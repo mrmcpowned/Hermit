@@ -37,9 +37,9 @@ class User
 
         $result = $query->fetch();
 
-        if ($result) {
-            return $result[0];
-        }
+        return $result[0];
+
+
     }
 
     public function getLastName()
@@ -47,13 +47,47 @@ class User
         if (!$this->isLoggedIn())
             return;
 
+        $sid = $this->getSID();
+        $sql = "SELECT l_name FROM users WHERE sid=:usersid";
+        $query = $this->db->prepare($sql);
+        $query->bindParam(":usersid", $sid);
+        $query->execute();
+
+        $result = $query->fetch();
+
+        return $result[0];
 
     }
 
+    public function register($email, $pass)
+    {
+        //TODO: Register with only email or registration with all the necessary details?
+
+        $sql = "INSERT INTO users (email, pass) VALUES (:email, :pass) ";
+
+        $passHash = password_hash($pass, PASSWORD_DEFAULT);
+
+        $query = $this->db->prepare($sql);
+        $query->bindParam(":email", $email);
+        $query->bindParam(":pass", $passHash);
+
+        $query->execute();
+
+    }
+
+
+    /**
+     * Login method
+     * @param $email string User's email
+     * @param $pass string User's password
+     * @return bool If the action succeeded or not
+     */
     public function login($email, $pass)
     {
         $sql = "SELECT * FROM users WHERE email=:email LIMIT 1";
 
+        //Every attempt at login should effectively regenerate the ID, since it's an attempt at privilege elevation
+        session_regenerate_id(true);
 
         try {
             $query = $this->db->prepare($sql);
@@ -66,6 +100,7 @@ class User
             if (!$result) {
                 return false;
             }
+            //Login failed due to incorrect
             if (!password_verify($pass, $result['pass'])) {
                 return false;
             }
@@ -78,7 +113,7 @@ class User
             $query->execute();
 
             $this->setSID($userSID);
-
+            extendSession();
             return true;
 
         } catch (PDOException $e) {
@@ -119,17 +154,23 @@ class User
         unset($_SESSION['sid']);
     }
 
+    public function destroySession(){
+        session_unset();
+        session_destroy();
+    }
+
     public function logout()
     {
         if (!$this->isLoggedIn())
             return false;
 
         $sid = $this->getSID();
-        $sql = "UPDATE users SET sid = NULL WHERE sid=:user-sid";
+        $sql = "UPDATE users SET sid = NULL WHERE sid=:usersid";
         $query = $this->db->prepare($sql);
-        $query->bindParam(":user-sid", $sid);
-        $this->destroySID();
-        session_destroy();
+        $query->bindParam(":usersid", $sid);
+        $query->execute();
+        $this->destroySession();
+        session_start();
         return true;
     }
 }

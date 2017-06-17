@@ -13,10 +13,14 @@ $fname = $user->getFirstName();
 var_dump($isLogged);
 var_dump($fname);
 
-if(!$isLogged){
-    $user->login("me@dank.memes", "password");
+if(!$isLogged && isset($_POST['type'])) {
+    if($_POST['type'] == "login"){
+        $user->login($_POST['user'], $_POST['pass']);
+    } else {
+        $user->register($_POST['user'], $_POST['pass']);
+    }
+    header("Location: /hermit/public");
 }
-
 ?>
 
 <!doctype html>
@@ -36,14 +40,19 @@ if(!$isLogged){
 
             <input type="text" name="user">
             <input type="password" name="pass">
+            <select name="type" id="">
+                <option value="login">Login</option>
+                <option value="register">Register</option>
+            </select>
             <button type="submit">Send</button>
         </form>
     <?php endif; ?>
 
     <?php
-    if($isLogged)
-        $user->logout();
+//    if($isLogged)
+//        $user->logout();
     var_dump($user->isLoggedIn());
+    var_dump($_SESSION);
     ?>
 </body>
 </html>

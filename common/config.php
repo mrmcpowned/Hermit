@@ -1,7 +1,5 @@
 <?php
 
-session_start();
-
 $db_host = "localhost";
 $db_user = "hermit";
 $db_pass = "9LGmAIdbWi6KgmWK";
@@ -16,4 +14,16 @@ try {
 require_once "functions.php";
 require_once 'User.php';
 
+session_start();
 $user = new User($db);
+
+
+//Only logout a user if they were logged in and their session has expired
+if ($user->isLoggedIn() && isset($_SESSION['discard_after']) && time() > $_SESSION['discard_after']) {
+    // session has taken too long between requests
+    $user->logout();
+}
+
+extendSession();
+
+
