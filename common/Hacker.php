@@ -6,7 +6,7 @@
  * Date: 6/18/2017
  * Time: 6:27 PM
  */
-class Hacker
+class Hacker extends User
 {
 
 }

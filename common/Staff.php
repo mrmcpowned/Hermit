@@ -6,7 +6,7 @@
  * Date: 6/18/2017
  * Time: 6:27 PM
  */
-class Staff
+class Staff extends User
 {
 
 }
