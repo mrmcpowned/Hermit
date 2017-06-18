@@ -12,7 +12,8 @@ class User
     /**
      * @var PDO Type of user, be it hacker or backend
      */
-    private $db;
+    protected $db;
+    protected $sidType;
 
     /**
      * User constructor.
@@ -21,6 +22,7 @@ class User
     public function __construct($dbPDO)
     {
         $this->db = $dbPDO;
+        $this->sidType = "user-sid";
     }
 
     public function getFirstName()
@@ -129,7 +131,7 @@ class User
      */
     public function isLoggedIn()
     {
-        return isset($_SESSION['sid']);
+        return isset($_SESSION[$this->sidType]);
     }
 
     /**
@@ -141,17 +143,17 @@ class User
         if (!$this->isLoggedIn()) {
             return null;
         }
-        return $_SESSION['sid'];
+        return $_SESSION[$this->sidType];
     }
 
     public function setSID($newSID)
     {
-        $_SESSION['sid'] = $newSID;
+        $_SESSION[$this->sidType] = $newSID;
     }
 
     public function destroySID()
     {
-        unset($_SESSION['sid']);
+        unset($_SESSION[$this->sidType]);
     }
 
     public function destroySession(){
@@ -159,6 +161,12 @@ class User
         session_destroy();
     }
 
+
+    /**
+     * Logs out the currently logged in user
+     *
+     * @return bool
+     */
     public function logout()
     {
         if (!$this->isLoggedIn())
