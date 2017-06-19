@@ -14,6 +14,7 @@ class User
      */
     protected $db;
     protected $sidType;
+    protected $userInfo;
 
     /**
      * User constructor.

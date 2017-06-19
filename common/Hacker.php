@@ -17,6 +17,41 @@ class Hacker extends User
     {
         parent::__construct($dbPDO);
         $this->sidType = "hacker-sid";
+        $this->setup();
+    }
+
+    /**
+     * Sets up a logged in user by storing user details in an associative array
+     */
+    public function setup()
+    {
+        if(!$this->isLoggedIn())
+            return;
+
+        $sql = "SELECT * FROM users WHERE sid = :sid";
+
+        $query = $this->db->prepare($sql);
+        $sid = $this->getSID();
+        $query->bindParam(":sid", $sid);
+        $query->execute();
+
+        $this->userInfo = $query->fetch(PDO::FETCH_ASSOC);
+
+        //We have to do some cleanup here so we do accidentally expose any unwanted columns
+        unset($this->userInfo['pass']);
+        unset($this->userInfo['id']);
+        unset($this->userInfo['sid']);
+
+    }
+
+    public function getFirstName()
+    {
+        return $this->userInfo['f_name'];
+    }
+
+    public function getLastName()
+    {
+        return $this->userInfo['l_name'];
     }
 
     /**
@@ -59,7 +94,7 @@ class Hacker extends User
             $query->execute();
 
             $this->setSID($userSID);
-            extendSession();
+            $this->extendSession();
             return true;
 
         } catch (PDOException $e) {
