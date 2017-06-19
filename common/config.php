@@ -22,12 +22,3 @@ require_once 'Hacker.php';
 $user = new Hacker($db);
 
 
-//Only logout a user if they were logged in and their session has expired
-if ($user->isLoggedIn() && $user->hasSessionExpired()) {
-    // session has taken too long between requests
-    $user->logout();
-}
-
-$user->extendSession();
-
-

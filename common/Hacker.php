@@ -12,20 +12,23 @@ class Hacker extends User
 
     /**
      * Hacker constructor.
+     * @param $dbPDO PDO Database connection
      */
     public function __construct($dbPDO)
     {
-        parent::__construct($dbPDO);
+        $this->db = $dbPDO;
         $this->sidType = "hacker-sid";
-        $this->setup();
+        $this->userSetup();
+        $this->sessionCheck();
+        $this->extendSession();
     }
 
     /**
      * Sets up a logged in user by storing user details in an associative array
      */
-    public function setup()
+    public function userSetup()
     {
-        if(!$this->isLoggedIn())
+        if (!$this->isLoggedIn())
             return;
 
         $sql = "SELECT * FROM users WHERE sid = :sid";
@@ -122,15 +125,5 @@ class Hacker extends User
         $this->destroySession();
         session_start();
         return true;
-    }
-
-    public function hasSessionExpired()
-    {
-        return (time() > $_SESSION['discard_after']);
-    }
-
-    public function extendSession()
-    {
-        $_SESSION['discard_after'] = SESSION_EXPIRATION_SECONDS + time();
     }
 }
