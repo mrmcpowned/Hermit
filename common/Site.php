@@ -1,15 +1,17 @@
 <?php
 
 /**
- * Created by PhpStorm.
- * User: mrmcp
- * Date: 6/17/2017
- * Time: 2:50 PM
+ * Class Site
+ * The Site class handles site operations. Things like creating files or updating settings.
  */
 class Site
 {
 
     private $db;
+    /**
+     * @var array Associative array holding the site's settings
+     */
+    private $settings;
 
     /**
      * Site constructor.
@@ -18,6 +20,8 @@ class Site
     {
         $this->db = $db;
     }
+
+
 
 
 }
