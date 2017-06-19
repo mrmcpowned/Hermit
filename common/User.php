@@ -14,6 +14,9 @@ class User
      */
     protected $db;
     protected $sidType;
+    /**
+     * @var array Associative array containing user info
+     */
     protected $userInfo;
 
     /**
@@ -24,6 +27,14 @@ class User
     {
         $this->db = $dbPDO;
         $this->sidType = "user-sid";
+    }
+
+    /**
+     * @return array Associative array containing userInfo
+     */
+    public function getUserInfo()
+    {
+        return $this->userInfo;
     }
 
     /*

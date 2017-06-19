@@ -13,10 +13,12 @@ try {
     die("Error connecting to database: " . $e->getMessage());
 }
 
-require_once "functions.php";
-require_once 'Hacker.php';
-
 session_start();
+
+require_once "functions.php";
+
+//TODO: Find a better way of generalizing this for both hackers and staff
+require_once 'Hacker.php';
 $user = new Hacker($db);
 
 
