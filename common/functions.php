@@ -8,3 +8,20 @@ function generateSID()
 function trimLow($input){
     return trim(strtolower($input));
 }
+
+function generateAlphaCode($size = 4){
+
+    $output = "";
+
+    for($i = 0; $i < $size; $i++){
+        $offset = random_int(0, 255);
+
+        if(rand(0,1))
+            //Concat a capital letter
+            $output .= chr( 65 + ($offset%10));
+        else
+            //Concat a number
+            $output .= chr( 48 + ($offset%26));
+    }
+    return $output;
+}

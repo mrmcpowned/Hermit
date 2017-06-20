@@ -15,9 +15,12 @@ $userFieldFilters = [
     "class_year" => "",
     "school" => "",
     "race" => "",
+    "is_hispanic" => "",
 //    "city" => "",
 //    "state" => "",
     "shirt_size" => "",
+    "diet_restrictions" => "", //This one should be an integer, relative to the restriction type in the DB
+
 ];
 
 
