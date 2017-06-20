@@ -1,5 +1,8 @@
 <?php
 require_once '../common/config.php';
+require_once 'Hacker.php';
+$user = new Hacker($db);
+
 
 /**
  *
