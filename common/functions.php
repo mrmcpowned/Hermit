@@ -18,10 +18,10 @@ function generateAlphaCode($size = 4){
 
         if(rand(0,1))
             //Concat a capital letter
-            $output .= chr( 65 + ($offset%10));
+            $output .= chr( 65 + ($offset%26));
         else
             //Concat a number
-            $output .= chr( 48 + ($offset%26));
+            $output .= chr( 48 + ($offset%10));
     }
     return $output;
 }

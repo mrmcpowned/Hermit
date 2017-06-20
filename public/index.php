@@ -24,6 +24,7 @@ if(!$isLogged && isset($_POST['type'])) {
     }
 //    header("Location: /hermit/public");
 }
+echo generateAlphaCode();
 ?>
 
 <!doctype html>
