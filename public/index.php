@@ -20,11 +20,10 @@ if(!$isLogged && isset($_POST['type'])) {
     if($_POST['type'] == "login"){
         $user->login($_POST['user'], $_POST['pass']);
     } else {
-        $user->register($_POST['user'], $_POST['pass']);
+//        $user->register($_POST['user'], $_POST['pass']);
     }
 //    header("Location: /hermit/public");
 }
-echo generateAlphaCode();
 ?>
 
 <!doctype html>

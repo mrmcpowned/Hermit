@@ -18,9 +18,25 @@ $userFieldFilters = [
     "is_hispanic" => "",
 //    "city" => "",
 //    "state" => "",
-    "shirt_size" => "",
+    "shirt_size" => "", //Mix of male and female sizes, only allowed values so no need to filter
     "diet_restrictions" => "", //This one should be an integer, relative to the restriction type in the DB
+    "github" => "", //URL Escape and only the username
+    "linkedin" => "", //Ditto
+    "is_first_hackathon" => ""
+];
 
+$requiredFields = [
+    "f_name",
+    "l_name",
+    "email",
+    "pass",
+    "age",
+    "gender",
+    "class_year",
+    "school",
+    "race",
+    "is_hispanic",
+    "is_hispanic",
 ];
 
 

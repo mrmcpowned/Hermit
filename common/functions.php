@@ -25,3 +25,7 @@ function generateAlphaCode($size = 4){
     }
     return $output;
 }
+
+function hasPermissions($bitPermissions, $permissionsRequired){
+
+}
