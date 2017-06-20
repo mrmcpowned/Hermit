@@ -6,5 +6,16 @@
  * Time: 10:46 PM
  */
 
+$errors = [];
+
 //TODO: Handle auth with proper logic
+/*
+ * Proper auth logic flow:
+ *
+ * Email should be sanitized
+ * Email should not be empty
+ * Email should not be less than minimum character limit
+ * Password should not be less than minimum character limit
+ *
+ */
 //TODO: Maybe handle QR check-ins here too?

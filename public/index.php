@@ -1,6 +1,6 @@
 <?php
 require_once '../common/config.php';
-require_once 'Hacker.php';
+require_once '../common/Hacker.php';
 $user = new Hacker($db);
 
 
@@ -22,7 +22,7 @@ if(!$isLogged && isset($_POST['type'])) {
     } else {
         $user->register($_POST['user'], $_POST['pass']);
     }
-    header("Location: /hermit/public");
+//    header("Location: /hermit/public");
 }
 ?>
 

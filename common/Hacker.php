@@ -61,11 +61,12 @@ class Hacker extends User
      * Login method
      * @param $email string User's email
      * @param $pass string User's password
-     * @return bool If the action succeeded or not
+     * @return mixed If the action succeeded or not
      */
     //TODO: Rework this function so it can be implemented better with a login endpoint
     //NOTE: Probably better that a 'User' doesn't handle login, since it doesn't allow
     //for error handling very well.
+    //From here we assume user input has been sanitized
     public function login($email, $pass)
     {
         $sql = "SELECT * FROM users WHERE email=:email LIMIT 1";
@@ -82,11 +83,13 @@ class Hacker extends User
 
             //Result is only false on no match
             if (!$result) {
-                return false;
+                //TODO: Log incorrect attempt
+                return ['error' => "Email does not exist"];
             }
             //Login failed due to incorrect
             if (!password_verify($pass, $result['pass'])) {
-                return false;
+                //TODO: Log incorrect attempt
+                return ['error' => "Password is incorrect"];
             }
 
             $sql = "UPDATE users SET sid = :session WHERE id=:user";
@@ -101,7 +104,8 @@ class Hacker extends User
             return true;
 
         } catch (PDOException $e) {
-            return false;
+            //If we've reached this stage, chances are I won't be able to log this unless it's in a flat file
+            return ['error' => $e->getMessage()];
         }
 
 
