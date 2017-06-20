@@ -19,3 +19,6 @@ $errors = [];
  *
  */
 //TODO: Maybe handle QR check-ins here too?
+/*
+ * QR Code auth could be generated at the confirmation stage, with an endpoint guarding against collisions
+ */

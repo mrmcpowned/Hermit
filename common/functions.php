@@ -9,7 +9,7 @@ function trimLow($input){
     return trim(strtolower($input));
 }
 
-function generateAlphaCode($size = 4){
+function generateAlphaCode($size = 6){
 
     $output = "";
 
