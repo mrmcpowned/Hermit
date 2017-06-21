@@ -9,7 +9,7 @@
  *
  *
  * Permissions are as follows:
- *  -
+ *
  *  - view stats
  *  - view hackers (Name, GitHub, LinkedIn, School, Age) [Meant more for sponsors]
  *  - download resumes [Meant more for sponsors]

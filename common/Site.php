@@ -7,6 +7,20 @@
 class Site
 {
 
+    /*
+     *
+     */
+
+    /*
+     * EMAILS
+     *
+     * - Whitelist a list of emails
+     * - Literally just only get domain and check against DB once
+     * - Email whitelist will be its own table
+     *
+     */
+
+
     private $db;
     /**
      * @var array Associative array holding the site's settings

@@ -12,13 +12,13 @@ $userFieldFilters = [
     "pass" => "",
     "age" => "",
     "gender" => "",
-    "class_year" => "",
-    "school" => "",
+    "class_year" => "", //Normalize
+    "school" => "", //Normalize
     "race" => "",
-    "is_hispanic" => "",
-//    "city" => "",
-//    "state" => "",
-    "shirt_size" => "", //Mix of male and female sizes, only allowed values so no need to filter
+    "ethnicity" => "",
+    "zip_code" => "",
+    "state" => "",
+    "shirt_size" => "", //Needs normalization via DB
     "diet_restrictions" => "", //This one should be an integer, relative to the restriction type in the DB
     "github" => "", //URL Escape and only the username
     "linkedin" => "", //Ditto
@@ -36,7 +36,10 @@ $requiredFields = [
     "school",
     "race",
     "is_hispanic",
-    "is_hispanic",
+    "city" => "",
+    "state" => "",
+    "is_first_hackathon" => ""
+
 ];
 
 
@@ -60,6 +63,6 @@ $requiredFields = [
  *
  * After pre-flight check, query should be built programatically, since there could be omitted fields
  *
- *
- *
  */
+
+
