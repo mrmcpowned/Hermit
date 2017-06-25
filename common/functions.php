@@ -42,31 +42,32 @@ function recaptcha_verify($captchaResponse)
     return $response["success"] === true;
 }
 
-function has_required_keys($testArray, $validationArray){
-    $resultArray = array_intersect_key($testArray, array_flip($validationArray));
-    return count($resultArray) === count($validationArray);
-}
+function missing_fields($required, $input, $total){
+    $fieldsWeWant = array_intersect_key($total, array_flip($required));
+    $fieldsWeHave = array_intersect_key($input, array_flip($required));
+    //We do this to get the keys with named values instead of the keys with input values
+    $fieldsWeHave = array_intersect_key($total, $fieldsWeHave);
 
-function fields_diff($testArray, $validationArray){
-    $resultArray = array_intersect_key($testArray, array_flip($validationArray));
-    return count($resultArray);
+    return array_diff_key($fieldsWeWant, $fieldsWeHave);
 }
 
 /**
  * Creates proper JSON response and ends the script
  * @param array $errors
- * @return string JSON Encoded Array
+
  */
 function json_response($errors = []){
     $response = [
         "success" => false,
-        "errors" => &$errors
+        "errors" => $errors
     ];
 
-    if(empty($errors))
-        return json_encode($response);
+    if(!empty($errors)) {
+        echo json_encode($response);
+        die;
+    }
 
     $response['success'] = true;
-    return json_encode($response);
-
+    echo json_encode($response);
+    die;
 }

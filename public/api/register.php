@@ -164,9 +164,6 @@ unset($_POST['g-recaptcha-response']);
 foreach($_POST as $entry => $value){
     //First check if the option is whitelisted, and if not unset it from the post
     if(!array_key_exists($entry, $acceptableFields)){
-//        $errors[] = "Option '$entry' is not in the list of acceptable options";
-//        echo json_encode($return);
-//        die;
         unset($_POST[$entry]);
         continue;
     }
@@ -178,9 +175,16 @@ foreach($_POST as $entry => $value){
 
 //Perform specific checks
 
-if(!has_required_keys($_POST, $requiredFields)){
-    if(fields_diff($_POST, $requiredFields) < 0){
+$missing = missing_fields($requiredFields, $_POST, $acceptableFields);
 
+//If our set of missing fields is greater than zero, then we're missing fields...
+if(count($missing) > 0){
+
+    //Check which specific required fields are missing
+    foreach($missing as $field){
+        $errors[] = "Field '" . $field['name'] . "' is missing.";
     }
+
+    json_response($errors);
 
 }
