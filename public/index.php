@@ -13,12 +13,16 @@ $user = new Hacker($db);
  */
 $isLogged = $user->isLoggedIn();
 $fname = $user->getFirstName();
-var_dump($isLogged);
-var_dump($fname);
+//var_dump($isLogged);
+//var_dump($fname);
 
 if(!$isLogged && isset($_POST['type'])) {
+    var_dump($_POST);
+//    $_POST['user'] = filter_var($_POST['user'], FILTER_SANITIZE_STRING);
+    $_POST = array_map('trim', $_POST);
+    var_dump($_POST);
     if($_POST['type'] == "login"){
-        $user->login($_POST['user'], $_POST['pass']);
+//        $user->login($_POST['user'], $_POST['pass']);
     } else {
 //        $user->register($_POST['user'], $_POST['pass']);
     }
