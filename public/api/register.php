@@ -17,7 +17,7 @@ require_once "../../common/functions.php";
 //This defines what we will consider valid data taken from a POST for Hacker profile creation or update
 $acceptableFields = [
     "f_name" => [
-        "filter" => FILTER_SANITIZE_STRING,
+        "filter" => [FILTER_SANITIZE_STRING],
         "name" => "First Name",
         "length" => [
             "min" => 2,
@@ -25,7 +25,7 @@ $acceptableFields = [
         ]
     ],
     "l_name" => [
-        "filter" => FILTER_SANITIZE_STRING,
+        "filter" => [FILTER_SANITIZE_STRING],
         "name" => "Last Name",
         "length" => [
             "min" => 2,
@@ -33,7 +33,7 @@ $acceptableFields = [
         ]
     ],
     "email" => [
-        "filter" => FILTER_SANITIZE_EMAIL,
+        "filter" => [FILTER_SANITIZE_EMAIL],
         "name" => "E-Mail",
         "length" => [
             "min" => 7,
@@ -41,7 +41,7 @@ $acceptableFields = [
         ]
     ],
     "pass" => [
-        "filter" => FILTER_DEFAULT, //Pass gets hashed, so no real issue of injection here
+        "filter" => [FILTER_DEFAULT], //Pass gets hashed, so no real issue of injection here
         "name" => "Password",
         "length" => [
             "min" => 8,
@@ -49,7 +49,7 @@ $acceptableFields = [
         ]
     ],
     "age" => [
-        "filter" => FILTER_SANITIZE_NUMBER_INT,
+        "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Age",
         "length" => [
             "min" => 2,
@@ -61,7 +61,7 @@ $acceptableFields = [
         ]
     ],
     "gender" => [
-        "filter" => FILTER_SANITIZE_NUMBER_INT,
+        "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Gender",
         "length" => [
             "min" => 1,
@@ -69,7 +69,7 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "class_year" => [
-        "filter" => FILTER_SANITIZE_NUMBER_INT,
+        "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Class Year",
         "length" => [
             "min" => 1,
@@ -77,7 +77,7 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "school" => [
-        "filter" => FILTER_SANITIZE_NUMBER_INT,
+        "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "School",
         "length" => [
             "min" => 1,
@@ -85,7 +85,7 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "race" => [
-        "filter" => FILTER_SANITIZE_NUMBER_INT,
+        "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Race",
         "length" => [
             "min" => 1,
@@ -93,7 +93,7 @@ $acceptableFields = [
         ]
     ], //normalize - DONE
     "is_hispanic" => [
-        "filter" => FILTER_VALIDATE_BOOLEAN,
+        "filter" => [FILTER_VALIDATE_BOOLEAN],
         "name" => "Are you of Hispanic/Latino origins?",
         "length" => [
             "min" => 1,
@@ -101,7 +101,7 @@ $acceptableFields = [
         ]
     ], //Boolean is hispanic
     "zip_code" => [
-        "filter" => FILTER_SANITIZE_NUMBER_INT,
+        "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "City",
         "length" => [
             "min" => 5,
@@ -109,7 +109,7 @@ $acceptableFields = [
         ]
     ],
     "state" => [
-        "filter" => FILTER_SANITIZE_NUMBER_INT,
+        "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "State",
         "length" => [
             "min" => 1,
@@ -117,7 +117,7 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "shirt_size" => [
-        "filter" => FILTER_SANITIZE_NUMBER_INT,
+        "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Shirt Size",
         "length" => [
             "min" => 1,
@@ -125,7 +125,7 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "diet_restrictions" => [
-        "filter" => FILTER_SANITIZE_NUMBER_INT,
+        "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Dietary Restrictions",
         "length" => [
             "min" => 1,
@@ -133,7 +133,7 @@ $acceptableFields = [
         ]
     ], //Normalize - IN PROGRESS
     "diet_other" => [
-        "filter" => FILTER_SANITIZE_STRING,
+        "filter" => [FILTER_SANITIZE_STRING],
         "name" => "Diet Other",
         "length" => [
             "min" => 1,
@@ -141,23 +141,29 @@ $acceptableFields = [
         ]
     ],
     "github" => [
-        "filter" => FILTER_SANITIZE_STRING,
+        "filter" => [
+            FILTER_SANITIZE_STRING,
+            FILTER_SANITIZE_URL
+        ],
         "name" => "GitHub Profile",
         "length" => [
-            "min" => 1,
-            "max" => 1
+            "min" => 0,
+            "max" => 20
         ]
     ], //URL Escape and only the username
     "linkedin" => [
-        "filter" => FILTER_SANITIZE_STRING,
+        "filter" => [
+            FILTER_SANITIZE_STRING,
+            FILTER_SANITIZE_URL
+        ],
         "name" => "LinkedIn Profile",
         "length" => [
-            "min" => 1,
-            "max" => 1
+            "min" => 0,
+            "max" => 30
         ]
     ], //Ditto
     "is_first_hackathon" => [
-        "filter" => FILTER_VALIDATE_BOOLEAN,
+        "filter" => [FILTER_VALIDATE_BOOLEAN],
         "name" => "Is this your first hackathon?",
         "length" => [
             "min" => 1,
@@ -196,10 +202,10 @@ $requiredFields = [
 /*
  * Register pre-flight check, FAIL if:
  *
- * - Registration is closed OR Walk-Ins are Disabled
- * - Required fields are empty
- * - Required fields to not meet minimum/maximum requirements
- * - Fields do not pass validation
+ * - Registration is closed OR Walk-Ins are Disabled - DONE
+ * - Required fields are empty - DONE
+ * - Required fields to not meet minimum/maximum requirements - DONE
+ * - Fields do not pass validation - WORKING ON IT
  * - File is over limit OR file is not of allowed types
  *   - File shouldn't be a required field for walk-ins
  *
@@ -241,9 +247,8 @@ if($site->isAcceptingWalkIns()){
 //$response = $_POST['g-recaptcha-response'];
 
 /*if(!recaptcha_verify($response)){
-    $return['errors'][] = "Captcha failed to verify";
+    $errors['Captcha'][] = "Captcha failed to verify";
     echo json_encode($return);
-    die;
 }
 
 unset($_POST['g-recaptcha-response']);
@@ -260,7 +265,9 @@ foreach($_POST as $entry => $value){
     }
     //Then filter the input as defined by the config array
     if (isset($acceptableFields[$entry]['filter'])) {
-        $_POST[$entry] = filter_input(INPUT_POST, $entry, $acceptableFields[$entry]['filter']);
+        foreach ($acceptableFields[$entry]['filter'] as $filter) {
+            $_POST[$entry] = filter_input(INPUT_POST, $entry, $filter);
+        }
     }
 }
 
@@ -283,6 +290,8 @@ if(count($missing) > 0){
 //By now we have all our required fields, now we need to make sure all fields are following length and value checks
 foreach ($_POST as $key => $value){
     $fieldName = $acceptableFields[$key]['name'];
+
+    //Length is to check if string length is within the configured range, including numbers
     if(isset($acceptableFields[$key]['length'])){
         //We have to check the length of applicable values, even numbers
         $valueLength = strlen($value);
@@ -304,8 +313,9 @@ foreach ($_POST as $key => $value){
             $errors['Value Size'] = "Value of field '$fieldName' is greater than the maximum of '$max'";
     }
 }
-//Check if there are any errors so far
+//Check if there are any errors so far, and if so, execute a response
 if(!empty($errors))
     json_response($errors);
 
+//Now we can go into entry specific checks
 
