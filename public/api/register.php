@@ -34,6 +34,7 @@ $acceptableFields = [
     ],
     "email" => [
         "filter" => [FILTER_SANITIZE_EMAIL],
+        "validate" => FILTER_VALIDATE_EMAIL,
         "name" => "E-Mail",
         "length" => [
             "min" => 7,
@@ -94,11 +95,7 @@ $acceptableFields = [
     ], //normalize - DONE
     "is_hispanic" => [
         "filter" => [FILTER_VALIDATE_BOOLEAN],
-        "name" => "Are you of Hispanic/Latino origins?",
-        "length" => [
-            "min" => 1,
-            "max" => 1
-        ]
+        "name" => "Are you of Hispanic/Latino origins?"
     ], //Boolean is hispanic
     "zip_code" => [
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
@@ -164,11 +161,7 @@ $acceptableFields = [
     ], //Ditto
     "is_first_hackathon" => [
         "filter" => [FILTER_VALIDATE_BOOLEAN],
-        "name" => "Is this your first hackathon?",
-        "length" => [
-            "min" => 1,
-            "max" => 1
-        ]
+        "name" => "Is this your first hackathon?"
     ],
     "resume" => [
         "name" => "Resume"
@@ -296,26 +289,35 @@ foreach ($_POST as $key => $value){
         //We have to check the length of applicable values, even numbers
         $valueLength = strlen($value);
         $min = $acceptableFields[$key]['length']['min'];
-        $max = $acceptableFields[$key]['length']['min'];
+        $max = $acceptableFields[$key]['length']['max'];
         if($valueLength < $min)
-            $errors['Value Length'] = "Length of field '$fieldName' is less than the minimum of '$min'";
+            $errors['Value Length'][] = "Length of field '$fieldName' is less than the minimum of '$min' at a size of '$valueLength'";
         if($valueLength > $max)
-            $errors['Value Length'] = "Length of field '$fieldName' is greater than the maximum of '$max'";
+            $errors['Value Length'][] = "Length of field '$fieldName' is greater than the maximum of '$max' at a size of '$valueLength'";
     }
 
     //Value is used for checking if the actual value of a field is within a specified range
     if(isset($acceptableFields[$key]['value'])){
         $min = $acceptableFields[$key]['value']['min'];
-        $max = $acceptableFields[$key]['value']['min'];
+        $max = $acceptableFields[$key]['value']['max'];
         if($value < $min)
-            $errors['Value Size'] = "Value of field '$fieldName' is less than the minimum of '$min'";
+            $errors['Value Size'][] = "Value of field '$fieldName' is less than the minimum of '$min'";
         if($value > $max)
-            $errors['Value Size'] = "Value of field '$fieldName' is greater than the maximum of '$max'";
+            $errors['Value Size'][] = "Value of field '$fieldName' is greater than the maximum of '$max'";
+    }
+
+    //Validate via filter for any items that are set to validate
+    if(isset($acceptableFields[$key]['validate'])){
+        if(filter_var($_POST[$key], $acceptableFields[$key]['validate']));
     }
 }
 //Check if there are any errors so far, and if so, execute a response
 if(!empty($errors))
     json_response($errors);
 
-//Now we can go into entry specific checks
-
+//Resume file check
+/*
+ * Resume shouldn't be:
+ * - More than 2MB
+ * - Any format other than doc, docx, or pdf
+ */
