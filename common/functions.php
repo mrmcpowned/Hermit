@@ -51,6 +51,22 @@ function missing_fields($required, $input, $total){
     return array_diff_key($fieldsWeWant, $fieldsWeHave);
 }
 
+function codeToMessage($code)
+{
+
+$messages = [
+    UPLOAD_ERR_INI_SIZE => "The uploaded file exceeds the upload_max_filesize directive in php.ini",
+    UPLOAD_ERR_FORM_SIZE => "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form",
+    UPLOAD_ERR_PARTIAL => "The uploaded file was only partially uploaded",
+    UPLOAD_ERR_NO_FILE => "No file was uploaded",
+    UPLOAD_ERR_NO_TMP_DIR => "Missing a temporary folder",
+    UPLOAD_ERR_CANT_WRITE => "Failed to write file to disk",
+    UPLOAD_ERR_EXTENSION => "File upload stopped by extension"
+];
+
+return $messages[$code];
+}
+
 /**
  * Creates proper JSON response and ends the script
  * @param array $errors
@@ -63,6 +79,7 @@ function json_response($errors = []){
     ];
 
     if(!empty($errors)) {
+        http_response_code(400);
         echo json_encode($response);
         die;
     }
@@ -70,4 +87,13 @@ function json_response($errors = []){
     $response['success'] = true;
     echo json_encode($response);
     die;
+}
+
+function is_acceptable_file_type($type){
+    $acceptableTypes = [
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/pdf"
+    ];
+    return array_key_exists($type, array_flip($acceptableTypes));
 }

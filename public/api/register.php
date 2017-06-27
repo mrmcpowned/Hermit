@@ -17,6 +17,7 @@ require_once "../../common/functions.php";
 //This defines what we will consider valid data taken from a POST for Hacker profile creation or update
 $acceptableFields = [
     "f_name" => [
+        "default" => "",
         "filter" => [FILTER_SANITIZE_STRING],
         "name" => "First Name",
         "length" => [
@@ -25,6 +26,7 @@ $acceptableFields = [
         ]
     ],
     "l_name" => [
+        "default" => "",
         "filter" => [FILTER_SANITIZE_STRING],
         "name" => "Last Name",
         "length" => [
@@ -33,6 +35,7 @@ $acceptableFields = [
         ]
     ],
     "email" => [
+        "default" => "",
         "filter" => [FILTER_SANITIZE_EMAIL],
         "validate" => FILTER_VALIDATE_EMAIL,
         "name" => "E-Mail",
@@ -42,6 +45,7 @@ $acceptableFields = [
         ]
     ],
     "pass" => [
+        "default" => "",
         "filter" => [FILTER_DEFAULT], //Pass gets hashed, so no real issue of injection here
         "name" => "Password",
         "length" => [
@@ -50,6 +54,7 @@ $acceptableFields = [
         ]
     ],
     "age" => [
+        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Age",
         "length" => [
@@ -62,6 +67,7 @@ $acceptableFields = [
         ]
     ],
     "gender" => [
+        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Gender",
         "length" => [
@@ -70,6 +76,7 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "class_year" => [
+        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Class Year",
         "length" => [
@@ -78,6 +85,7 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "school" => [
+        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "School",
         "length" => [
@@ -86,6 +94,7 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "race" => [
+        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Race",
         "length" => [
@@ -94,10 +103,12 @@ $acceptableFields = [
         ]
     ], //normalize - DONE
     "is_hispanic" => [
+        "default" => "",
         "filter" => [FILTER_VALIDATE_BOOLEAN],
         "name" => "Are you of Hispanic/Latino origins?"
     ], //Boolean is hispanic
     "zip_code" => [
+        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "City",
         "length" => [
@@ -106,6 +117,7 @@ $acceptableFields = [
         ]
     ],
     "state" => [
+        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "State",
         "length" => [
@@ -114,6 +126,7 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "shirt_size" => [
+        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Shirt Size",
         "length" => [
@@ -122,6 +135,7 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "diet_restrictions" => [
+        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Dietary Restrictions",
         "length" => [
@@ -130,6 +144,7 @@ $acceptableFields = [
         ]
     ], //Normalize - IN PROGRESS
     "diet_other" => [
+        "default" => "",
         "filter" => [FILTER_SANITIZE_STRING],
         "name" => "Diet Other",
         "length" => [
@@ -138,6 +153,7 @@ $acceptableFields = [
         ]
     ],
     "github" => [
+        "default" => "",
         "filter" => [
             FILTER_SANITIZE_STRING,
             FILTER_SANITIZE_URL
@@ -149,6 +165,7 @@ $acceptableFields = [
         ]
     ], //URL Escape and only the username
     "linkedin" => [
+        "default" => "",
         "filter" => [
             FILTER_SANITIZE_STRING,
             FILTER_SANITIZE_URL
@@ -160,11 +177,13 @@ $acceptableFields = [
         ]
     ], //Ditto
     "is_first_hackathon" => [
+        "default" => "",
         "filter" => [FILTER_VALIDATE_BOOLEAN],
         "name" => "Is this your first hackathon?"
     ],
     "resume" => [
-        "name" => "Resume"
+        "default" => "",
+        "name" => "Resume",
     ]
 ];
 
@@ -183,8 +202,7 @@ $requiredFields = [
     "state",
     "shirt_size",
     "is_first_hackathon",
-    "diet_restrictions",
-    "resume"
+    "diet_restrictions"
 ];
 
 
@@ -198,7 +216,7 @@ $requiredFields = [
  * - Registration is closed OR Walk-Ins are Disabled - DONE
  * - Required fields are empty - DONE
  * - Required fields to not meet minimum/maximum requirements - DONE
- * - Fields do not pass validation - WORKING ON IT
+ * - Fields do not pass validation - DONE
  * - File is over limit OR file is not of allowed types
  *   - File shouldn't be a required field for walk-ins
  *
@@ -228,14 +246,6 @@ if(!($site->isAcceptingRegistrations() OR $site->isAcceptingWalkinIns())){
     $errors[] = "Sorry, registrations are currently closed.";
 }
 
-//We don't accept resumes from walk-ins
-if($site->isAcceptingWalkIns()){
-    if(($key = array_search("resume", $requiredFields)) !== false) {
-        unset($requiredFields[$key]);
-    }
-}
-*/
-
 //Check captcha
 //$response = $_POST['g-recaptcha-response'];
 
@@ -262,6 +272,8 @@ foreach($_POST as $entry => $value){
             $_POST[$entry] = filter_input(INPUT_POST, $entry, $filter);
         }
     }
+
+
 }
 
 //Perform specific checks
@@ -308,16 +320,85 @@ foreach ($_POST as $key => $value){
 
     //Validate via filter for any items that are set to validate
     if(isset($acceptableFields[$key]['validate'])){
-        if(filter_var($_POST[$key], $acceptableFields[$key]['validate']));
+        if(!filter_var($_POST[$key], $acceptableFields[$key]['validate']))
+            $errors['Validation'][] = "Field '$fieldName' is invalidly formatted.";
     }
 }
+
 //Check if there are any errors so far, and if so, execute a response
 if(!empty($errors))
     json_response($errors);
+
+/*
+ * TODO: There shouldn't already be an email in the system for the user supplied
+ * TODO: User shouldn't be able to register with an email address whose domain is not whitelisted
+ */
+
+/*
+ * By now, all text data is sanitized and validated
+ * Next, we have to validate the resume upload and check if the email is in the database
+ */
+
+
 
 //Resume file check
 /*
  * Resume shouldn't be:
  * - More than 2MB
  * - Any format other than doc, docx, or pdf
+ * - Required if it's a walk-in
  */
+//We don't accept resumes from walk-ins
+
+if(!isset($_FILES['resume']) /*AND !$site->isAcceptingWalkIns()*/){
+    $errors['Resume'][] = "A resume is required.";
+    json_response($errors);
+}
+
+if(isset($_FILES['resume'])){
+
+    $resume = $_FILES['resume'];
+
+    //We shouldn't be having more than 1 file uploaded
+    if(count($resume['name']) > 1){
+        $errors['Resume'] = "Please only upload 1 file.";
+    }
+
+    //If PHP has an upload error, respect it
+    if($resume['error'] !== UPLOAD_ERR_OK){
+        $errors['Resume'][] = codeToMessage($resume['error']);
+    }
+
+    //If file is not of the acceptable type, through an error
+    if(!is_acceptable_file_type($resume['type'])){
+        $errors['Resume'][] = "Resume is not one of the acceptable file formats";
+    }
+
+    //If size is greater than 2MB, error
+    if($resume['size'] > 2000000){
+        $errors['Resume'][] = "Resume is larger than 2MB. Please upload a smaller file.";
+    }
+
+    if(!empty($errors))
+        json_response($errors);
+
+    //Now prep the file for move
+    $fileInfo = pathinfo($resume['name']);
+
+    $newName = $_POST['f_name'] . "-" . $_POST['l_name'] . "-" . generateAlphaCode();
+    $newName = filter_var($newName, FILTER_SANITIZE_URL);
+    $newName .= "." . $fileInfo['extension'];
+
+    $success = move_uploaded_file($resume["tmp_name"],
+        "../../common/resumes/" . $newName);
+    if (!$success){
+        $errors['Resume'][] = "Error saving file to directory";
+    }
+
+    $_POST['resume'] = $newName;
+
+    var_dump($_POST);
+
+}
+
+//TODO: Work on SQL query with all items as placeholders and fill in those that are optional using an array of binds
