@@ -35,5 +35,20 @@ class Site
         $this->db = $db;
     }
 
+    public function getValidEmails()
+    {
+        return ['.edu', 'mymdc.net'];
+    }
+
+    public function isAcceptingRegistrations()
+    {
+        return true;
+    }
+
+    public function isAcceptingWalkIns()
+    {
+        return false;
+    }
+
 
 }

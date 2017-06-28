@@ -1,6 +1,6 @@
 <?php
 
-//require_once "../../common/config.php";
+require_once "../../common/config.php";
 require_once "../../common/functions.php";
 
 /**
@@ -12,6 +12,7 @@ require_once "../../common/functions.php";
  * TODO: Finish this file
  * TODO: Commit to git
  */
+
 
 
 //This defines what we will consider valid data taken from a POST for Hacker profile creation or update
@@ -240,10 +241,10 @@ header("Content-Type: application/json");
 $errors = [];
 
 //Check if we're NOT accepting registrations OR walk-ins
-/*
-if(!($site->isAcceptingRegistrations() OR $site->isAcceptingWalkinIns())){
-    http_response_code(400);
-    $errors[] = "Sorry, registrations are currently closed.";
+
+if(!($site->isAcceptingRegistrations() OR $site->isAcceptingWalkIns())){
+    $errors['Registration'] = "Sorry, registrations are currently closed.";
+    json_response($errors);
 }
 
 //Check captcha
@@ -325,14 +326,39 @@ foreach ($_POST as $key => $value){
     }
 }
 
-//Check if there are any errors so far, and if so, execute a response
+//If the email does not end with one of the whitelisted domains, throw an error
+$found = false;
+foreach($site->getValidEmails() as $address){
+    if(endswith($_POST['email'], $address)) {
+        $found = true;
+        break;
+    }
+}
+if(!$found)
+    $errors{'Email'}[] = "The email address you entered is not in the list of whitelisted domains.";
+
+//No need to run a query if it's not an acceptable email
 if(!empty($errors))
     json_response($errors);
+
+//Check if there are any errors so far, and if so, execute a response
 
 /*
  * TODO: There shouldn't already be an email in the system for the user supplied
  * TODO: User shouldn't be able to register with an email address whose domain is not whitelisted
  */
+
+$query = $db->prepare("SELECT COUNT(*) as users FROM hackers WHERE email = :email");
+$query->bindValue(":email", $_POST['email']);
+$query->execute();
+
+$queryResult = $query->fetch();
+
+if($queryResult['users'] > 0)
+    $errors['Email'][] = "That email already exists in our system.";
+
+if(!empty($errors))
+    json_response($errors);
 
 /*
  * By now, all text data is sanitized and validated
@@ -350,7 +376,7 @@ if(!empty($errors))
  */
 //We don't accept resumes from walk-ins
 
-if(!isset($_FILES['resume']) /*AND !$site->isAcceptingWalkIns()*/){
+if(!isset($_FILES['resume']) AND !$site->isAcceptingWalkIns()){
     $errors['Resume'][] = "A resume is required.";
     json_response($errors);
 }
@@ -396,9 +422,6 @@ if(isset($_FILES['resume'])){
     }
 
     $_POST['resume'] = $newName;
-
-    var_dump($_POST);
-
 }
 
 //TODO: Work on SQL query with all items as placeholders and fill in those that are optional using an array of binds
