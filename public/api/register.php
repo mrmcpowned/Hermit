@@ -18,7 +18,6 @@ require_once "../../common/functions.php";
 //This defines what we will consider valid data taken from a POST for Hacker profile creation or update
 $acceptableFields = [
     "f_name" => [
-        "default" => "",
         "filter" => [FILTER_SANITIZE_STRING],
         "name" => "First Name",
         "length" => [
@@ -27,7 +26,6 @@ $acceptableFields = [
         ]
     ],
     "l_name" => [
-        "default" => "",
         "filter" => [FILTER_SANITIZE_STRING],
         "name" => "Last Name",
         "length" => [
@@ -36,7 +34,6 @@ $acceptableFields = [
         ]
     ],
     "email" => [
-        "default" => "",
         "filter" => [FILTER_SANITIZE_EMAIL],
         "validate" => FILTER_VALIDATE_EMAIL,
         "name" => "E-Mail",
@@ -46,7 +43,6 @@ $acceptableFields = [
         ]
     ],
     "pass" => [
-        "default" => "",
         "filter" => [FILTER_DEFAULT], //Pass gets hashed, so no real issue of injection here
         "name" => "Password",
         "length" => [
@@ -55,7 +51,6 @@ $acceptableFields = [
         ]
     ],
     "age" => [
-        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Age",
         "length" => [
@@ -68,7 +63,6 @@ $acceptableFields = [
         ]
     ],
     "gender" => [
-        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Gender",
         "length" => [
@@ -77,7 +71,6 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "class_year" => [
-        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Class Year",
         "length" => [
@@ -86,7 +79,6 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "school" => [
-        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "School",
         "length" => [
@@ -95,7 +87,6 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "race" => [
-        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Race",
         "length" => [
@@ -104,12 +95,10 @@ $acceptableFields = [
         ]
     ], //normalize - DONE
     "is_hispanic" => [
-        "default" => "",
         "filter" => [FILTER_VALIDATE_BOOLEAN],
         "name" => "Are you of Hispanic/Latino origins?"
     ], //Boolean is hispanic
     "zip_code" => [
-        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "City",
         "length" => [
@@ -118,7 +107,6 @@ $acceptableFields = [
         ]
     ],
     "state" => [
-        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "State",
         "length" => [
@@ -127,7 +115,6 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "shirt_size" => [
-        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Shirt Size",
         "length" => [
@@ -136,7 +123,6 @@ $acceptableFields = [
         ]
     ], //Normalize - DONE
     "diet_restrictions" => [
-        "default" => "",
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Dietary Restrictions",
         "length" => [
@@ -145,7 +131,6 @@ $acceptableFields = [
         ]
     ], //Normalize - IN PROGRESS
     "diet_other" => [
-        "default" => "",
         "filter" => [FILTER_SANITIZE_STRING],
         "name" => "Diet Other",
         "length" => [
@@ -154,7 +139,6 @@ $acceptableFields = [
         ]
     ],
     "github" => [
-        "default" => "",
         "filter" => [
             FILTER_SANITIZE_STRING,
             FILTER_SANITIZE_URL
@@ -166,7 +150,6 @@ $acceptableFields = [
         ]
     ], //URL Escape and only the username
     "linkedin" => [
-        "default" => "",
         "filter" => [
             FILTER_SANITIZE_STRING,
             FILTER_SANITIZE_URL
@@ -178,12 +161,14 @@ $acceptableFields = [
         ]
     ], //Ditto
     "is_first_hackathon" => [
-        "default" => "",
         "filter" => [FILTER_VALIDATE_BOOLEAN],
         "name" => "Is this your first hackathon?"
     ],
+    "mlh_accept" => [
+        "name" => "MLH Code of Conduct",
+        "filter" => [FILTER_VALIDATE_BOOLEAN]
+    ],
     "resume" => [
-        "default" => "",
         "name" => "Resume",
     ]
 ];
@@ -203,13 +188,14 @@ $requiredFields = [
     "state",
     "shirt_size",
     "is_first_hackathon",
-    "diet_restrictions"
+    "diet_restrictions",
+    "mlh_accept"
 ];
 
 
 //TODO: Handle registration logic
 //TODO: Handle validation logic
-//TODO: Possibly spit validation in a way that it can be reused for backend user creation
+//TODO: Possibly split validation in a way that it can be reused for backend user creation
 
 /*
  * Register pre-flight check, FAIL if:
@@ -242,10 +228,14 @@ $errors = [];
 
 //Check if we're NOT accepting registrations OR walk-ins
 
-if(!($site->isAcceptingRegistrations() OR $site->isAcceptingWalkIns())){
-    $errors['Registration'] = "Sorry, registrations are currently closed.";
+//if(!$user->isLoggedIn())
+//    $errors['Registration'][] = "You're already registered"
+
+if(!($site->isAcceptingRegistrations() OR $site->isAcceptingWalkIns()))
+    $errors['Registration'] = "Sorry, registrations are currently closed";
+
+if(!empty($errors))
     json_response($errors);
-}
 
 //Check captcha
 //$response = $_POST['g-recaptcha-response'];
@@ -276,7 +266,6 @@ foreach($_POST as $entry => $value){
 
 
 }
-
 //Perform specific checks
 
 $missing = missing_fields($requiredFields, $_POST, $acceptableFields);
@@ -292,6 +281,13 @@ if(count($missing) > 0){
     //Output the response
     json_response($errors);
 }
+
+//Make sure users accept the MLH terms of service
+if(!$_POST['mlh_accept'])
+    $errors['MLH Code of Conduct'][] = "Please accept the MLH Code of Conduct";
+
+//We only check if the user has accepted, saving this response is of no real value
+unset($_POST['mlh_accept']);
 
 //By now we have all our required fields, now we need to make sure all fields are following length and value checks
 foreach ($_POST as $key => $value){
@@ -335,7 +331,7 @@ foreach($site->getValidEmails() as $address){
     }
 }
 if(!$found)
-    $errors{'Email'}[] = "The email address you entered is not in the list of whitelisted domains.";
+    $errors{'Email'}[] = "The email address you entered is not in the list of whitelisted domains";
 
 //No need to run a query if it's not an acceptable email
 if(!empty($errors))
@@ -344,18 +340,22 @@ if(!empty($errors))
 //Check if there are any errors so far, and if so, execute a response
 
 /*
- * TODO: There shouldn't already be an email in the system for the user supplied
- * TODO: User shouldn't be able to register with an email address whose domain is not whitelisted
+ * DONE: There shouldn't already be an email in the system for the user supplied
+ * DONE: User shouldn't be able to register with an email address whose domain is not whitelisted
  */
 
-$query = $db->prepare("SELECT COUNT(*) as users FROM hackers WHERE email = :email");
-$query->bindValue(":email", $_POST['email']);
-$query->execute();
+try {
+    $userQuery = $db->prepare("SELECT COUNT(*) as users FROM hackers WHERE email = :email");
+    $userQuery->bindValue(":email", $_POST['email']);
+    $userQuery->execute();
 
-$queryResult = $query->fetch();
+    $queryResult = $userQuery->fetch();
+} catch (Exception $e) {
+    $errors['Database Error'][] = $e->getMessage();
+}
 
 if($queryResult['users'] > 0)
-    $errors['Email'][] = "That email already exists in our system.";
+    $errors['Email'][] = "That email already exists in our system";
 
 if(!empty($errors))
     json_response($errors);
@@ -387,7 +387,7 @@ if(isset($_FILES['resume'])){
 
     //We shouldn't be having more than 1 file uploaded
     if(count($resume['name']) > 1){
-        $errors['Resume'] = "Please only upload 1 file.";
+        $errors['Resume'] = "Please only upload 1 file";
     }
 
     //If PHP has an upload error, respect it
@@ -402,7 +402,7 @@ if(isset($_FILES['resume'])){
 
     //If size is greater than 2MB, error
     if($resume['size'] > 2000000){
-        $errors['Resume'][] = "Resume is larger than 2MB. Please upload a smaller file.";
+        $errors['Resume'][] = "Resume is larger than 2MB. Please upload a smaller file";
     }
 
     if(!empty($errors))
@@ -424,4 +424,37 @@ if(isset($_FILES['resume'])){
     $_POST['resume'] = $newName;
 }
 
-//TODO: Work on SQL query with all items as placeholders and fill in those that are optional using an array of binds
+//DONE: Work on SQL query with all items as placeholders and fill in those that are optional using an array of binds
+
+//First we have to prepare the values
+
+$preparedPairs = [];
+
+foreach ($_POST as $key => $value){
+    $preparedKey = ":$key";
+    $preparedPairs[$preparedKey] = $value;
+}
+
+$columnNames = implode(", ", array_keys($_POST));
+$columnValues = implode(", ", array_keys($preparedPairs));
+
+//TODO: Implement the rest of the columns for new users (refer to notebook) and the email verification, timestamp etc
+//TODO: Get to work on the validation controller
+//TODO: Get to work on the email queue
+
+$columnNames = "($columnNames)";
+$columnValues = "($columnValues)";
+
+$newUserSQL = "INSERT INTO `hackers` $columnNames VALUES $columnValues";
+
+//TODO: Do what's below with the other query
+try {
+    $newUserQuery = $db->prepare($newUserSQL);
+    if(!$newUserQuery->execute($preparedPairs))
+        $errors['Database Error'][] = $newUserQuery->errorInfo();
+
+} catch (Exception $e) {
+    $errors['Database Error'][] = $e->getMessage();
+}
+
+json_response($errors);
