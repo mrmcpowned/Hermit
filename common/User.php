@@ -6,6 +6,7 @@
  * Date: 6/13/2017
  * Time: 9:01 PM
  */
+//TODO: Get IP verification working
 class User
 {
 
@@ -67,9 +68,16 @@ class User
     public function sessionCheck()
     {
         //Only logout a user if they were logged in and their session has expired
-        if ($this->isLoggedIn() && $this->hasSessionExpired()) {
-            // session has taken too long between requests
-            $this->logout();
+        if ($this->isLoggedIn()) {
+
+            if($this->hasSessionExpired()) {
+                // session has taken too long between requests
+                $this->logout();
+            }
+
+            //Destroy a session of a user's IP doesn't match the one they logged in with
+            if($this->getUserInfo()['current_ip'] != $_SERVER['REMOTE_ADDR'])
+                $this->logout();
         }
 
     }
@@ -82,6 +90,10 @@ class User
     public function extendSession()
     {
         $_SESSION['discard-' . $this->sidType] = SESSION_EXPIRATION_SECONDS + time();
+    }
+
+    public function logout(){
+
     }
 
 }

@@ -347,15 +347,15 @@ if(!empty($errors))
 try {
     $userQuery = $db->prepare("SELECT COUNT(*) as users FROM hackers WHERE email = :email");
     $userQuery->bindValue(":email", $_POST['email']);
-    $userQuery->execute();
+    if(!$userQuery->execute())
+        $errors['Database Error'][] = $userQuery->errorInfo();
 
     $queryResult = $userQuery->fetch();
+    if($queryResult['users'] > 0)
+        $errors['Email'][] = "That email already exists in our system";
 } catch (Exception $e) {
     $errors['Database Error'][] = $e->getMessage();
 }
-
-if($queryResult['users'] > 0)
-    $errors['Email'][] = "That email already exists in our system";
 
 if(!empty($errors))
     json_response($errors);
@@ -374,7 +374,7 @@ if(!empty($errors))
  * - Any format other than doc, docx, or pdf
  * - Required if it's a walk-in
  */
-//We don't accept resumes from walk-ins
+//We don't require resumes from walk-ins
 
 if(!isset($_FILES['resume']) AND !$site->isAcceptingWalkIns()){
     $errors['Resume'][] = "A resume is required.";
@@ -424,6 +424,31 @@ if(isset($_FILES['resume'])){
     $_POST['resume'] = $newName;
 }
 
+//TODO: Generate Check-in code (at size 4) and check for collision. If collision, generate at size 5
+$checkInCode = generateAlphaCode(4);
+
+try {
+    $codeCheckQuery = $db->prepare("SELECT COUNT(*) as collisions FROM hackers WHERE check_in_code = :code");
+    $codeCheckQuery->bindParam(":code", $checkInCode);
+    if (!$codeCheckQuery->execute())
+        $errors['Database Error'][] = $codeCheckQuery->errorInfo();
+
+    $queryResult = $codeCheckQuery->fetch();
+    if ($queryResult['collisions'] > 0)
+        $checkInCode = generateAlphaCode(5);
+} catch (Exception $e) {
+    $errors['Debug'][] = "Alpha Code";
+    $errors['Database Error'][] = $e->getMessage();
+}
+
+$_POST['check_in_code'] = $checkInCode;
+
+if(!empty($errors))
+    json_response($errors);
+
+//Now we need to create our email verification id, which we can do the same way as SIDs
+$_POST['email_vid'] = generateSID();
+
 //DONE: Work on SQL query with all items as placeholders and fill in those that are optional using an array of binds
 
 //First we have to prepare the values
@@ -442,12 +467,12 @@ $columnValues = implode(", ", array_keys($preparedPairs));
 //TODO: Get to work on the validation controller
 //TODO: Get to work on the email queue
 
-$columnNames = "($columnNames)";
-$columnValues = "($columnValues)";
+$columnNames = "($columnNames, date_created)";
+$columnValues = "($columnValues, UNIX_TIMESTAMP())";
 
-$newUserSQL = "INSERT INTO `hackers` $columnNames VALUES $columnValues";
+$newUserSQL = "INSERT INTO hackers $columnNames VALUES $columnValues";
 
-//TODO: Do what's below with the other query
+//DONE: Do what's below with the other query
 try {
     $newUserQuery = $db->prepare($newUserSQL);
     if(!$newUserQuery->execute($preparedPairs))

@@ -92,7 +92,7 @@ class Hacker extends User
                 return ['error' => "Password is incorrect"];
             }
 
-            $sql = "UPDATE users SET sid = :session WHERE id=:user";
+            $sql = "UPDATE hackers SET sid = :session WHERE id=:user";
             $userSID = generateSID();
             $query = $this->db->prepare($sql);
             $query->bindParam(":user", $result['id']);
@@ -122,7 +122,7 @@ class Hacker extends User
             return false;
 
         $sid = $this->getSID();
-        $sql = "UPDATE users SET sid = NULL WHERE sid=:usersid";
+        $sql = "UPDATE hackers SET sid = NULL, current_ip = NULL WHERE sid=:usersid";
         $query = $this->db->prepare($sql);
         $query->bindParam(":usersid", $sid);
         $query->execute();
