@@ -14,7 +14,7 @@ require_once "../../common/functions.php";
  */
 
 
-
+//TODO: Move this to config when done
 //This defines what we will consider valid data taken from a POST for Hacker profile creation or update
 $acceptableFields = [
     "f_name" => [
@@ -204,7 +204,7 @@ $requiredFields = [
  * - Required fields are empty - DONE
  * - Required fields to not meet minimum/maximum requirements - DONE
  * - Fields do not pass validation - DONE
- * - File is over limit OR file is not of allowed types
+ * - File is over limit OR file is not of allowed types - DONE
  *   - File shouldn't be a required field for walk-ins
  *
  * Only the allowed fields will be processed, all others will be ignored
@@ -395,7 +395,7 @@ if(isset($_FILES['resume'])){
         $errors['Resume'][] = codeToMessage($resume['error']);
     }
 
-    //If file is not of the acceptable type, through an error
+    //If file is not of the acceptable type, throw an error
     if(!is_acceptable_file_type($resume['type'])){
         $errors['Resume'][] = "Resume is not one of the acceptable file formats";
     }
@@ -437,7 +437,6 @@ try {
     if ($queryResult['collisions'] > 0)
         $checkInCode = generateAlphaCode(5);
 } catch (Exception $e) {
-    $errors['Debug'][] = "Alpha Code";
     $errors['Database Error'][] = $e->getMessage();
 }
 
@@ -480,6 +479,7 @@ try {
 
 } catch (Exception $e) {
     $errors['Database Error'][] = $e->getMessage();
+    json_response($errors);
 }
 
 json_response($errors);
