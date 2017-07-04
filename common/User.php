@@ -75,9 +75,10 @@ class User
                 $this->logout();
             }
 
+            //TODO: Actually implement this when testing in a remote environment
             //Destroy a session of a user's IP doesn't match the one they logged in with
-            if($this->getUserInfo()['current_ip'] != $_SERVER['REMOTE_ADDR'])
-                $this->logout();
+            /*if($this->getUserInfo()['current_ip'] != $_SERVER['REMOTE_ADDR'])
+                $this->logout();*/
         }
 
     }

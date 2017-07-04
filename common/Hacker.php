@@ -31,7 +31,7 @@ class Hacker extends User
         if (!$this->isLoggedIn())
             return;
 
-        $sql = "SELECT * FROM users WHERE sid = :sid";
+        $sql = "SELECT * FROM hackers WHERE sid = :sid";
 
         $query = $this->db->prepare($sql);
         $sid = $this->getSID();
@@ -40,7 +40,7 @@ class Hacker extends User
 
         $this->userInfo = $query->fetch(PDO::FETCH_ASSOC);
 
-        //We have to do some cleanup here so we do accidentally expose any unwanted columns
+        //We have to do some cleanup here so we don't accidentally expose any unwanted columns
         unset($this->userInfo['pass']);
         unset($this->userInfo['id']);
         unset($this->userInfo['sid']);
@@ -69,7 +69,7 @@ class Hacker extends User
     //From here we assume user input has been sanitized
     public function login($email, $pass)
     {
-        $sql = "SELECT * FROM users WHERE email=:email LIMIT 1";
+        $sql = "SELECT * FROM hackers WHERE email=:email LIMIT 1";
 
         //Every attempt at login should effectively regenerate the ID, since it's an attempt at privilege elevation
         session_regenerate_id(true);
