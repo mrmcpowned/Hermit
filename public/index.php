@@ -18,9 +18,13 @@ $twig = new Twig_Environment($loader);
 $isLogged = $user->isLoggedIn();
 $fname = $user->getFirstName();
 
+//$context = [
+//    "isLoggedIn" => $isLogged,
+//    "fname" => $fname
+//];
+
 $context = [
-    "isLoggedIn" => $isLogged,
-    "fname" => $fname
+    "user" => $user
 ];
 
 var_dump($isLogged);

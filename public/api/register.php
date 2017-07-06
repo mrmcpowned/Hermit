@@ -176,13 +176,13 @@ if(!empty($errors))
  */
 
 try {
-    $userQuery = $db->prepare("SELECT COUNT(*) as users FROM hackers WHERE email = :email");
+    $userQuery = $db->prepare("SELECT COUNT(*) FROM hackers WHERE email = :email");
     $userQuery->bindValue(":email", $_POST['email']);
     if(!$userQuery->execute())
         $errors['Database Error'][] = $userQuery->errorInfo();
 
-    $queryResult = $userQuery->fetch();
-    if($queryResult['users'] > 0)
+    $queryResult = $userQuery->fetchColumn(0);
+    if($queryResult > 0)
         $errors['Email'][] = "That email already exists in our system";
 } catch (Exception $e) {
     $errors['Database Error'][] = $e->getMessage();
@@ -259,13 +259,13 @@ if(isset($_FILES['resume'])){
 $checkInCode = generateAlphaCode(4);
 
 try {
-    $codeCheckQuery = $db->prepare("SELECT COUNT(*) as collisions FROM hackers WHERE check_in_code = :code");
+    $codeCheckQuery = $db->prepare("SELECT COUNT(*) FROM hackers WHERE check_in_code = :code");
     $codeCheckQuery->bindParam(":code", $checkInCode);
     if (!$codeCheckQuery->execute())
         $errors['Database Error'][] = $codeCheckQuery->errorInfo();
 
-    $queryResult = $codeCheckQuery->fetch();
-    if ($queryResult['collisions'] > 0)
+    $queryResult = $codeCheckQuery->fetchColumn(0);
+    if ($queryResult > 0)
         $checkInCode = generateAlphaCode(5);
 } catch (Exception $e) {
     $errors['Database Error'][] = $e->getMessage();

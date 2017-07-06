@@ -8,8 +8,11 @@
     <title>Document</title>
 </head>
 <body>
-{% if isLoggedIn %}
-<h1>Hi there {{ fname }}</h1>
+{% if user.loggedIn %}
+<h1>Hi there {{ user.firstName }}</h1>
+    {% for key, item in user.userInfo %}
+    <p>{{ key }}: {{ item }}</p>
+    {% endfor %}
 {% else %}
 <form action="" method="post">
 
