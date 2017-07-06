@@ -6,7 +6,6 @@ require_once "../../common/Hacker.php";
 
 $user = new Hacker($db);
 
-
 /**
  * Created by PhpStorm.
  * User: mrmcp
@@ -26,10 +25,13 @@ $user = new Hacker($db);
  * - Diet Restrictions
  */
 
-if(!isset($_POST) AND )
+if(!isset($_POST) AND !$user->isLoggedIn())
     die;
 
 header("Content-Type: application/json");
 
 $errors = [];
+
+
+//All update requests REQUIRE the current password to be sent
 

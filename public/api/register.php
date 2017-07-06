@@ -2,6 +2,9 @@
 
 require_once "../../common/config.php";
 require_once "../../common/functions.php";
+require_once "../../common/Hacker.php";
+
+$user = new Hacker($db);
 
 /**
  * This file handles user registration
@@ -14,183 +17,11 @@ require_once "../../common/functions.php";
  */
 
 
-//TODO: Move this to config when done
+//DONE: Moved this to site config
 //This defines what we will consider valid data taken from a POST for Hacker profile creation or update
-$acceptableFields = [
-    "f_name" => [
-        "filter" => [FILTER_SANITIZE_STRING],
-        "name" => "First Name",
-        "length" => [
-            "min" => 2,
-            "max" => 50
-        ]
-    ],
-    "l_name" => [
-        "filter" => [FILTER_SANITIZE_STRING],
-        "name" => "Last Name",
-        "length" => [
-            "min" => 2,
-            "max" => 50
-        ]
-    ],
-    "email" => [
-        "filter" => [FILTER_SANITIZE_EMAIL],
-        "validate" => FILTER_VALIDATE_EMAIL,
-        "name" => "E-Mail",
-        "length" => [
-            "min" => 7,
-            "max" => 255
-        ]
-    ],
-    "pass" => [
-        "filter" => [FILTER_DEFAULT], //Pass gets hashed, so no real issue of injection here
-        "name" => "Password",
-        "length" => [
-            "min" => 8,
-            "max" => 255
-        ]
-    ],
-    "age" => [
-        "filter" => [FILTER_SANITIZE_NUMBER_INT],
-        "name" => "Age",
-        "length" => [
-            "min" => 2,
-            "max" => 2
-        ],
-        "value" => [
-            "min" => 15,
-            "max" => 99
-        ]
-    ],
-    "gender" => [
-        "filter" => [FILTER_SANITIZE_NUMBER_INT],
-        "name" => "Gender",
-        "length" => [
-            "min" => 1,
-            "max" => 1
-        ]
-    ], //Normalize - DONE
-    "class_year" => [
-        "filter" => [FILTER_SANITIZE_NUMBER_INT],
-        "name" => "Class Year",
-        "length" => [
-            "min" => 1,
-            "max" => 1
-        ]
-    ], //Normalize - DONE
-    "school" => [
-        "filter" => [FILTER_SANITIZE_NUMBER_INT],
-        "name" => "School",
-        "length" => [
-            "min" => 1,
-            "max" => 3
-        ]
-    ], //Normalize - DONE
-    "race" => [
-        "filter" => [FILTER_SANITIZE_NUMBER_INT],
-        "name" => "Race",
-        "length" => [
-            "min" => 1,
-            "max" => 1
-        ]
-    ], //normalize - DONE
-    "is_hispanic" => [
-        "filter" => [FILTER_VALIDATE_BOOLEAN],
-        "name" => "Are you of Hispanic/Latino origins?"
-    ], //Boolean is hispanic
-    "zip_code" => [
-        "filter" => [FILTER_SANITIZE_NUMBER_INT],
-        "name" => "City",
-        "length" => [
-            "min" => 5,
-            "max" => 5
-        ]
-    ],
-    "state" => [
-        "filter" => [FILTER_SANITIZE_NUMBER_INT],
-        "name" => "State",
-        "length" => [
-            "min" => 1,
-            "max" => 2
-        ]
-    ], //Normalize - DONE
-    "shirt_size" => [
-        "filter" => [FILTER_SANITIZE_NUMBER_INT],
-        "name" => "Shirt Size",
-        "length" => [
-            "min" => 1,
-            "max" => 1
-        ]
-    ], //Normalize - DONE
-    "diet_restrictions" => [
-        "filter" => [FILTER_SANITIZE_NUMBER_INT],
-        "name" => "Dietary Restrictions",
-        "length" => [
-            "min" => 1,
-            "max" => 1
-        ]
-    ], //Normalize - IN PROGRESS
-    "diet_other" => [
-        "filter" => [FILTER_SANITIZE_STRING],
-        "name" => "Diet Other",
-        "length" => [
-            "min" => 1,
-            "max" => 1
-        ]
-    ],
-    "github" => [
-        "filter" => [
-            FILTER_SANITIZE_STRING,
-            FILTER_SANITIZE_URL
-        ],
-        "name" => "GitHub Profile",
-        "length" => [
-            "min" => 0,
-            "max" => 20
-        ]
-    ], //URL Escape and only the username
-    "linkedin" => [
-        "filter" => [
-            FILTER_SANITIZE_STRING,
-            FILTER_SANITIZE_URL
-        ],
-        "name" => "LinkedIn Profile",
-        "length" => [
-            "min" => 0,
-            "max" => 30
-        ]
-    ], //Ditto
-    "is_first_hackathon" => [
-        "filter" => [FILTER_VALIDATE_BOOLEAN],
-        "name" => "Is this your first hackathon?"
-    ],
-    "mlh_accept" => [
-        "name" => "MLH Code of Conduct",
-        "filter" => [FILTER_VALIDATE_BOOLEAN]
-    ],
-    "resume" => [
-        "name" => "Resume",
-    ]
-];
+$acceptableFields = $site->getRegistrationFields();
 
-$requiredFields = [
-    "f_name",
-    "l_name",
-    "email",
-    "pass",
-    "age",
-    "gender",
-    "class_year",
-    "school",
-    "race",
-    "is_hispanic",
-    "zip_code",
-    "state",
-    "shirt_size",
-    "is_first_hackathon",
-    "diet_restrictions",
-    "mlh_accept"
-];
+$requiredFields = $site->getRequiredRegistrationFields();
 
 
 //TODO: Handle registration logic
@@ -228,8 +59,9 @@ $errors = [];
 
 //Check if we're NOT accepting registrations OR walk-ins
 
-//if(!$user->isLoggedIn())
-//    $errors['Registration'][] = "You're already registered"
+
+if($user->isLoggedIn())
+    $errors['Registration'][] = "You're already registered";
 
 if(!($site->isAcceptingRegistrations() OR $site->isAcceptingWalkIns()))
     $errors['Registration'] = "Sorry, registrations are currently closed";
@@ -263,9 +95,8 @@ foreach($_POST as $entry => $value){
             $_POST[$entry] = filter_input(INPUT_POST, $entry, $filter);
         }
     }
-
-
 }
+
 //Perform specific checks
 
 $missing = missing_fields($requiredFields, $_POST, $acceptableFields);
@@ -448,10 +279,12 @@ if(!empty($errors))
 //Now we need to create our email verification id, which we can do the same way as SIDs
 $_POST['email_vid'] = generateSID();
 
+//Can't forget to hash the password. Last thing we need is to be storing this in plaintext
+$_POST['pass'] = password_hash($_POST['pass'], PASSWORD_DEFAULT);
+
 //DONE: Work on SQL query with all items as placeholders and fill in those that are optional using an array of binds
 
 //First we have to prepare the values
-
 $preparedPairs = [];
 
 foreach ($_POST as $key => $value){
