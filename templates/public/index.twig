@@ -9,21 +9,32 @@
 </head>
 <body>
 {% if user.loggedIn %}
-<h1>Hi there {{ user.firstName }}</h1>
+    <h1>Hi there {{ user.firstName }}</h1>
     {% for key, item in user.userInfo %}
-    <p>{{ key }}: {{ item }}</p>
+        <span>{{ key }}: {{ item }} </span>
     {% endfor %}
-{% else %}
-<form action="" method="post">
+    <form action="api/update.php" method="post">
 
-    <input type="text" name="user">
-    <input type="password" name="pass">
-    <select name="type" id="">
-        <option value="login">Login</option>
-        <option value="register">Register</option>
-    </select>
-    <button type="submit">Send</button>
-</form>
+        <input type="password" name="curr_pass">
+        <textarea name="diet_other" id="" cols="30" rows="10"></textarea>
+        <select name="shirt_size" id="">
+            <option value="1">Small</option>
+            <option value="2">Medium</option>
+            <option value="3">Large</option>
+        </select>
+        <button type="submit">Send</button>
+    </form>
+{% else %}
+    <form action="" method="post">
+
+        <input type="text" name="user">
+        <input type="password" name="pass">
+        <select name="type" id="">
+            <option value="login">Login</option>
+            <option value="register">Register</option>
+        </select>
+        <button type="submit">Send</button>
+    </form>
 {% endif %}
 </body>
 </html>

@@ -46,8 +46,8 @@ $acceptableFields = [
         "filter" => [FILTER_SANITIZE_STRING],
         "name" => "Diet Other",
         "length" => [
-            "min" => 1,
-            "max" => 1
+            "min" => 3,
+            "max" => 500
         ]
     ]
 ];
