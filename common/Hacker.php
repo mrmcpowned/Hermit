@@ -42,6 +42,7 @@ class Hacker extends User
 
         //We have to do some cleanup here so we don't accidentally expose any unwanted columns
         unset($this->userInfo['pass']);
+        $this->passHash = $this->userInfo['id'];
         unset($this->userInfo['id']);
         unset($this->userInfo['sid']);
 

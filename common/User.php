@@ -21,6 +21,11 @@ class User
     protected $userInfo;
 
     /**
+     * @var string Hash of the user's password
+     */
+    protected $passHash;
+
+    /**
      * @return array Associative array containing userInfo
      */
     public function getUserInfo()
@@ -95,6 +100,15 @@ class User
 
     public function logout(){
 
+    }
+
+    /**
+     * This method lets us verify passwords without having to expose the hash anywhere.
+     * @param $givenPassword Password given to verify.
+     * @return bool If the password was valid or not.
+     */
+    public function isPasswordCorrect($givenPassword){
+        return password_verify($givenPassword, $this->passHash);
     }
 
 }

@@ -92,7 +92,11 @@ foreach($_POST as $entry => $value){
     //Then filter the input as defined by the config array
     if (isset($acceptableFields[$entry]['filter'])) {
         foreach ($acceptableFields[$entry]['filter'] as $filter) {
-            $_POST[$entry] = filter_input(INPUT_POST, $entry, $filter);
+            if ($filter === FILTER_CALLBACK) {
+                $_POST[$entry] = filter_input(INPUT_POST, $entry, FILTER_CALLBACK, $acceptableFields[$entry]['filterOptions']);
+            } else {
+                $_POST[$entry] = filter_input(INPUT_POST, $entry, $filter);
+            }
         }
     }
 }
@@ -162,7 +166,7 @@ foreach($site->getValidEmails() as $address){
     }
 }
 if(!$found)
-    $errors{'Email'}[] = "The email address you entered is not in the list of whitelisted domains";
+    $errors['Email'][] = "The email address you entered is not in the list of whitelisted domains";
 
 //No need to run a query if it's not an acceptable email
 if(!empty($errors))

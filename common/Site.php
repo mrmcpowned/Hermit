@@ -42,7 +42,10 @@ class Site
 
     private $registrationFields = [
         "f_name" => [
-            "filter" => [FILTER_SANITIZE_STRING],
+            "filter" => [FILTER_CALLBACK],
+            "filterOptions" => [
+                "options" => "strip_tags"
+            ],
             "name" => "First Name",
             "length" => [
                 "min" => 2,
@@ -50,7 +53,10 @@ class Site
             ]
         ],
         "l_name" => [
-            "filter" => [FILTER_SANITIZE_STRING],
+            "filter" => [FILTER_CALLBACK],
+            "filterOptions" => [
+                "options" => "strip_tags"
+            ],
             "name" => "Last Name",
             "length" => [
                 "min" => 2,
@@ -155,7 +161,10 @@ class Site
             ]
         ], //Normalize - IN PROGRESS
         "diet_other" => [
-            "filter" => [FILTER_SANITIZE_STRING],
+            "filter" => [FILTER_CALLBACK],
+            "filterOptions" => [
+                "options" => "strip_tags"
+            ],
             "name" => "Diet Other",
             "length" => [
                 "min" => 3,
