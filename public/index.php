@@ -41,7 +41,7 @@ if(!$isLogged && isset($_POST['type'])) {
     } else {
 //        $user->register($_POST['user'], $_POST['pass']);
     }
-//    header("Location: /hermit/public");
+    header("Location: /hermit/public");
 }
 
 echo $twig->render('index.twig', $context);

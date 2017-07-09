@@ -43,7 +43,10 @@ $acceptableFields = [
         ]
     ], //Normalize - IN PROGRESS
     "diet_other" => [
-        "filter" => [FILTER_SANITIZE_STRING],
+        "filter" => [FILTER_CALLBACK],
+        "filterOptions" => [
+            "options" => "strip_tags"
+        ],
         "name" => "Diet Other",
         "length" => [
             "min" => 3,
@@ -79,13 +82,17 @@ foreach ($_POST as $entry => $value) {
     //Then filter the input as defined by the config array
     if (isset($acceptableFields[$entry]['filter'])) {
         foreach ($acceptableFields[$entry]['filter'] as $filter) {
-            $_POST[$entry] = filter_input(INPUT_POST, $entry, $filter);
+            if ($filter === FILTER_CALLBACK) {
+                $_POST[$entry] = filter_input(INPUT_POST, $entry, FILTER_CALLBACK, $acceptableFields[$entry]['filterOptions']);
+            } else {
+                $_POST[$entry] = filter_input(INPUT_POST, $entry, $filter);
+            }
         }
     }
 }
 
 //after filtering, if the POST is empty, error our
-if(empty($_POST)){
+if (empty($_POST)) {
     $errors['Missing Fields'][] = "Please submit at least 1 field to update";
 }
 
@@ -101,17 +108,17 @@ try {
     $errors['Database Error'][] = $e->getMessage();
 }
 
-if(!empty($errors))
+if (!empty($errors))
     json_response($errors);
 
 //If the result is 0 rows, error out
-if($getPassQuery->rowCount() < 1) {
+if ($getPassQuery->rowCount() < 1) {
     $errors['Session Error'][] = "Session expired, please login again";
     json_response($errors);
 }
 
 //Check if passwords match
-if(!password_verify($currentPass, $dbPass)) {
+if (!password_verify($currentPass, $dbPass)) {
     $errors['Password Error'][] = "The password entered does not match the current password";
     json_response($errors);
 }
@@ -123,7 +130,7 @@ if(!password_verify($currentPass, $dbPass)) {
 $preparedPairs = [];
 $sqlSets = [];
 
-foreach ($_POST as $key => $value){
+foreach ($_POST as $key => $value) {
     $preparedKey = ":$key";
     $preparedPairs[$preparedKey] = $value;
     //While we're here we can prepare a set of "set" statements
