@@ -12,7 +12,7 @@ class PasswordManager
      */
     private $currentUser;
     private $userInfo;
-    const COOLDOWN_SECONDS = (5 * 60);
+    const COOLDOWN_SECONDS = (3 * 60);
     const RESET_WINDOW = (30 * 60);
 
     /**
@@ -35,11 +35,32 @@ class PasswordManager
     /**
      * Change password for currently logged in user
      * @param $newPassword string New password to assign
+     * @return bool|string
      */
     public function updatePassword($newPassword)
     {
+
         $hashedPassword = password_hash($newPassword, $newPassword);
-        $sql = "UPDATE hackers SET pass = :pass";
+        $sql = "UPDATE hackers SET pass = :pass WHERE sid = :sid";
+        $sid = $this->currentUser->getSID();
+        if($sid == null)
+            return "User SID is null";
+
+        $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        try {
+            $sqlQuery = $this->db->prepare($sql);
+            $sqlQuery->bindParam(":pass", $newPassword);
+            $sqlQuery->bindParam(":sid", $sid);
+            if (!$sqlQuery->execute()) {
+                return "Error executing SQL: " . $sqlQuery->errorInfo();
+            }
+        } catch (Exception $e) {
+            return "Error executing SQL: " . $e->getMessage();
+        }
+
+        return true;
+
     }
 
     public function isPastRequestCooldown()
@@ -49,7 +70,7 @@ class PasswordManager
 
     public function changePasswordByKey($key, $newPassword)
     {
-
+        $sql = "UPDATE hackers SET pass = :pass WHERE pass_reset_vid = :id";
     }
     
 }
