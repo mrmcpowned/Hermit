@@ -13,7 +13,7 @@ $user = new Hacker($db);
 /*
  * Things to get done:
  * TODO: Finish this file
- * TODO: Commit to git
+ * DONE: Commit to git (I'm always commiting to git)
  */
 
 
@@ -24,9 +24,9 @@ $acceptableFields = $site->getRegistrationFields();
 $requiredFields = $site->getRequiredRegistrationFields();
 
 
-//TODO: Handle registration logic
-//TODO: Handle validation logic
-//TODO: Possibly split validation in a way that it can be reused for backend user creation
+//DONE: Handle registration logic (Registration logic has been handled completely)
+//DONE: Handle validation logic (The validation logic has been automated using a config array)
+//TODO: [FUTURE] Possibly split validation in a way that it can be reused for backend user creation
 
 /*
  * Register pre-flight check, FAIL if:
@@ -259,9 +259,16 @@ if(isset($_FILES['resume'])){
     $_POST['resume'] = $newName;
 }
 
-//TODO: Generate Check-in code (at size 4) and check for collision. If collision, generate at size 5
+//DONE: Generate Check-in code (at size 4) and check for collision. If collision, generate at size 5
 $checkInCode = generateAlphaCode(4);
 
+/*
+ * This bit of code checks if the Check-In Code already exists, and if so, generates at size 5
+ *
+ * Then you might as "But Chris, what happens if there's a collision there?"
+ * To which I'd respond "The script will produce a database error since that column is unique, thus requiring
+ * our applicant to simply press 'submit' once again."
+ */
 try {
     $codeCheckQuery = $db->prepare("SELECT COUNT(*) FROM hackers WHERE check_in_code = :code");
     $codeCheckQuery->bindParam(":code", $checkInCode);
@@ -299,7 +306,7 @@ foreach ($_POST as $key => $value){
 $columnNames = implode(", ", array_keys($_POST));
 $columnValues = implode(", ", array_keys($preparedPairs));
 
-//TODO: Implement the rest of the columns for new users (refer to notebook) and the email verification, timestamp etc
+//TODO: [IN PROGRESS] Implement the rest of the columns for new users (refer to notebook) and the email verification, timestamp etc
 //TODO: Get to work on the validation controller
 //TODO: Get to work on the email queue
 
