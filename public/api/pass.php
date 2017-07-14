@@ -8,6 +8,13 @@ require_once "../../common/PasswordManager.php";
 $user = new Hacker($db);
 $passManager = new PasswordManager($db, $user);
 
+//This interface acts as a pseudo enum
+interface VerificationType{
+    const FORGOT = 0;
+    const CHANGE = 1;
+    const RESET = 2;
+}
+
 /**
  * This page handles PASSWORD RESETS
  * Password Resets can happen 2 ways:
@@ -46,11 +53,17 @@ if(!isset($_POST['change_type'])){
 }
 
 //It's time to ... SWITCH! *Nintendo Switch click noise*
-switch ($_POST[]) {
+switch ($_POST['change_type']) {
 
-    case 0:
+    case VerificationType::FORGOT:
+        break;
+    case VerificationType::CHANGE:
+        break;
+    case VerificationType::RESET:
+        break;
 
     default:
         $errors['Missing Type'][] = "Type is not a valid option";
-
 }
+
+json_response($errors);
