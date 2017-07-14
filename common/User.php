@@ -7,7 +7,7 @@
  * Time: 9:01 PM
  */
 //TODO: Get IP verification working
-class User
+abstract class User
 {
 
     /**
@@ -44,7 +44,7 @@ class User
 
     /**
      * Gets the SID of the current User, returns null if not logged in.
-     * @return null or string
+     * @return mixed null or string
      */
     public function getSID()
     {
@@ -81,6 +81,7 @@ class User
             }
 
             //TODO: Actually implement this when testing in a remote environment
+            //TODO: Include an insert for the IP on login
             //Destroy a session of a user's IP doesn't match the one they logged in with
             /*if($this->getUserInfo()['current_ip'] != $_SERVER['REMOTE_ADDR'])
                 $this->logout();*/
@@ -98,12 +99,10 @@ class User
         $_SESSION['discard-' . $this->sidType] = SESSION_EXPIRATION_SECONDS + time();
     }
 
-    public function logout(){
-
-    }
+    public abstract function logout();
 
     /**
-     * This method lets us verify passwords without having to expose the hash anywhere.
+     * This method lets us verify a User's password without having to expose the hash anywhere.
      * @param $givenPassword Password given to verify.
      * @return bool If the password was valid or not.
      */
