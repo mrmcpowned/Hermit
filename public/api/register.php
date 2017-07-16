@@ -83,23 +83,7 @@ unset($_POST['g-recaptcha-response']);
 
 //Sanitize all inputs
 
-foreach($_POST as $entry => $value){
-    //First check if the option is whitelisted, and if not unset it from the post
-    if(!array_key_exists($entry, $acceptableFields)){
-        unset($_POST[$entry]);
-        continue;
-    }
-    //Then filter the input as defined by the config array
-    if (isset($acceptableFields[$entry]['filter'])) {
-        foreach ($acceptableFields[$entry]['filter'] as $filter) {
-            if ($filter === FILTER_CALLBACK) {
-                $_POST[$entry] = filter_input(INPUT_POST, $entry, FILTER_CALLBACK, $acceptableFields[$entry]['filterOptions']);
-            } else {
-                $_POST[$entry] = filter_input(INPUT_POST, $entry, $filter);
-            }
-        }
-    }
-}
+sanitize_array($_POST, $acceptableFields);
 
 //Perform specific checks
 
@@ -232,7 +216,7 @@ if(isset($_FILES['resume'])){
 
     //If file is not of the acceptable type, throw an error
     if(!is_acceptable_file_type($resume['type'])){
-        $errors['Resume'][] = "Resume is not one of the acceptable file formats";
+        $errors['Resume'][] = "Resume is not in one of the acceptable file formats";
     }
 
     //If size is greater than 2MB, error
@@ -325,5 +309,5 @@ try {
     $errors['Database Error'][] = $e->getMessage();
     json_response($errors);
 }
-
+http_response_code(201);
 json_response($errors);
