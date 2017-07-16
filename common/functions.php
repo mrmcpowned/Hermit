@@ -105,3 +105,25 @@ function endswith($string, $test) {
     if ($testlen > $strlen) return false;
     return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
 }
+
+function sanitize_array(&$inputArray, $configArray){
+    foreach($inputArray as $entry => $value){
+        //All values should be trimmed
+        $_POST[$entry] = trim($value);
+        //First check if the option is whitelisted, and if not unset it from the post
+        if(!array_key_exists($entry, $configArray)){
+            unset($inputArray[$entry]);
+            continue;
+        }
+        //Then filter the input as defined by the config array
+        if (isset($configArray[$entry]['filter'])) {
+            foreach ($configArray[$entry]['filter'] as $filter) {
+                if ($filter === FILTER_CALLBACK) {
+                    $inputArray[$entry] = filter_var($value, FILTER_CALLBACK, $configArray[$entry]['filterOptions']);
+                } else {
+                    $inputArray[$entry] = filter_var($value, $filter);
+                }
+            }
+        }
+    }
+}
