@@ -103,7 +103,7 @@ abstract class User
 
     /**
      * This method lets us verify a User's password without having to expose the hash anywhere.
-     * @param $givenPassword Password given to verify.
+     * @param $givenPassword string Password given to verify.
      * @return bool If the password was valid or not.
      */
     public function isPasswordCorrect($givenPassword){
