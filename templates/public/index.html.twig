@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+<div id="messages">
+
+</div>
+{% if user.loggedIn %}
+    <h1>Hi there {{ user.firstName }}</h1>
+    {% for key, item in user.userInfo %}
+        <span>{{ key }}: {{ item }} </span>
+    {% endfor %}
+    <form action="api/update.php" method="post" enctype="multipart/form-data">
+
+        <input type="password" name="curr_pass">
+        <textarea name="diet_other" id="" cols="30" rows="10"></textarea>
+        <select name="shirt_size" id="">
+            <option value="1">Small</option>
+            <option value="2">Medium</option>
+            <option value="3">Large</option>
+        </select>
+        <button type="submit">Send</button>
+    </form>
+{% else %}
+    <form action="api/auth.php" method="post">
+
+        <input type="text" name="email">
+        <input type="password" name="pass">
+        <select name="type" id="">
+            <option value="login">Login</option>
+            <option value="register">Register</option>
+        </select>
+        <button type="submit">Send</button>
+    </form>
+{% endif %}
+<script type="text/javascript">
+    $("form").on("submit", function (event) {
+        event.preventDefault();
+//        console.log(event);
+        var formData = new FormData(this);
+
+        var address = this.action;
+        $.ajax({
+            method: "POST",
+            url: address,
+            data: formData,
+            contentType: false,
+            processData: false,
+            dataType: "json",
+            beforeSend: function () {
+                $("#messages").empty();
+            }
+        }).fail(function (jqXHR, textStatus) {
+            console.log(textStatus);
+            console.log("Error parsing request: ", jqXHR.responseText);
+
+            var response = jqXHR.responseJSON;
+            console.log(response);
+        }).done(function (data) {
+            window.location.reload(true);
+        }).always(function (data) {
+            console.log(data);
+        })
+    })
+</script>
+</body>
+</html>
