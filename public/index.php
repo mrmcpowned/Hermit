@@ -7,7 +7,6 @@ $loader = new Twig_Loader_Filesystem('../templates/public');
 
 $twig = new Twig_Environment($loader);
 
-
 /**
  *
  * Created by PhpStorm.
@@ -44,7 +43,7 @@ if(!$isLogged && isset($_POST['type'])) {
     header("Location: /hermit/public");
 }
 
-echo $twig->render('index.twig', $context);
+echo $twig->render('index.html.twig', $context);
 
 /*<!doctype html>
 <html lang="en">
