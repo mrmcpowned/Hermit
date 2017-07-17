@@ -47,18 +47,70 @@ if (!isset($_POST))
 
 $errors = [];
 
+header("Content-Type: application/json");
+
 if(!isset($_POST['change_type'])){
     $errors['Missing Type'][] = "Type of action is missing";
     json_response($errors);
 }
 
-//It's time to ... SWITCH! *Nintendo Switch click noise*
-switch ($_POST['change_type']) {
+$type = $_POST['change_type'];
 
+sanitize_array($_POST, $passManager->getManagementFields());
+
+
+//It's time to ... SWITCH! *Nintendo Switch click noise*
+switch ($type) {
+
+    //TODO: Complete code for a forgotten password reset
     case VerificationType::FORGOT:
+        $email = null;
+        if($user->isLoggedIn()){
+            $email = $user->getUserInfo()['email'];
+        } else {
+            if(isset($_POST['email'])){
+                $email = $_POST['email'];
+            } else {
+                $errors['Missing Field'][] = "Email is missing";
+                break;
+            }
+        }
+        //We now have a email we need to create a key for
+
         break;
+    //DONE: Complete code for changing password with current password
     case VerificationType::CHANGE:
+        if(!$user->isLoggedIn()){
+            $errors['Unauthenticated'][] = "You are currently not logged in";
+            break;
+        }
+
+        if(!isset($_POST['curr_password'])){
+            $errors['Missing Field'][] = "Current password is missing";
+            break;
+        }
+
+        if(!isset($_POST['new_password'])){
+            $errors['Missing Field'][] = "New password is missing";
+            break;
+        }
+
+        $currPassword = $_POST['curr_password'];
+        $newPassword = $_POST['new_password'];
+
+        if(!$user->isPasswordCorrect($currPassword)){
+            $errors['Incorrect Password'][] = "The current password supplied was incorrect";
+            break;
+        }
+
+        //By here we should have a correct password and be authenticated
+        $result = $passManager->updatePassword($newPassword);
+        if($result !== true){
+            $errors['Database Error'][] = $result;
+        }
+
         break;
+    //TODO: Complete code for initiating a reset after user has submitted
     case VerificationType::RESET:
         break;
 
@@ -66,4 +118,4 @@ switch ($_POST['change_type']) {
         $errors['Missing Type'][] = "Type is not a valid option";
 }
 
-json_response($errors);
+json_response($errors, false);
