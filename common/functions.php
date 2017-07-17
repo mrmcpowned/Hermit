@@ -1,10 +1,19 @@
 <?php
 
+/**
+ * Generates an SHA-256 hash made up of the time and a random set of bytes
+ * @return string The hash
+ */
 function generateSID()
 {
     return hash('sha256', time() . bin2hex(random_bytes(8)));
 }
 
+/**
+ * Generates an alpha-numeric code and the length specified
+ * @param int $size Specifies the length of the code
+ * @return string The generated alpha-numeric code
+ */
 function generateAlphaCode($size = 6)
 {
 
@@ -28,6 +37,11 @@ function hasPermissions($bitPermissions, $permissionsRequired)
 
 }
 
+/**
+ * Verifies a Google Recaptcha response
+ * @param $captchaResponse string The response to verify
+ * @return bool
+ */
 function recaptcha_verify($captchaResponse)
 {
     $ch = curl_init("https://www.google.com/recaptcha/api/siteverify");
@@ -51,20 +65,18 @@ function missing_fields($required, $input, $total){
     return array_diff_key($fieldsWeWant, $fieldsWeHave);
 }
 
-function codeToMessage($code)
-{
+function codeToMessage($code) {
+    $messages = [
+        UPLOAD_ERR_INI_SIZE => "The uploaded file exceeds the upload_max_filesize directive in php.ini",
+        UPLOAD_ERR_FORM_SIZE => "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form",
+        UPLOAD_ERR_PARTIAL => "The uploaded file was only partially uploaded",
+        UPLOAD_ERR_NO_FILE => "No file was uploaded",
+        UPLOAD_ERR_NO_TMP_DIR => "Missing a temporary folder",
+        UPLOAD_ERR_CANT_WRITE => "Failed to write file to disk",
+        UPLOAD_ERR_EXTENSION => "File upload stopped by extension"
+    ];
 
-$messages = [
-    UPLOAD_ERR_INI_SIZE => "The uploaded file exceeds the upload_max_filesize directive in php.ini",
-    UPLOAD_ERR_FORM_SIZE => "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form",
-    UPLOAD_ERR_PARTIAL => "The uploaded file was only partially uploaded",
-    UPLOAD_ERR_NO_FILE => "No file was uploaded",
-    UPLOAD_ERR_NO_TMP_DIR => "Missing a temporary folder",
-    UPLOAD_ERR_CANT_WRITE => "Failed to write file to disk",
-    UPLOAD_ERR_EXTENSION => "File upload stopped by extension"
-];
-
-return $messages[$code];
+    return $messages[$code];
 }
 
 /**
@@ -72,11 +84,23 @@ return $messages[$code];
  * @param array $errors
 
  */
-function json_response($errors = []){
+function json_response($errors = [], $checkIfEmpty = true){
     $response = [
         "success" => false,
         "errors" => $errors
     ];
+
+    /**
+     * We use this to cut down on our outer logic to check if there's any errors
+     * If there happens to be an error the function wont return prematurely and go about it's regular execution
+     * For a final response check, we set this to false to respect the possibility of an empty errors array, which
+     * signifies a successful response.
+     */
+    if($checkIfEmpty){
+        if(empty($errors)){
+            return;
+        }
+    }
 
     if(!empty($errors)) {
         http_response_code(400);
@@ -124,6 +148,40 @@ function sanitize_array(&$inputArray, $configArray){
                     $inputArray[$entry] = filter_var($value, $filter);
                 }
             }
+        }
+    }
+}
+
+function validate_array($inputArray, $configArray, &$errorsArray){
+    foreach ($inputArray as $key => $value){
+        $fieldName = $configArray[$key]['name'];
+
+        //Length is to check if string length is within the configured range, including numbers
+        if(isset($configArray[$key]['length'])){
+            //We have to check the length of applicable values, even numbers
+            $valueLength = strlen($value);
+            $min = $configArray[$key]['length']['min'];
+            $max = $configArray[$key]['length']['max'];
+            if($valueLength < $min)
+                $errorsArray['Value Length'][] = "Length of field '$fieldName' is less than the minimum of '$min' at a size of '$valueLength'";
+            if($valueLength > $max)
+                $errorsArray['Value Length'][] = "Length of field '$fieldName' is greater than the maximum of '$max' at a size of '$valueLength'";
+        }
+
+        //Value is used for checking if the actual value of a field is within a specified range
+        if(isset($configArray[$key]['value'])){
+            $min = $configArray[$key]['value']['min'];
+            $max = $configArray[$key]['value']['max'];
+            if($value < $min)
+                $errorsArray['Value Size'][] = "Value of field '$fieldName' is less than the minimum of '$min'";
+            if($value > $max)
+                $errorsArray['Value Size'][] = "Value of field '$fieldName' is greater than the maximum of '$max'";
+        }
+
+        //Validate via filter for any items that are set to validate
+        if(isset($configArray[$key]['validate'])){
+            if(!filter_var($inputArray[$key], $configArray[$key]['validate']))
+                $errorsArray['Validation'][] = "Field '$fieldName' is invalidly formatted.";
         }
     }
 }
