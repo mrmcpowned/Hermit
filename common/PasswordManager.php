@@ -1,10 +1,51 @@
 <?php
 
+require_once 'Site.php';
+
 /**
  * This should manage the updating of passwords
  */
 class PasswordManager
 {
+
+    private $requiredManagementFields = [
+        "change_type"
+    ];
+
+    private $managementFields = [
+        "change_type" => [
+            "filter" => [FILTER_SANITIZE_NUMBER_INT],
+            "name" => "Action Type"
+        ],
+        "key" => [
+            "filter" => [FILTER_DEFAULT], //Since we're only checking for this hash, there's no need to sanitize
+            "name" => "Reset Key"
+        ],
+        "curr_password" => [
+            "filter" => [FILTER_DEFAULT],
+            "name" => "Current Password"
+        ],
+        "new_password" => [
+            "filter" => [FILTER_DEFAULT],
+            "name" => "New Password"
+        ]
+    ];
+
+    /**
+     * @return array
+     */
+    public function getRequiredManagementFields(): array
+    {
+        return $this->requiredManagementFields;
+    }
+
+    /**
+     * @return array
+     */
+    public function getManagementFields(): array
+    {
+        return $this->managementFields;
+    }
 
     private $db;
     /**
@@ -25,6 +66,7 @@ class PasswordManager
         $this->db = $db;
         $this->currentUser = $currentUser;
         $this->userInfo = $currentUser->getUserInfo();
+        $this->managementFields['email'] = Site::getRegistrationFields()['email'];
     }
 
     public function isWithinWindow()
@@ -42,16 +84,14 @@ class PasswordManager
 
         $hashedPassword = password_hash($newPassword, $newPassword);
         $sql = "UPDATE hackers SET pass = :pass WHERE sid = :sid";
-        $sid = $this->currentUser->getSID();
-        if($sid == null)
-            return "User SID is null";
-
+        $email = $this->userInfo['email'];
         $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
         try {
             $sqlQuery = $this->db->prepare($sql);
             $sqlQuery->bindParam(":pass", $newPassword);
-            $sqlQuery->bindParam(":sid", $sid);
+            $sqlQuery->bindParam(":email", $email);
+
             if (!$sqlQuery->execute()) {
                 return "Error executing SQL: " . $sqlQuery->errorInfo();
             }
