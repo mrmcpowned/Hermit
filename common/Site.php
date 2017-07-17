@@ -113,7 +113,7 @@ class Site
             "name" => "School",
             "length" => [
                 "min" => 1,
-                "max" => 3
+                "max" => 4
             ]
         ], //Normalize - DONE
         "race" => [
