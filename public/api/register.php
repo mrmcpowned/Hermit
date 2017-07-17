@@ -69,16 +69,16 @@ if(!($site->isAcceptingRegistrations() OR $site->isAcceptingWalkIns()))
 json_response($errors);
 
 //Check captcha
-//$response = $_POST['g-recaptcha-response'];
+$response = $_POST['g-recaptcha-response'];
 
-/*if(!recaptcha_verify($response)){
+if(!recaptcha_verify($response, RECAPTCHA_SECRET)){
     $errors['Captcha'][] = "Captcha failed to verify";
-    echo json_encode($return);
+    json_encode($errors);
 }
 
 unset($_POST['g-recaptcha-response']);
 
-*/
+
 
 //Sanitize all inputs
 

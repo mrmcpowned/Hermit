@@ -46,6 +46,15 @@ $requiredFields = [
 $allowedFields['email'] = $allFields['email'];
 $allowedFields['pass'] = $allFields['pass'];
 
+$response = $_POST['g-recaptcha-response'];
+
+if(!recaptcha_verify($response, RECAPTCHA_SECRET)){
+    $errors['Captcha'][] = "Captcha failed to verify";
+    json_encode($errors);
+}
+
+unset($_POST['g-recaptcha-response']);
+
 //now we sanitize input
 sanitize_array($_POST,$allowedFields);
 

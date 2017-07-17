@@ -6,6 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
     <title>Document</title>
 </head>
 <body>
@@ -17,7 +18,7 @@
     {% for key, item in user.userInfo %}
         <span>{{ key }}: {{ item }} </span>
     {% endfor %}
-    <form action="api/update.php" method="post" enctype="multipart/form-data">
+    <form action="api/update.php" method="post">
 
         <input type="password" name="curr_pass">
         <textarea name="diet_other" id="" cols="30" rows="10"></textarea>
@@ -37,16 +38,20 @@
             <option value="login">Login</option>
             <option value="register">Register</option>
         </select>
+        <div class="g-recaptcha" data-sitekey="6LcIOikUAAAAAEp8cpikw_xb_DAbmEgkO7sbHzXS"></div>
         <button type="submit">Send</button>
     </form>
 {% endif %}
 <script type="text/javascript">
+    let formIsSubmitting = false;
     $("form").on("submit", function (event) {
         event.preventDefault();
+        if(formIsSubmitting)
+            return;
 //        console.log(event);
-        var formData = new FormData(this);
+        let formData = new FormData(this);
 
-        var address = this.action;
+        let address = this.action;
         $.ajax({
             method: "POST",
             url: address,
@@ -55,18 +60,29 @@
             processData: false,
             dataType: "json",
             beforeSend: function () {
+                formIsSubmitting = true;
                 $("#messages").empty();
             }
         }).fail(function (jqXHR, textStatus) {
-            console.log(textStatus);
-            console.log("Error parsing request: ", jqXHR.responseText);
+            let response = jqXHR.responseJSON;
+            if(textStatus === "parsererror" || !response) {
+                console.log("Error parsing request: ", jqXHR.responseText);
+            } else {
+                for(let entry in response.errors){
+                    if(!response.errors.hasOwnProperty(entry))
+                        continue;
 
-            var response = jqXHR.responseJSON;
-            console.log(response);
+                    let newHtml = $("#messages").append(`<div><h3>${entry}</h3><ul></ul></div>`);
+                    for(let i = 0; i < response.errors[entry].length; i++){
+                        newHtml.find("ul").append(`<li>${response.errors[entry][i]}</li>`)
+                    }
+                }
+            }
         }).done(function (data) {
             window.location.reload(true);
         }).always(function (data) {
-            console.log(data);
+            grecaptcha.reset();
+            formIsSubmitting = false;
         })
     })
 </script>
