@@ -1,9 +1,11 @@
 <?php
 
-define("DB_HOST", "localhost");
-define("DB_USER", "hermit");
-define("DB_PASS", "9LGmAIdbWi6KgmWK");
-define("DB_NAME", "test");
+define("DB_HOST", "");
+define("DB_USER", "");
+define("DB_PASS", "");
+define("DB_NAME", "");
+
+define("RECAPTCHA_SECRET", "");
 
 define('SESSION_EXPIRATION_SECONDS', 3600); //1 Hour Expiration
 
