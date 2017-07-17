@@ -56,13 +56,17 @@ $acceptableFields = [
 ];
 
 
-if (!isset($_POST) AND !$user->isLoggedIn())
+if (!isset($_POST))
     die;
 
 header("Content-Type: application/json");
 
 $errors = [];
 
+
+if(!$user->isLoggedIn()){
+    $errors['Unauthorized'][] = "Only logged in users can access this endpoint";
+}
 
 //All update requests REQUIRE a current password to be sent
 if (!isset($_POST['curr_pass'])) {
@@ -108,8 +112,7 @@ try {
     $errors['Database Error'][] = $e->getMessage();
 }
 
-if (!empty($errors))
-    json_response($errors);
+json_response($errors);
 
 //If the result is 0 rows, error out
 if ($getPassQuery->rowCount() < 1) {
@@ -154,4 +157,4 @@ try {
 }
 
 //Finally send a response
-json_response($errors);
+json_response($errors, false);
