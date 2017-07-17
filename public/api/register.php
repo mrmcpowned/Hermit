@@ -66,8 +66,7 @@ if($user->isLoggedIn())
 if(!($site->isAcceptingRegistrations() OR $site->isAcceptingWalkIns()))
     $errors['Registration'] = "Sorry, registrations are currently closed";
 
-if(!empty($errors))
-    json_response($errors);
+json_response($errors);
 
 //Check captcha
 //$response = $_POST['g-recaptcha-response'];
@@ -109,37 +108,8 @@ if(!$_POST['mlh_accept'])
 unset($_POST['mlh_accept']);
 
 //By now we have all our required fields, now we need to make sure all fields are following length and value checks
-foreach ($_POST as $key => $value){
-    $fieldName = $acceptableFields[$key]['name'];
-
-    //Length is to check if string length is within the configured range, including numbers
-    if(isset($acceptableFields[$key]['length'])){
-        //We have to check the length of applicable values, even numbers
-        $valueLength = strlen($value);
-        $min = $acceptableFields[$key]['length']['min'];
-        $max = $acceptableFields[$key]['length']['max'];
-        if($valueLength < $min)
-            $errors['Value Length'][] = "Length of field '$fieldName' is less than the minimum of '$min' at a size of '$valueLength'";
-        if($valueLength > $max)
-            $errors['Value Length'][] = "Length of field '$fieldName' is greater than the maximum of '$max' at a size of '$valueLength'";
-    }
-
-    //Value is used for checking if the actual value of a field is within a specified range
-    if(isset($acceptableFields[$key]['value'])){
-        $min = $acceptableFields[$key]['value']['min'];
-        $max = $acceptableFields[$key]['value']['max'];
-        if($value < $min)
-            $errors['Value Size'][] = "Value of field '$fieldName' is less than the minimum of '$min'";
-        if($value > $max)
-            $errors['Value Size'][] = "Value of field '$fieldName' is greater than the maximum of '$max'";
-    }
-
-    //Validate via filter for any items that are set to validate
-    if(isset($acceptableFields[$key]['validate'])){
-        if(!filter_var($_POST[$key], $acceptableFields[$key]['validate']))
-            $errors['Validation'][] = "Field '$fieldName' is invalidly formatted.";
-    }
-}
+validate_array($_POST, $acceptableFields, $errors);
+json_response($errors);
 
 //If the email does not end with one of the whitelisted domains, throw an error
 $found = false;
@@ -153,8 +123,7 @@ if(!$found)
     $errors['Email'][] = "The email address you entered is not in the list of whitelisted domains";
 
 //No need to run a query if it's not an acceptable email
-if(!empty($errors))
-    json_response($errors);
+json_response($errors);
 
 //Check if there are any errors so far, and if so, execute a response
 
@@ -176,8 +145,7 @@ try {
     $errors['Database Error'][] = $e->getMessage();
 }
 
-if(!empty($errors))
-    json_response($errors);
+json_response($errors);
 
 /*
  * By now, all text data is sanitized and validated
@@ -224,8 +192,7 @@ if(isset($_FILES['resume'])){
         $errors['Resume'][] = "Resume is larger than 2MB. Please upload a smaller file";
     }
 
-    if(!empty($errors))
-        json_response($errors);
+    json_response($errors);
 
     //Now prep the file for move
     $fileInfo = pathinfo($resume['name']);
@@ -268,8 +235,7 @@ try {
 
 $_POST['check_in_code'] = $checkInCode;
 
-if(!empty($errors))
-    json_response($errors);
+json_response($errors);
 
 //Now we need to create our email verification id, which we can do the same way as SIDs
 $_POST['email_vid'] = generateSID();
@@ -310,4 +276,4 @@ try {
     json_response($errors);
 }
 http_response_code(201);
-json_response($errors);
+json_response($errors, false);
