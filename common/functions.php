@@ -42,11 +42,11 @@ function hasPermissions($bitPermissions, $permissionsRequired)
  * @param $captchaResponse string The response to verify
  * @return bool
  */
-function recaptcha_verify($captchaResponse)
+function recaptcha_verify($captchaResponse, $secretKey)
 {
     $ch = curl_init("https://www.google.com/recaptcha/api/siteverify");
     curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, ["secret" => "", "response" => ""]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, ["secret" => "$secretKey", "response" => "$captchaResponse"]);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $response = curl_exec($ch);
