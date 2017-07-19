@@ -150,7 +150,10 @@ $sql = "UPDATE hackers SET $setStatement WHERE sid = :sid AND pass = :pass";
 try {
     $updateQuery = $db->prepare($sql);
     if (!$updateQuery->execute($preparedPairs)) {
-        $errors['Database Error'][] = $updateQuery->errorInfo();
+        throw new Exception($updateQuery->errorInfo());
+    }
+    if ($updateQuery->rowCount() < 1){
+        throw new Exception("No user found");
     }
 } catch (Exception $e) {
     $errors['Database Error'][] = $e->getMessage();

@@ -269,7 +269,7 @@ $newUserSQL = "INSERT INTO hackers $columnNames VALUES $columnValues";
 try {
     $newUserQuery = $db->prepare($newUserSQL);
     if(!$newUserQuery->execute($preparedPairs))
-        $errors['Database Error'][] = $newUserQuery->errorInfo();
+        throw new Exception($newUserQuery->errorInfo());
 
 } catch (Exception $e) {
     $errors['Database Error'][] = $e->getMessage();
