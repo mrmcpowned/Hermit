@@ -34,7 +34,7 @@ if(!isset($_POST))
 header("Content-Type: application/json");
 
 //First we prep using the predefined sanitization config
-$allFields = $site::getRegistrationFields();
+$allFields = $site->getRegistrationFields();
 
 $allowedFields = [];
 
@@ -43,9 +43,11 @@ $requiredFields = [
     'pass'
 ];
 
+//We only need these two fields out of the entire config
 $allowedFields['email'] = $allFields['email'];
 $allowedFields['pass'] = $allFields['pass'];
 
+//Go through the captcha check
 $response = $_POST['g-recaptcha-response'];
 
 if(!recaptcha_verify($response, RECAPTCHA_SECRET)){

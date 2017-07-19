@@ -21,7 +21,7 @@ class Site
      */
 
 
-    private static $requiredRegistrationFields = [
+    public static $requiredRegistrationFields = [
         "f_name",
         "l_name",
         "email",
@@ -40,7 +40,7 @@ class Site
         "mlh_accept"
     ];
 
-    private static $registrationFields = [
+    public static $registrationFields = [
         "f_name" => [
             "filter" => [FILTER_CALLBACK],
             "filterOptions" => [
@@ -238,7 +238,7 @@ class Site
     /**
      * @return array
      */
-    public static function getRequiredRegistrationFields(): array
+    public function getRequiredRegistrationFields()
     {
         return Site::$requiredRegistrationFields;
     }
@@ -246,7 +246,7 @@ class Site
     /**
      * @return array
      */
-    public static function getRegistrationFields(): array
+    public function getRegistrationFields()
     {
         return Site::$registrationFields;
     }
