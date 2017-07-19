@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Site.php';
+require_once "functions.php";
 
 /**
  * This should manage the updating of passwords
@@ -19,15 +20,28 @@ class PasswordManager
         ],
         "key" => [
             "filter" => [FILTER_DEFAULT], //Since we're only checking for this hash, there's no need to sanitize
-            "name" => "Reset Key"
+            "name" => "Reset Key",
+            "length" => [
+                "min" => 8,
+                "max" => 255
+            ]
         ],
-        "curr_password" => [
+        "curr_pass" => [
             "filter" => [FILTER_DEFAULT],
-            "name" => "Current Password"
+            "name" => "Current Password",
+            "length" => [
+                "min" => 8,
+                "max" => 255
+            ]
+
         ],
-        "new_password" => [
+        "new_pass" => [
             "filter" => [FILTER_DEFAULT],
-            "name" => "New Password"
+            "name" => "New Password",
+            "length" => [
+                "min" => 8,
+                "max" => 255
+            ]
         ]
     ];
 
@@ -53,7 +67,7 @@ class PasswordManager
      */
     private $currentUser;
     private $userInfo;
-    const COOLDOWN_SECONDS = (3 * 60);
+    const COOLDOWN_SECONDS = (3 * 60); //This is to make sure people can't spam a password reset email every 5 seconds
     const RESET_WINDOW = (30 * 60);
 
     /**
@@ -69,9 +83,26 @@ class PasswordManager
         $this->managementFields['email'] = Site::getRegistrationFields()['email'];
     }
 
-    public function isWithinWindow()
+    public function isWithinWindow($unixTime)
     {
-        return (time() - $this->userInfo['pass_reset_time']) <= PasswordManager::RESET_WINDOW;
+        return time() - $unixTime <= PasswordManager::RESET_WINDOW;
+    }
+
+    public function isValidKey($key){
+        $sql = "SELECT pass_reset_time FROM hackers where pass_reset_vid = :vid";
+
+        try {
+            $query = $this->db->prepare($sql);
+            $query->bindParam(":vid", $key);
+
+            if (!$query->execute()) {
+                throw new Exception('Key is invalid');
+            }
+            $resetTime = $query->fetchColumn(0);
+        } catch (Exception $e) {
+            return "Error executing SQL: " . $e->getMessage();
+        }
+        return [$resetTime];
     }
 
     /**
@@ -82,8 +113,7 @@ class PasswordManager
     public function updatePassword($newPassword)
     {
 
-        $hashedPassword = password_hash($newPassword, $newPassword);
-        $sql = "UPDATE hackers SET pass = :pass WHERE sid = :sid";
+        $sql = "UPDATE hackers SET pass = :pass WHERE email = :email";
         $email = $this->userInfo['email'];
         $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
@@ -93,7 +123,10 @@ class PasswordManager
             $sqlQuery->bindParam(":email", $email);
 
             if (!$sqlQuery->execute()) {
-                return "Error executing SQL: " . $sqlQuery->errorInfo();
+                throw new Exception($sqlQuery->errorInfo());
+            }
+            if($sqlQuery->rowCount() < 1){
+                throw new Exception("No user found with email $email");
             }
         } catch (Exception $e) {
             return "Error executing SQL: " . $e->getMessage();
@@ -103,14 +136,62 @@ class PasswordManager
 
     }
 
-    public function isPastRequestCooldown()
+    public function isPastRequestCooldown($unixTime)
     {
-        return (time() - $this->userInfo['pass_reset_time']) >= PasswordManager::COOLDOWN_SECONDS;
+        return (time() - $unixTime) >= PasswordManager::COOLDOWN_SECONDS;
     }
 
     public function changePasswordByKey($key, $newPassword)
     {
-        $sql = "UPDATE hackers SET pass = :pass WHERE pass_reset_vid = :id";
+        $sql = "UPDATE hackers SET pass = :pass, pass_reset_vid = NULL WHERE pass_reset_vid = :vid";
+        $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        try {
+            $sqlQuery = $this->db->prepare($sql);
+            $sqlQuery->bindParam(":pass", $newPassword);
+            $sqlQuery->bindParam(":vid", $key);
+
+            if (!$sqlQuery->execute()) {
+                throw new Exception($sqlQuery->errorInfo());
+            }
+            if ($sqlQuery->rowCount() < 1){
+                throw new Exception("No user with verification ID $key");
+            }
+        } catch (Exception $e) {
+            return "Error executing SQL: " . $e->getMessage();
+        }
+
+        return true;
+
+    }
+
+    /**
+     * Sets a password reset verification ID t
+     * @param $email string Email to lookup by
+     * @return array|string If no errors arise, the nan array containing the key is returned, else a
+     * string with the error
+     *
+     */
+    public function setResetKeyByEmail($email){
+        $sql = "UPDATE hackers SET pass_reset_vid = :pass_reset_vid, pass_reset_time = UNIX_TIMESTAMP() WHERE email = :email";
+        $resetKey = generateSID();
+
+        try {
+            $sqlQuery = $this->db->prepare($sql);
+            $sqlQuery->bindParam(":pass_reset_vid", $resetKey);
+            $sqlQuery->bindParam(":email", $email);
+
+            if (!$sqlQuery->execute()) {
+                throw new Exception($sqlQuery->errorInfo());
+            }
+            if ($sqlQuery->rowCount() < 1){
+                throw new Exception("No user with email $email");
+            }
+        } catch (Exception $e) {
+            return "Error executing SQL: " . $e->getMessage();
+        }
+
+        return [$resetKey];
     }
     
 }
