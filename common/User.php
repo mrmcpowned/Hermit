@@ -76,15 +76,13 @@ abstract class User
         if ($this->isLoggedIn()) {
 
             if($this->hasSessionExpired()) {
-                // session has taken too long between requests
+                // session has taken too long between requests or was regenerated elsewhere
                 $this->logout();
             }
 
-            //TODO: Actually implement this when testing in a remote environment
-            //TODO: Include an insert for the IP on login
-            //Destroy a session of a user's IP doesn't match the one they logged in with
-            /*if($this->getUserInfo()['current_ip'] != $_SERVER['REMOTE_ADDR'])
-                $this->logout();*/
+            //Destroy a session if a user's IP doesn't match the one they logged in with
+            if($this->getUserInfo()['current_ip'] != $_SERVER['REMOTE_ADDR'])
+                $this->logout();
         }
 
     }
@@ -109,5 +107,7 @@ abstract class User
     public function isPasswordCorrect($givenPassword){
         return password_verify($givenPassword, $this->passHash);
     }
+
+    protected abstract function hasSessionChanged();
 
 }

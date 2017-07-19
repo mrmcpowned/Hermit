@@ -6,7 +6,9 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    {% if not user.loggedIn %}
     <script src='https://www.google.com/recaptcha/api.js'></script>
+    {% endif %}
     <title>Document</title>
 </head>
 <body>
@@ -29,8 +31,25 @@
         </select>
         <button type="submit">Send</button>
     </form>
+
+    <h2>Pass Reset While Logged In and Current Password</h2>
+    <form action="api/pass.php" method="post">
+        <input type="password" name="curr_pass">
+        <input type="password" name="new_pass">
+        <input type="hidden" value="1" name="change_type">
+        <button type="submit">Send</button>
+    </form>
+
+    <h2>Generate verification key while logged in</h2>
+    <form action="api/pass.php" method="post">
+        {#<input type="email" name="email">#}
+        <input type="hidden" value="0" name="change_type">
+        <button type="submit">Send</button>
+    </form>
+
+
 {% else %}
-    <form action="api/auth.php" method="post">
+    <form action="api/auth.php" method="post" name="other">
 
         <input type="text" name="email">
         <input type="password" name="pass">
@@ -41,6 +60,30 @@
         <div class="g-recaptcha" data-sitekey="6LevRykUAAAAAHrEG5L_UTm7iqDQIDr7BEx_IuXb"></div>
         <button type="submit">Send</button>
     </form>
+
+    <h2>Generate verification key while NOT logged in</h2>
+    <form action="api/pass.php" method="post">
+        <input type="email" name="email">
+        <input type="hidden" value="0" name="change_type">
+        <button type="submit">Send</button>
+    </form>
+
+    <h2>Change password with key</h2>
+    <form action="api/pass.php" method="post">
+        <input type="password" name="key">
+        <input type="password" name="new_pass">
+        <input type="hidden" value="2" name="change_type">
+        <button type="submit">Send</button>
+    </form>
+
+    <h2>Pass Reset While NOT Logged In and Current Password</h2>
+    <form action="api/pass.php" method="post">
+        <input type="password" name="curr_pass">
+        <input type="password" name="new_pass">
+        <input type="hidden" value="1" name="change_type">
+        <button type="submit">Send</button>
+    </form>
+
 {% endif %}
 <script type="text/javascript">
     let formIsSubmitting = false;
@@ -81,7 +124,8 @@
         }).done(function (data) {
             window.location.reload(true);
         }).always(function (data) {
-            grecaptcha.reset();
+            if(typeof grecaptcha !== "undefined")
+                grecaptcha.reset();
             formIsSubmitting = false;
         })
     })
