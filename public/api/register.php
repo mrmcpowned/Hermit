@@ -1,10 +1,5 @@
 <?php
 
-require_once "../../common/config.php";
-require_once "../../common/functions.php";
-
-$user = new Hacker($db);
-
 /**
  * This file handles user registration
  * TODO: REFACTOR AS STUB
@@ -19,9 +14,9 @@ $user = new Hacker($db);
 
 //DONE: Moved this to site config
 //This defines what we will consider valid data taken from a POST for Hacker profile creation or update
-$acceptableFields = $site->getRegistrationFields();
+$acceptableFields = Site::$registrationFields;
 
-$requiredFields = $site->getRequiredRegistrationFields();
+$requiredFields = Site::$requiredRegistrationFields;
 
 
 //DONE: Handle registration logic (Registration logic has been handled completely)
@@ -46,46 +41,25 @@ $requiredFields = $site->getRequiredRegistrationFields();
  *
  */
 
-//Check if the request was sent via post
-if(!isset($_POST))
-    die;
-
-//Set our header
-header("Content-Type: application/json");
-
-
-//Create array to push error messages to
-$errors = [];
 
 //Check if we're NOT accepting registrations OR walk-ins
-
-
 if($user->isLoggedIn())
-    $errors['Registration'][] = "You're already registered";
+    throw new RegistrationException("You're already registered");
 
 if(!($site->isAcceptingRegistrations() OR $site->isAcceptingWalkIns()))
-    $errors['Registration'] = "Sorry, registrations are currently closed";
-
-json_response($errors);
+    throw new RegistrationException("Sorry, registrations are currently closed");
 
 //Check captcha
 $response = $_POST['g-recaptcha-response'];
 
 if(!recaptcha_verify($response, RECAPTCHA_SECRET)){
-    $errors['Captcha'][] = "Captcha failed to verify";
-    json_encode($errors);
+    throw new CaptchaException("Captcha failed to verify");
 }
 
-unset($_POST['g-recaptcha-response']);
-
-
-
 //Sanitize all inputs
-
 sanitize_array($_POST, $acceptableFields);
 
 //Perform specific checks
-
 $missing = missing_fields($requiredFields, $_POST, $acceptableFields);
 
 //If our set of missing fields is greater than zero, then we're missing fields...
@@ -93,16 +67,13 @@ if(count($missing) > 0){
 
     //Check which specific required fields are missing
     foreach($missing as $field){
-        $errors['Missing Fields'][] = "Field '" . $field['name'] . "' is missing.";
+        throw new MissingFieldException("Field '" . $field['name'] . "' is missing");
     }
-
-    //Output the response
-    json_response($errors);
 }
 
 //Make sure users accept the MLH terms of service
 if(!$_POST['mlh_accept'])
-    $errors['MLH Code of Conduct'][] = "Please accept the MLH Code of Conduct";
+    throw new MissingFieldException("Please accept the MLH Code of Conduct");
 
 //We only check if the user has accepted, saving this response is of no real value
 unset($_POST['mlh_accept']);
@@ -120,7 +91,7 @@ foreach($site->getValidEmails() as $address){
     }
 }
 if(!$found)
-    $errors['Email'][] = "The email address you entered is not in the list of whitelisted domains";
+    throw new EmailException("The email address you entered is not in the list of whitelisted domains");
 
 //No need to run a query if it's not an acceptable email
 json_response($errors);
@@ -132,20 +103,14 @@ json_response($errors);
  * DONE: User shouldn't be able to register with an email address whose domain is not whitelisted
  */
 
-try {
-    $userQuery = $db->prepare("SELECT COUNT(*) FROM hackers WHERE email = :email");
-    $userQuery->bindValue(":email", $_POST['email']);
-    if(!$userQuery->execute())
-        $errors['Database Error'][] = $userQuery->errorInfo();
+$userQuery = $db->prepare("SELECT COUNT(*) FROM hackers WHERE email = :email");
+$userQuery->bindValue(":email", $_POST['email']);
+if(!$userQuery->execute())
+    throw new DatabaseErrorException($userQuery->errorInfo());
 
-    $queryResult = $userQuery->fetchColumn();
-    if($queryResult > 0)
-        $errors['Email'][] = "That email already exists in our system";
-} catch (Exception $e) {
-    $errors['Database Error'][] = $e->getMessage();
-}
-
-json_response($errors);
+$queryResult = $userQuery->fetchColumn();
+if($queryResult > 0)
+    throw new EmailException("That email already exists in our system");
 
 /*
  * By now, all text data is sanitized and validated
@@ -162,10 +127,8 @@ json_response($errors);
  * - Required if it's a walk-in
  */
 //We don't require resumes from walk-ins
-
 if(!isset($_FILES['resume']) AND !$site->isAcceptingWalkIns()){
-    $errors['Resume'][] = "A resume is required.";
-    json_response($errors);
+    throw new ResumeEsception("A resume is required");
 }
 
 if(isset($_FILES['resume'])){
@@ -174,25 +137,23 @@ if(isset($_FILES['resume'])){
 
     //We shouldn't be having more than 1 file uploaded
     if(count($resume['name']) > 1){
-        $errors['Resume'] = "Please only upload 1 file";
+        throw new ResumeEsception("Please only upload 1 file");
     }
 
     //If PHP has an upload error, respect it
     if($resume['error'] !== UPLOAD_ERR_OK){
-        $errors['Resume'][] = codeToMessage($resume['error']);
+        throw new ResumeEsception(codeToMessage($resume['error']));
     }
 
     //If file is not of the acceptable type, throw an error
     if(!is_acceptable_file_type($resume['type'])){
-        $errors['Resume'][] = "Resume is not in one of the acceptable file formats";
+        throw new ResumeEsception("Resume is not in one of the acceptable file formats");
     }
 
     //If size is greater than 2MB, error
     if($resume['size'] > 2000000){
-        $errors['Resume'][] = "Resume is larger than 2MB. Please upload a smaller file";
+        throw new ResumeEsception("Resume is larger than 2MB. Please upload a smaller file");
     }
-
-    json_response($errors);
 
     //Now prep the file for move
     $fileInfo = pathinfo($resume['name']);
@@ -204,7 +165,7 @@ if(isset($_FILES['resume'])){
     $success = move_uploaded_file($resume["tmp_name"],
         "../../common/resumes/" . $newName);
     if (!$success){
-        $errors['Resume'][] = "Error saving file to directory";
+        throw new Exception("Error saving file to directory");
     }
 
     $_POST['resume'] = $newName;
@@ -220,22 +181,16 @@ $checkInCode = generateAlphaCode(4);
  * To which I'd respond "The script will produce a database error since that column is unique, thus requiring
  * our applicant to simply press 'submit' once again."
  */
-try {
-    $codeCheckQuery = $db->prepare("SELECT COUNT(*) FROM hackers WHERE check_in_code = :code");
-    $codeCheckQuery->bindParam(":code", $checkInCode);
-    if (!$codeCheckQuery->execute())
-        $errors['Database Error'][] = $codeCheckQuery->errorInfo();
+$codeCheckQuery = $db->prepare("SELECT COUNT(*) FROM hackers WHERE check_in_code = :code");
+$codeCheckQuery->bindParam(":code", $checkInCode);
+if (!$codeCheckQuery->execute())
+    throw new DatabaseErrorException($codeCheckQuery->errorInfo());
 
-    $queryResult = $codeCheckQuery->fetchColumn();
-    if ($queryResult > 0)
-        $checkInCode = generateAlphaCode(5);
-} catch (Exception $e) {
-    $errors['Database Error'][] = $e->getMessage();
-}
+$queryResult = $codeCheckQuery->fetchColumn();
+if ($queryResult > 0)
+    $checkInCode = generateAlphaCode(5);
 
 $_POST['check_in_code'] = $checkInCode;
-
-json_response($errors);
 
 //Now we need to create our email verification id, which we can do the same way as SIDs
 $_POST['email_vid'] = generateSID();
@@ -267,14 +222,7 @@ $columnValues = "($columnValues, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())";
 $newUserSQL = "INSERT INTO hackers $columnNames VALUES $columnValues";
 
 //DONE: Do what's below with the other query
-try {
-    $newUserQuery = $db->prepare($newUserSQL);
-    if(!$newUserQuery->execute($preparedPairs))
-        throw new Exception($newUserQuery->errorInfo());
-
-} catch (Exception $e) {
-    $errors['Database Error'][] = $e->getMessage();
-    json_response($errors);
-}
+$newUserQuery = $db->prepare($newUserSQL);
+if(!$newUserQuery->execute($preparedPairs))
+    throw new Exception($newUserQuery->errorInfo());
 http_response_code(201);
-json_response($errors, false);
