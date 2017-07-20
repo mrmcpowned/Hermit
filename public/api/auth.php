@@ -1,7 +1,6 @@
 <?php
 
 require_once '../../common/config.php';
-require_once '../../common/Hacker.php';
 /**
  * Created by PhpStorm.
  * User: mrmcp

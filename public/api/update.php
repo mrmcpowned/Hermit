@@ -2,7 +2,6 @@
 
 require_once "../../common/config.php";
 require_once "../../common/functions.php";
-require_once "../../common/Hacker.php";
 
 $user = new Hacker($db);
 

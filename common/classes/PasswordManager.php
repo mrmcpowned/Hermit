@@ -1,7 +1,6 @@
 <?php
 
 require_once 'Site.php';
-require_once "functions.php";
 
 /**
  * This should manage the updating of passwords
@@ -88,17 +87,17 @@ class PasswordManager
         return time() - $unixTime <= PasswordManager::RESET_WINDOW;
     }
 
-    public function isValidKey($key){
+    public function getResetTime($key){
         $sql = "SELECT pass_reset_time FROM hackers where pass_reset_vid = :vid";
 
         try {
             $query = $this->db->prepare($sql);
             $query->bindParam(":vid", $key);
 
-            if (!$query->execute()) {
+            $resetTime = $query->fetchColumn();
+            if (!$query->execute() OR !$resetTime) {
                 throw new Exception('Key is invalid');
             }
-            $resetTime = $query->fetchColumn();
         } catch (Exception $e) {
             return "Error executing SQL: " . $e->getMessage();
         }

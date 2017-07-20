@@ -1,6 +1,5 @@
 <?php
 require_once '../common/config.php';
-require_once '../common/Hacker.php';
 require_once '../vendor/autoload.php';
 $user = new Hacker($db);
 $loader = new Twig_Loader_Filesystem('../templates/public');

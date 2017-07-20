@@ -19,6 +19,8 @@ try {
 session_start();
 
 require_once "functions.php";
-require_once "Site.php";
+spl_autoload_register(function ($class){
+    require_once "classes/$class.class";
+});
 
 $site = new Site($db);

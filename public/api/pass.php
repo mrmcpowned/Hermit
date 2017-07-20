@@ -2,8 +2,6 @@
 
 require_once "../../common/config.php";
 require_once "../../common/functions.php";
-require_once "../../common/Hacker.php";
-require_once "../../common/PasswordManager.php";
 
 $user = new Hacker($db);
 $passManager = new PasswordManager($db, $user);
@@ -166,7 +164,7 @@ switch ($type) {
 
         //Check if key is valid
 
-        $result = $passManager->isValidKey($resetKey);
+        $result = $passManager->getResetTime($resetKey);
 
         if(!is_array($result)){
             $errors['Database Error'][] = $result;
@@ -176,6 +174,7 @@ switch ($type) {
         //Check if we're within the window to allow a reset
         if(!$passManager->isWithinWindow($result[0])) {
             $errors['Key Expired'][] = "The validation key has expired";
+            break;
         }
 
         $result = $passManager->changePasswordByKey($resetKey, $newPassword);
