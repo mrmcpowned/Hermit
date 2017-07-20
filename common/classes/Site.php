@@ -218,6 +218,11 @@ class Site
     public function __construct($db)
     {
         $this->db = $db;
+//        $this->setUp();
+    }
+
+    private function setUp(){
+        $this->db;
     }
 
     public function getValidEmails()

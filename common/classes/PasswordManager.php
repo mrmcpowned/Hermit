@@ -82,62 +82,67 @@ class PasswordManager
         $this->managementFields['email'] = Site::$registrationFields['email'];
     }
 
-    public function isWithinWindow($unixTime)
+    public function isWithinWindow($key)
     {
-        return time() - $unixTime <= PasswordManager::RESET_WINDOW;
+        $resetTime = $this->getResetTime($key);
+        return time() - $resetTime <= PasswordManager::RESET_WINDOW;
     }
 
     public function getResetTime($key){
-        $sql = "SELECT pass_reset_time FROM hackers where pass_reset_vid = :vid";
+        $sql = "SELECT pass_reset_time FROM hackers where ";
 
-        try {
-            $query = $this->db->prepare($sql);
-            $query->bindParam(":vid", $key);
+        $isEmail = filter_var($key, FILTER_VALIDATE_EMAIL);
 
-            $resetTime = $query->fetchColumn();
-            if (!$query->execute() OR !$resetTime) {
-                throw new Exception('Key is invalid');
-            }
-        } catch (Exception $e) {
-            return "Error executing SQL: " . $e->getMessage();
+        if($isEmail){
+            $sql .= "email = :key";
+        } else {
+            $sql .= "pass_reset_vid = :key";
         }
-        return [$resetTime];
+
+        $query = $this->db->prepare($sql);
+        $query->bindParam(":key", $key);
+
+        if (!$query->execute()) {
+            throw new DatabaseErrorException($query->errorInfo());
+        }
+
+        $resetTime = $query->fetchColumn();
+        if (!$resetTime) {
+            throw new UnknownKeyException(($isEmail ? "Unable to find $key in the system" : "Provided key is invalid"));
+        }
+
+        return $resetTime;
     }
 
     /**
      * Change password for currently logged in user
+     * @param $email
      * @param $newPassword string New password to assign
-     * @return bool|string
+     * @throws UnknownUserException
      */
-    public function updatePassword($newPassword)
+    public function updatePassword($email, $newPassword)
     {
 
         $sql = "UPDATE hackers SET pass = :pass WHERE email = :email";
-        $email = $this->userInfo['email'];
         $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
-        try {
-            $sqlQuery = $this->db->prepare($sql);
-            $sqlQuery->bindParam(":pass", $newPassword);
-            $sqlQuery->bindParam(":email", $email);
+        $sqlQuery = $this->db->prepare($sql);
+        $sqlQuery->bindParam(":pass", $newPassword);
+        $sqlQuery->bindParam(":email", $email);
 
-            if (!$sqlQuery->execute()) {
-                throw new Exception($sqlQuery->errorInfo());
-            }
-            if($sqlQuery->rowCount() < 1){
-                throw new Exception("No user found with email $email");
-            }
-        } catch (Exception $e) {
-            return "Error executing SQL: " . $e->getMessage();
+        if (!$sqlQuery->execute()) {
+            throw new DatabaseErrorException($sqlQuery->errorInfo());
         }
-
-        return true;
+        if($sqlQuery->rowCount() < 1){
+            throw new UnknownUserException("No user found with email $email");
+        }
 
     }
 
-    public function isPastRequestCooldown($unixTime)
+    public function isPastRequestCooldown($email)
     {
-        return (time() - $unixTime) >= PasswordManager::COOLDOWN_SECONDS;
+        $resetTime = $this->getResetTime($email);
+        return (time() - $resetTime) >= PasswordManager::COOLDOWN_SECONDS;
     }
 
     public function changePasswordByKey($key, $newPassword)
@@ -145,22 +150,16 @@ class PasswordManager
         $sql = "UPDATE hackers SET pass = :pass, pass_reset_vid = NULL WHERE pass_reset_vid = :vid";
         $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
-        try {
-            $sqlQuery = $this->db->prepare($sql);
-            $sqlQuery->bindParam(":pass", $newPassword);
-            $sqlQuery->bindParam(":vid", $key);
+        $sqlQuery = $this->db->prepare($sql);
+        $sqlQuery->bindParam(":pass", $newPassword);
+        $sqlQuery->bindParam(":vid", $key);
 
-            if (!$sqlQuery->execute()) {
-                throw new Exception($sqlQuery->errorInfo());
-            }
-            if ($sqlQuery->rowCount() < 1){
-                throw new Exception("No user with verification ID $key");
-            }
-        } catch (Exception $e) {
-            return "Error executing SQL: " . $e->getMessage();
+        if (!$sqlQuery->execute()) {
+            throw new DatabaseErrorException($sqlQuery->errorInfo());
         }
-
-        return true;
+        if ($sqlQuery->rowCount() < 1){
+            throw new UnknownUserException("No user with verification ID $key");
+        }
 
     }
 
@@ -169,28 +168,24 @@ class PasswordManager
      * @param $email string Email to lookup by
      * @return array|string If no errors arise, the nan array containing the key is returned, else a
      * string with the error
-     *
+     * @throws UnknownUserException
      */
     public function setResetKeyByEmail($email){
         $sql = "UPDATE hackers SET pass_reset_vid = :pass_reset_vid, pass_reset_time = UNIX_TIMESTAMP() WHERE email = :email";
         $resetKey = generateSID();
 
-        try {
-            $sqlQuery = $this->db->prepare($sql);
-            $sqlQuery->bindParam(":pass_reset_vid", $resetKey);
-            $sqlQuery->bindParam(":email", $email);
+        $sqlQuery = $this->db->prepare($sql);
+        $sqlQuery->bindParam(":pass_reset_vid", $resetKey);
+        $sqlQuery->bindParam(":email", $email);
 
-            if (!$sqlQuery->execute()) {
-                throw new Exception($sqlQuery->errorInfo());
-            }
-            if ($sqlQuery->rowCount() < 1){
-                throw new Exception("No user with email $email");
-            }
-        } catch (Exception $e) {
-            return "Error executing SQL: " . $e->getMessage();
+        if (!$sqlQuery->execute()) {
+            throw new DatabaseErrorException($sqlQuery->errorInfo());
+        }
+        if ($sqlQuery->rowCount() < 1){
+            throw new UnknownUserException("No user with email $email");
         }
 
-        return [$resetKey];
+        return $resetKey;
     }
     
 }

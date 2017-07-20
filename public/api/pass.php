@@ -1,9 +1,5 @@
 <?php
 
-require_once "../../common/config.php";
-require_once "../../common/functions.php";
-
-$user = new Hacker($db);
 $passManager = new PasswordManager($db, $user);
 
 //This interface acts as a pseudo enum
@@ -20,6 +16,8 @@ interface VerificationType{
  * - The user has forgotten their password and wishes to reset it
  *
  * THIS FILE HAS BEEN TESTED AND WORKS
+ *
+ * FULLY REFACTORED AS STUB
  */
 
 
@@ -40,21 +38,15 @@ interface VerificationType{
  *
  */
 
-//Only allow post requests
-if (!isset($_POST))
-    die;
 
-$errors = [];
 
-header("Content-Type: application/json");
-
-if(!isset($_POST['change_type'])){
-    $errors['Missing Type'][] = "Type of action is missing";
-    json_response($errors);
+if (!isset($_POST['change_type'])) {
+    throw new MissingFieldException("Type of action is missing");
 }
 
 $type = $_POST['change_type'];
 
+//Batch processes like these shouldn't throw exceptions so users have greater detail into what's wrong with their input
 sanitize_array($_POST, $passManager->getManagementFields());
 validate_array($_POST, $passManager->getManagementFields(), $errors);
 json_response($errors);
@@ -66,128 +58,81 @@ switch ($type) {
     //TODO: [SEMI-DONE] Complete code for a forgotten password reset
     case VerificationType::FORGOT:
         $email = null;
-        if($user->isLoggedIn()){
+        if ($user->isLoggedIn()) {
             $email = $user->getUserInfo()['email'];
         } else {
-            if(!empty($_POST['email'])){
+            if (!empty($_POST['email'])) {
                 $email = $_POST['email'];
             } else {
-                $errors['Missing Field'][] = "Email is missing";
-                break;
+                throw new MissingFieldException("Email is missing");
             }
         }
         //We now have a email we need to create a key for, but we need to check if we're spamming or not
-        $checkCooldownSQL = "SELECT pass_reset_time from hackers where email = :email";
 
-        try {
-            $query = $db->prepare($checkCooldownSQL);
-            $query->bindParam(":email", $email);
 
-            if (!$query->execute())
-                throw new Exception($query->errorInfo());
-            //If the email is incorrect then we get back no results
-            if(!$result = $query->fetchColumn()){
-                $errors['Incorrect Email'][] = "There is no user with that email address";
-                break;
-            }
-            if (!$passManager->isPastRequestCooldown($result)){
-                $errors['Reset Cooldown'][] = "Please wait a while before initiating another reset";
-                break;
-            }
-        } catch (Exception $e) {
-            $errors['Database Error'][] = $e->getMessage();
-            break;
-        }
+        //TODO: Exception
+        if (!$passManager->isPastRequestCooldown($email))
+            throw new CooldownException("Please wait a while before initiating another reset");
 
-        //Fun fact, in the event the email doesn't exist, the query errors out
-        $result = $passManager->setResetKeyByEmail($email);
-        if(is_array($result)){
-            $result = $result[0];
-        } else {
-            $errors['Database Error'][] = $result;
-            break;
-        }
+
+        //Fun fact, in the event the email doesn't exist, the query errors out and throws an exception
+        $resetKey = $passManager->setResetKeyByEmail($email);
+
         //Lets assume for now we have a working mailer
         //TODO: Send to mail queue table
 
-        $errors['Success'][] = $result;
+        $errors['Success'][] = $resetKey;
 
         break;
     //DONE: Complete code for changing password with current password
     case VerificationType::CHANGE:
-        if(!$user->isLoggedIn()){
-            $errors['Unauthenticated'][] = "You are currently not logged in";
-            break;
+        if (!$user->isLoggedIn()) {
+            throw new UnauthenticatedException("You are currently not logged in");
         }
 
-        if(empty($_POST['curr_pass'])){
-            $errors['Missing Field'][] = "Current password is missing";
-            break;
+        if (empty($_POST['curr_pass'])) {
+            throw new MissingFieldException("Current password is missing");
         }
 
-        if(empty($_POST['new_pass'])){
-            $errors['Missing Field'][] = "New password is missing";
-            break;
+        if (empty($_POST['new_pass'])) {
+            throw new MissingFieldException("New password is missing");
         }
 
         $currPassword = $_POST['curr_pass'];
         $newPassword = $_POST['new_pass'];
 
-        if(!$user->isPasswordCorrect($currPassword)){
-            $errors['Incorrect Password'][] = "The current password supplied was incorrect";
-            break;
+        if (!$user->isPasswordCorrect($currPassword)) {
+            throw new IncorrectPasswordException("The current password supplied was incorrect");
         }
 
         //By here we should have a correct password and be authenticated
-        $result = $passManager->updatePassword($newPassword);
-        if($result !== true){
-            $errors['Database Error'][] = $result;
-        }
+        $passManager->updatePassword($user->getEmail(), $newPassword);
 
         break;
     //DONE: Complete code for initiating a reset after user has submitted a valid key
     case VerificationType::RESET:
 
-        if(empty($_POST['key'])){
-            $errors['Missing Field'][] = "No verification key was supplied";
-            break;
+        if (empty($_POST['key'])) {
+            throw new MissingFieldException("No verification key was supplied");
         }
 
-        if(empty($_POST['new_pass'])){
-            $errors['Missing Field'][] = "No new password supplied";
-            $errors['Missing Field'][] = $_POST['new_pass'];
-            break;
+        if (empty($_POST['new_pass'])) {
+            throw new MissingFieldException("No new password supplied");
         }
 
         $newPassword = $_POST['new_pass'];
         $resetKey = $_POST['key'];
 
-        //Check if key is valid
-
-        $result = $passManager->getResetTime($resetKey);
-
-        if(!is_array($result)){
-            $errors['Database Error'][] = $result;
-            break;
-        }
-
         //Check if we're within the window to allow a reset
-        if(!$passManager->isWithinWindow($result[0])) {
-            $errors['Key Expired'][] = "The validation key has expired";
-            break;
+        if (!$passManager->isWithinWindow($resetKey)) {
+            throw new ExpiredKeyException("The validation key has expired");
         }
-
-        $result = $passManager->changePasswordByKey($resetKey, $newPassword);
 
         //Finally, change the password
-        if($result !== true){
-            $errors['Database Error'][] = $result;
-        }
+        $passManager->changePasswordByKey($resetKey, $newPassword);
 
         break;
 
     default:
-        $errors['Missing Type'][] = "Type is not a valid option";
+        throw new UnknownTypeException("$type is not a valid option");
 }
-
-json_response($errors, false);

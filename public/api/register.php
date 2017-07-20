@@ -7,6 +7,7 @@ $user = new Hacker($db);
 
 /**
  * This file handles user registration
+ * TODO: REFACTOR AS STUB
  */
 
 /*
@@ -259,8 +260,9 @@ $columnValues = implode(", ", array_keys($preparedPairs));
 //TODO: Get to work on the validation controller
 //TODO: Get to work on the email queue
 
-$columnNames = "($columnNames, date_created)";
-$columnValues = "($columnValues, UNIX_TIMESTAMP())";
+//To make sure validation doesn't fail because 0 ends up evaluating to false, we set the reset timestamp to the current time
+$columnNames = "($columnNames, date_created, pass_reset_time)";
+$columnValues = "($columnValues, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())";
 
 $newUserSQL = "INSERT INTO hackers $columnNames VALUES $columnValues";
 

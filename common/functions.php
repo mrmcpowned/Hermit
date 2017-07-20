@@ -84,7 +84,7 @@ function codeToMessage($code) {
  * @param array $errors
 
  */
-function json_response($errors = [], $checkIfEmpty = true){
+function json_response($errors = [], $returnOnEmpty = true){
     $response = [
         "success" => false,
         "errors" => $errors
@@ -96,7 +96,7 @@ function json_response($errors = [], $checkIfEmpty = true){
      * For a final response check, we set this to false to respect the possibility of an empty errors array, which
      * signifies a successful response.
      */
-    if($checkIfEmpty){
+    if($returnOnEmpty){
         if(empty($errors)){
             return;
         }
@@ -181,7 +181,7 @@ function validate_array($inputArray, $configArray, &$errorsArray){
         //Validate via filter for any items that are set to validate
         if(isset($configArray[$key]['validate'])){
             if(!filter_var($inputArray[$key], $configArray[$key]['validate']))
-                $errorsArray['Validation'][] = "Field '$fieldName' is invalidly formatted.";
+                $errorsArray['Validation'][] = "Field '$fieldName' is improperly formatted.";
         }
     }
 }

@@ -83,4 +83,9 @@ class Hacker extends User
         session_start();
     }
 
+    public function getEmail()
+    {
+        return $this->userInfo['email'];
+    }
+
 }

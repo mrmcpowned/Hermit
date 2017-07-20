@@ -1,15 +1,7 @@
 <?php
 
-require_once "../../common/config.php";
-require_once "../../common/functions.php";
-
-$user = new Hacker($db);
-
 /**
- * Created by PhpStorm.
- * User: mrmcp
- * Date: 6/20/2017
- * Time: 1:18 AM
+ * FULLY REFACTORED AS STUB
  */
 
 //Update current user's information
@@ -24,7 +16,7 @@ $user = new Hacker($db);
  */
 
 //There's no password changing here because password changing and resetting will be done from the same controller
-$acceptableFields = [
+/*$acceptableFields = [
     "shirt_size" => [
         "filter" => [FILTER_SANITIZE_NUMBER_INT],
         "name" => "Shirt Size",
@@ -52,75 +44,48 @@ $acceptableFields = [
             "max" => 500
         ]
     ]
-];
+];*/
 
-
-if (!isset($_POST))
-    die;
-
-header("Content-Type: application/json");
-
-$errors = [];
-
+//Here we build our validation array from fields already defined for the site
+$acceptableFields = [];
+$acceptableFields['shirt_size'] = Site::$registrationFields['shirt_size'];
+$acceptableFields['diet_restrictions'] = Site::$registrationFields['diet_restrictions'];
+$acceptableFields['diet_other'] = Site::$registrationFields['diet_other'];
+$acceptableFields['pass'] = Site::$registrationFields['pass'];
 
 if(!$user->isLoggedIn()){
-    $errors['Unauthorized'][] = "Not currently logged in";
+    throw new UnauthenticatedException("You are currently not logged in");
 }
 
 //All update requests REQUIRE a current password to be sent
-if (!isset($_POST['curr_pass'])) {
-    $errors['Missing Fields'][] = "Current password is missing";
-    json_response($errors);
+if (empty($_POST['curr_pass'])) {
+    throw new MissingFieldException("Current password is required");
 }
 //Store current pass
-$currentPass = $_POST['curr_pass'];
 
 //Go through the cleansing routine
-foreach ($_POST as $entry => $value) {
-    //First check if the option is whitelisted, and if not unset it from the post
-    if (!array_key_exists($entry, $acceptableFields)) {
-        unset($_POST[$entry]);
-        continue;
-    }
-    //Then filter the input as defined by the config array
-    if (isset($acceptableFields[$entry]['filter'])) {
-        foreach ($acceptableFields[$entry]['filter'] as $filter) {
-            if ($filter === FILTER_CALLBACK) {
-                $_POST[$entry] = filter_input(INPUT_POST, $entry, FILTER_CALLBACK, $acceptableFields[$entry]['filterOptions']);
-            } else {
-                $_POST[$entry] = filter_input(INPUT_POST, $entry, $filter);
-            }
-        }
-    }
-}
+sanitize_array($_POST, $acceptableFields);
+validate_array($_POST, $acceptableFields, $errors);
+json_response($errors);
+
+$currentPass = $_POST['curr_pass'];
+unset($_POST['curr_pass']);
 
 //after filtering, if the POST is empty, error our
 if (empty($_POST)) {
-    $errors['Missing Fields'][] = "Please submit at least 1 field to update";
+    throw new MissingFieldException("Please submit at least 1 field to update");
 }
-
-try {
-    $getPassQuery = $db->prepare("SELECT pass FROM hackers WHERE sid = :sid");
-    $userSID = $user->getSID();
-    $getPassQuery->bindParam(":sid", $userSID);
-    if (!$getPassQuery->execute()) {
-        $errors['Database Error'][] = $getPassQuery->errorInfo();
-    }
-    $dbPass = $getPassQuery->fetchColumn();
-} catch (Exception $e) {
-    $errors['Database Error'][] = $e->getMessage();
-}
-json_response($errors);
 
 //Check if passwords match
-if (!password_verify($currentPass, $dbPass)) {
-    $errors['Password Error'][] = "The password entered does not match the current password";
-    json_response($errors);
+if ($user->isPasswordCorrect($currentPass)) {
+    throw new IncorrectPasswordException("The password entered does not match the current password");
 }
 
-//now update the given fields in the database
-//first generate query
+$userSID = $user->getSID();
 
+//now update the given fields in the database
+
+//Generate query
 //First we have to prepare the values
 $preparedPairs = [];
 $sqlSets = [];
@@ -132,24 +97,16 @@ foreach ($_POST as $key => $value) {
     $sqlSets[] = "$key = :$key";
 }
 
-$preparedPairs[':pass'] = $dbPass;
 $preparedPairs[':sid'] = $userSID;
 
 $setStatement = implode(", ", $sqlSets);
-$sql = "UPDATE hackers SET $setStatement WHERE sid = :sid AND pass = :pass";
+$sql = "UPDATE hackers SET $setStatement WHERE sid = :sid";
 
 //Prepare the SQL statement
-try {
-    $updateQuery = $db->prepare($sql);
-    if (!$updateQuery->execute($preparedPairs)) {
-        throw new Exception($updateQuery->errorInfo());
-    }
-    if ($updateQuery->rowCount() < 1){
-        throw new Exception("No user found");
-    }
-} catch (Exception $e) {
-    $errors['Database Error'][] = $e->getMessage();
+$updateQuery = $db->prepare($sql);
+if (!$updateQuery->execute($preparedPairs)) {
+    throw new DatabaseErrorException($updateQuery->errorInfo());
 }
-
-//Finally send a response
-json_response($errors, false);
+if ($updateQuery->rowCount() < 1){
+    throw new UnknownUserException("No user found");
+}
