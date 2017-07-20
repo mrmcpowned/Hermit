@@ -138,7 +138,7 @@ try {
     if(!$userQuery->execute())
         $errors['Database Error'][] = $userQuery->errorInfo();
 
-    $queryResult = $userQuery->fetchColumn(0);
+    $queryResult = $userQuery->fetchColumn();
     if($queryResult > 0)
         $errors['Email'][] = "That email already exists in our system";
 } catch (Exception $e) {
@@ -226,7 +226,7 @@ try {
     if (!$codeCheckQuery->execute())
         $errors['Database Error'][] = $codeCheckQuery->errorInfo();
 
-    $queryResult = $codeCheckQuery->fetchColumn(0);
+    $queryResult = $codeCheckQuery->fetchColumn();
     if ($queryResult > 0)
         $checkInCode = generateAlphaCode(5);
 } catch (Exception $e) {

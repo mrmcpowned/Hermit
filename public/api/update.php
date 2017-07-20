@@ -65,7 +65,7 @@ $errors = [];
 
 
 if(!$user->isLoggedIn()){
-    $errors['Unauthorized'][] = "Only logged in users can access this endpoint";
+    $errors['Unauthorized'][] = "Not currently logged in";
 }
 
 //All update requests REQUIRE a current password to be sent
@@ -107,18 +107,11 @@ try {
     if (!$getPassQuery->execute()) {
         $errors['Database Error'][] = $getPassQuery->errorInfo();
     }
-    $dbPass = $getPassQuery->fetchColumn(0);
+    $dbPass = $getPassQuery->fetchColumn();
 } catch (Exception $e) {
     $errors['Database Error'][] = $e->getMessage();
 }
-
 json_response($errors);
-
-//If the result is 0 rows, error out
-if ($getPassQuery->rowCount() < 1) {
-    $errors['Session Error'][] = "Session expired, please login again";
-    json_response($errors);
-}
 
 //Check if passwords match
 if (!password_verify($currentPass, $dbPass)) {

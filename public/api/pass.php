@@ -88,11 +88,11 @@ switch ($type) {
             if (!$query->execute())
                 throw new Exception($query->errorInfo());
             //If the email is incorrect then we get back no results
-            if($query->rowCount() < 1){
+            if(!$result = $query->fetchColumn()){
                 $errors['Incorrect Email'][] = "There is no user with that email address";
                 break;
             }
-            if (!$passManager->isPastRequestCooldown($query->fetchColumn(0))){
+            if (!$passManager->isPastRequestCooldown($result)){
                 $errors['Reset Cooldown'][] = "Please wait a while before initiating another reset";
                 break;
             }

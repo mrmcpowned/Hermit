@@ -98,7 +98,7 @@ class PasswordManager
             if (!$query->execute()) {
                 throw new Exception('Key is invalid');
             }
-            $resetTime = $query->fetchColumn(0);
+            $resetTime = $query->fetchColumn();
         } catch (Exception $e) {
             return "Error executing SQL: " . $e->getMessage();
         }
