@@ -108,6 +108,4 @@ abstract class User
         return password_verify($givenPassword, $this->passHash);
     }
 
-    protected abstract function hasSessionChanged();
-
 }

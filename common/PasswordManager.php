@@ -80,7 +80,7 @@ class PasswordManager
         $this->db = $db;
         $this->currentUser = $currentUser;
         $this->userInfo = $currentUser->getUserInfo();
-        $this->managementFields['email'] = Site::$requiredRegistrationFields['email'];
+        $this->managementFields['email'] = Site::$registrationFields['email'];
     }
 
     public function isWithinWindow($unixTime)
