@@ -4,6 +4,12 @@ require_once '../../common/config.php';
 
 /**
  * This file wraps all the other endpoint stubs to allow for a simpler method of generating a json response
+ *
+ * This way the stubs themselves can exist in a non-public directory
+ *
+ * Accessing this page would look like the following:
+ *  http://shellhacks.net/api/request-wrapper.php?type=registration
+ *
  */
 
 //Only allow post requests
@@ -21,7 +27,7 @@ try {
 
     $user = new Hacker($db);
 
-    if (! @include_once "$fileName.php")
+    if (! @include_once "../../common/endpoints/public/$fileName.php")
         throw new Exception("Requested endpoint does not exist");
 
 } catch (PDOException $e) {

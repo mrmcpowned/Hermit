@@ -163,6 +163,7 @@ if(isset($_FILES['resume'])){
     $newName .= "." . $fileInfo['extension'];
 
     $success = move_uploaded_file($resume["tmp_name"],
+        //Funnily enough, this location is relative to the calling script, and not the location of this one
         "../../common/resumes/" . $newName);
     if (!$success){
         throw new Exception("Error saving file to directory");
