@@ -211,23 +211,46 @@ class Site
      * @var array Associative array holding the site's settings
      */
     private $settings;
+    private $schools;
+    private $validEmails;
 
     /**
      * Site constructor.
+     * @param PDO $db
      */
-    public function __construct($db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
-//        $this->setUp();
     }
 
     private function setUp(){
-        $this->db;
+
+        $sql = "SELECT * FROM site_settings";
+
     }
 
     public function getValidEmails()
     {
+        if($this->validEmails != null)
+            return $this->validEmails;
+
+        $query = $this->db->prepare();
+
+
         return ['.edu', 'mymdc.net'];
+    }
+
+    public function getSchools(){
+        if($this->schools != null)
+            return $this->schools;
+
+        $sql = "SELECT * FROM schools";
+        $query = $this->db->query($sql);
+        //We do this to create an array whose indices are the IDs of the schools
+        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+            $this->schools[$row['id']] = $row['name'];
+        }
+        return $this->schools;
     }
 
     public function isAcceptingRegistrations()
