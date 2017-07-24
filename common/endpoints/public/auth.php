@@ -78,7 +78,7 @@ if (!password_verify($pass, $result['pass'])) {
     throw new Exception("Password is incorrect");
 }
 
-$sql = "UPDATE hackers SET sid = :session, current_ip = :current_ip WHERE id=:user";
+$sql = "UPDATE hackers SET sid = :session, current_ip = :current_ip, last_login_time = UNIX_TIMESTAMP() WHERE id=:user";
 $userSID = generateSID();
 $query = $db->prepare($sql);
 $query->bindParam(":user", $result['id']);
