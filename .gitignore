@@ -1,0 +1,5 @@
+.idea/
+common/config.php
+common/resumes/*
+vendor/
+
