@@ -48,8 +48,12 @@ try {
     $errors['Unauthenticated'][] = $e->getMessage();
 } catch (CooldownException $e){
     $errors['Request Cooldown'][] = $e->getMessage();
-} catch (CaptchaException $e){
+} catch (CaptchaException $e) {
     $errors['Captcha Error'][] = $e->getMessage();
+} catch (EmailException $e) {
+    $errors['Email Error'][] = $e->getMessage();
+} catch (ResumeException $e) {
+    $errors['Resume Error'][] = $e->getMessage();
 } catch (Exception $e){
     $errors['General Error'][] = $e->getMessage();
 }
