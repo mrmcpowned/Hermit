@@ -22,14 +22,12 @@ class Hacker extends User
             $this->userSetup();
         $this->sessionCheck();
         $this->extendSession();
-
-
     }
 
     /**
      * Sets up a logged in user by storing user details in an associative array
      */
-    private function userSetup()
+    protected function userSetup()
     {
         $sql = "SELECT * FROM hackers WHERE sid = :sid";
 
@@ -49,7 +47,6 @@ class Hacker extends User
         $this->passHash = $this->userInfo['pass'];
         //We have to do some cleanup here so we don't accidentally expose any unwanted columns
         unset($this->userInfo['pass']);
-        unset($this->userInfo['id']);
         unset($this->userInfo['sid']);
 
     }
@@ -63,6 +60,8 @@ class Hacker extends User
     {
         return $this->userInfo['l_name'];
     }
+
+
 
     /**
      * Logs out the currently logged in user
@@ -86,6 +85,10 @@ class Hacker extends User
     public function getEmail()
     {
         return $this->userInfo['email'];
+    }
+
+    public function isVerified(){
+        return $this->userInfo['is_email_confrmed'] == 1;
     }
 
 }
