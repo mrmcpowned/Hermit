@@ -88,7 +88,7 @@ class Hacker extends User
     }
 
     public function isVerified(){
-        return $this->userInfo['is_email_confrmed'] == 1;
+        return filter_var($this->userInfo['is_email_confirmed'], FILTER_VALIDATE_BOOLEAN);
     }
 
 }
