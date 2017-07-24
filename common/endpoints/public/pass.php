@@ -2,13 +2,6 @@
 
 $passManager = new PasswordManager($db, $user);
 
-//This interface acts as a pseudo enum
-interface VerificationType{
-    const FORGOT = 0;
-    const CHANGE = 1;
-    const RESET = 2;
-}
-
 /**
  * This page handles PASSWORD RESETS
  * Password Resets can happen 2 ways:
