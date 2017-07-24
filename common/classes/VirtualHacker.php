@@ -16,6 +16,7 @@ class VirtualHacker extends Hacker
 
     protected function userSetup()
     {
+
         $sql = "SELECT * FROM hackers WHERE id = :id";
         $query = $this->db->prepare($sql);
         $query->bindParam(":id", $this->userID);
@@ -26,6 +27,7 @@ class VirtualHacker extends Hacker
 
         unset($this->userInfo['pass']);
         unset($this->userInfo['sid']);
+
     }
 
 }
