@@ -6,7 +6,7 @@
  * Date: 7/20/2017
  * Time: 7:35 PM
  */
-class ResumeEsception extends Exception
+class ResumeException extends Exception
 {
 
     /**

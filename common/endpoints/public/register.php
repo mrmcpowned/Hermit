@@ -43,16 +43,16 @@ $requiredFields = Site::$requiredRegistrationFields;
 
 
 //Check if we're NOT accepting registrations OR walk-ins
-if($user->isLoggedIn())
+if ($user->isLoggedIn())
     throw new RegistrationException("You're already registered");
 
-if(!($site->isAcceptingRegistrations() OR $site->isAcceptingWalkIns()))
+if (!($site->isAcceptingRegistrations() OR $site->isAcceptingWalkIns()))
     throw new RegistrationException("Sorry, registrations are currently closed");
 
 //Check captcha
 $response = $_POST['g-recaptcha-response'];
 
-if(!recaptcha_verify($response, RECAPTCHA_SECRET)){
+if (!recaptcha_verify($response, RECAPTCHA_SECRET)) {
     throw new CaptchaException("Captcha failed to verify");
 }
 
@@ -63,16 +63,16 @@ sanitize_array($_POST, $acceptableFields);
 $missing = missing_fields($requiredFields, $_POST, $acceptableFields);
 
 //If our set of missing fields is greater than zero, then we're missing fields...
-if(count($missing) > 0){
+if (count($missing) > 0) {
 
     //Check which specific required fields are missing
-    foreach($missing as $field){
+    foreach ($missing as $field) {
         throw new MissingFieldException("Field '" . $field['name'] . "' is missing");
     }
 }
 
 //Make sure users accept the MLH terms of service
-if(!$_POST['mlh_accept'])
+if (!$_POST['mlh_accept'])
     throw new MissingFieldException("Please accept the MLH Code of Conduct");
 
 //We only check if the user has accepted, saving this response is of no real value
@@ -84,13 +84,13 @@ json_response($errors);
 
 //If the email does not end with one of the whitelisted domains, throw an error
 $found = false;
-foreach($site->getValidEmails() as $address){
-    if(endswith($_POST['email'], $address)) {
+foreach ($site->getValidEmails() as $address) {
+    if (endswith($_POST['email'], $address)) {
         $found = true;
         break;
     }
 }
-if(!$found)
+if (!$found)
     throw new EmailException("The email address you entered is not in the list of whitelisted domains");
 
 //No need to run a query if it's not an acceptable email
@@ -105,18 +105,17 @@ json_response($errors);
 
 $userQuery = $db->prepare("SELECT COUNT(*) FROM hackers WHERE email = :email");
 $userQuery->bindValue(":email", $_POST['email']);
-if(!$userQuery->execute())
+if (!$userQuery->execute())
     throw new DatabaseErrorException($userQuery->errorInfo());
 
 $queryResult = $userQuery->fetchColumn();
-if($queryResult > 0)
+if ($queryResult > 0)
     throw new EmailException("That email already exists in our system");
 
 /*
  * By now, all text data is sanitized and validated
  * Next, we have to validate the resume upload and check if the email is in the database
  */
-
 
 
 //Resume file check
@@ -127,32 +126,32 @@ if($queryResult > 0)
  * - Required if it's a walk-in
  */
 //We don't require resumes from walk-ins
-if(!isset($_FILES['resume']) AND !$site->isAcceptingWalkIns()){
-    throw new ResumeEsception("A resume is required");
+if (!isset($_FILES['resume']) AND !$site->isAcceptingWalkIns()) {
+    throw new ResumeException("A resume is required");
 }
 
-if(isset($_FILES['resume'])){
+if (isset($_FILES['resume'])) {
 
     $resume = $_FILES['resume'];
 
     //We shouldn't be having more than 1 file uploaded
-    if(count($resume['name']) > 1){
-        throw new ResumeEsception("Please only upload 1 file");
+    if (count($resume['name']) > 1) {
+        throw new ResumeException("Please only upload 1 file");
     }
 
     //If PHP has an upload error, respect it
-    if($resume['error'] !== UPLOAD_ERR_OK){
-        throw new ResumeEsception(codeToMessage($resume['error']));
+    if ($resume['error'] !== UPLOAD_ERR_OK) {
+        throw new ResumeException(codeToMessage($resume['error']));
     }
 
     //If file is not of the acceptable type, throw an error
-    if(!is_acceptable_file_type($resume['type'])){
-        throw new ResumeEsception("Resume is not in one of the acceptable file formats");
+    if (!is_acceptable_file_type($resume['type'])) {
+        throw new ResumeException("Resume is not in one of the acceptable file formats");
     }
 
     //If size is greater than 2MB, error
-    if($resume['size'] > 2000000){
-        throw new ResumeEsception("Resume is larger than 2MB. Please upload a smaller file");
+    if ($resume['size'] > 2000000) {
+        throw new ResumeException("Resume is larger than 2MB. Please upload a smaller file");
     }
 
     //Now prep the file for move
@@ -165,7 +164,7 @@ if(isset($_FILES['resume'])){
     $success = move_uploaded_file($resume["tmp_name"],
         //Funnily enough, this location is relative to the calling script, and not the location of this one
         "../../common/resumes/" . $newName);
-    if (!$success){
+    if (!$success) {
         throw new Exception("Error saving file to directory");
     }
 
@@ -204,7 +203,7 @@ $_POST['pass'] = password_hash($_POST['pass'], PASSWORD_DEFAULT);
 //First we have to prepare the values
 $preparedPairs = [];
 
-foreach ($_POST as $key => $value){
+foreach ($_POST as $key => $value) {
     $preparedKey = ":$key";
     $preparedPairs[$preparedKey] = $value;
 }
@@ -217,13 +216,13 @@ $columnValues = implode(", ", array_keys($preparedPairs));
 //TODO: Get to work on the email queue
 
 //To make sure validation doesn't fail because 0 ends up evaluating to false, we set the reset timestamp to the current time
-$columnNames = "($columnNames, date_created, pass_reset_time)";
-$columnValues = "($columnValues, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())";
+$columnNames = "($columnNames, date_created, pass_reset_time, email_verify_time)";
+$columnValues = "($columnValues, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), UNIX_TIMESTAMP())";
 
 $newUserSQL = "INSERT INTO hackers $columnNames VALUES $columnValues";
 
 //DONE: Do what's below with the other query
 $newUserQuery = $db->prepare($newUserSQL);
-if(!$newUserQuery->execute($preparedPairs))
+if (!$newUserQuery->execute($preparedPairs))
     throw new Exception($newUserQuery->errorInfo());
 http_response_code(201);
