@@ -41,7 +41,7 @@ class EmailVerify
         $verifyTime = $query->fetchColumn();
         //If no users were returned, then the $verifyTime is false
         if (!$verifyTime) {
-            throw new UnknownKeyException("Verification key is invalid");
+            throw new UnknownKeyException("Verification key is invalid or user is already verified");
         }
         return $verifyTime;
     }
