@@ -6,20 +6,20 @@
 class VirtualHacker extends Hacker
 {
 
-    private $userID;
+    private $uniqueID;
 
-    public function __construct(PDO $dbPDO, $userID)
+    protected $userSelectSQL = "SELECT * FROM hackers WHERE id = :id";
+
+    public function __construct(PDO $dbPDO, $uniqueID)
     {
-        $this->userID = $userID;
+        $this->uniqueID = $uniqueID;
         $this->userSetup();
     }
 
     protected function userSetup()
     {
-
-        $sql = "SELECT * FROM hackers WHERE id = :id";
-        $query = $this->db->prepare($sql);
-        $query->bindParam(":id", $this->userID);
+        $query = $this->db->prepare($this->userSelectSQL);
+        $query->bindParam(":id", $this->uniqueID);
 
         $query->execute();
 
