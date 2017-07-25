@@ -203,6 +203,12 @@ $_POST['pass'] = password_hash($_POST['pass'], PASSWORD_DEFAULT);
 //First we have to prepare the values
 $preparedPairs = [];
 
+//if we're accepting walkins, we mark the user as a walkin
+if($site->isAcceptingWalkIns()){
+    $_POST['is_walk_in'] = true;
+    $_POST['can_attend'] = true;
+}
+
 foreach ($_POST as $key => $value) {
     $preparedKey = ":$key";
     $preparedPairs[$preparedKey] = $value;
@@ -212,7 +218,7 @@ $columnNames = implode(", ", array_keys($_POST));
 $columnValues = implode(", ", array_keys($preparedPairs));
 
 //TODO: [IN PROGRESS] Implement the rest of the columns for new users (refer to notebook) and the email verification, timestamp etc
-//TODO: Get to work on the validation controller
+//DONE: Get to work on the validation controller
 //TODO: Get to work on the email queue
 
 //To make sure validation doesn't fail because 0 ends up evaluating to false, we set the reset timestamp to the current time
@@ -225,4 +231,10 @@ $newUserSQL = "INSERT INTO hackers $columnNames VALUES $columnValues";
 $newUserQuery = $db->prepare($newUserSQL);
 if (!$newUserQuery->execute($preparedPairs))
     throw new Exception($newUserQuery->errorInfo());
+
+if(!!$site->isAcceptingWalkIns()) {
+    $mailer = new Mailer($db);
+    $mailer->queueMail($_POST['email'], "Please verify your email address for ShellHacks",
+        $mailer->generateHTML("email-test.html.twig", ["user" => ["firstName" => $_POST['f_name']], "key" => $_POST['email_vid']]));
+}
 http_response_code(201);
