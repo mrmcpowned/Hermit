@@ -20,5 +20,6 @@ session_start();
 
 require_once "functions.php";
 require_once "classes/Autoloader.php";
+require_once __DIR__ . "/../vendor/autoload.php";
 
 $site = new Site($db);
