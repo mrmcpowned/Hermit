@@ -134,15 +134,11 @@ class Hacker extends User
     public function isAccepted()
     {
         switch ($this->getState()){
-//            var_dump()
-            case RegistrationState::DENIED:
-            case RegistrationState::REJECTED:
-            case RegistrationState::UNVERIFIED:
-            case RegistrationState::REGISTERED:
-                return false;
+            case RegistrationState::ACCEPTED:
+                return true;
 
             default:
-                return true;
+                return false;
         }
     }
 
