@@ -1,5 +1,6 @@
 .idea/
-common/config.php
+common/constants.php
 common/resumes/*
 vendor/
 
+!/common/config.php
