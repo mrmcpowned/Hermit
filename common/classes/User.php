@@ -66,6 +66,8 @@ abstract class User
 
     public function destroySession()
     {
+        $this->userInfo = null;
+        $this->passHash = null;
         session_unset();
         session_destroy();
     }
