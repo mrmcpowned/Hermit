@@ -92,7 +92,7 @@ class Mailer
     
     public function generateHTML($template, $context)
     {
-        $loader = new Twig_Loader_Filesystem(__DIR__ . '/../../templates/email/');
+        $loader = new Twig_Loader_Filesystem(EMAIL_TEMPLATES_PATH);
         $twig = new Twig_Environment($loader);
 
         return $twig->render($template, $context);
