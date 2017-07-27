@@ -50,16 +50,6 @@ class Hacker extends User
 
     }
 
-    public function getFirstName()
-    {
-        return $this->userInfo['f_name'];
-    }
-
-    public function getLastName()
-    {
-        return $this->userInfo['l_name'];
-    }
-
     /**
      * Logs out the currently logged in user
      *
@@ -77,6 +67,16 @@ class Hacker extends User
         $query->execute();
         $this->destroySession();
         session_start();
+    }
+
+    public function getFirstName()
+    {
+        return $this->userInfo['f_name'];
+    }
+
+    public function getLastName()
+    {
+        return $this->userInfo['l_name'];
     }
 
     public function getEmail()
