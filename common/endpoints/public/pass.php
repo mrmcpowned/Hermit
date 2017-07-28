@@ -1,6 +1,7 @@
 <?php
 
 $passManager = new PasswordManager($db, $user);
+$mailer = new Mailer($db);
 
 /**
  * This page handles PASSWORD RESETS
@@ -42,7 +43,7 @@ $type = $_POST['change_type'];
 //Batch processes like these shouldn't throw exceptions so users have greater detail into what's wrong with their input
 sanitize_array($_POST, $passManager->getManagementFields());
 validate_array($_POST, $passManager->getManagementFields(), $errors);
-json_response($errors);
+json_response($response);
 
 
 //It's time to ... SWITCH! *Nintendo Switch click noise*
@@ -74,7 +75,9 @@ switch ($type) {
         //Lets assume for now we have a working mailer
         //TODO: Send to mail queue table
 
-        $errors['Success'][] = $resetKey;
+        $mailer->queueMail($email, "Reset Forgotten Password",
+            $mailer->generateHTML("forgot.html.twig", ["key" => $resetKey]
+        ));
 
         break;
     //DONE: Complete code for changing password with current password
