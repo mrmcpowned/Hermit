@@ -2,7 +2,7 @@
 
 /**
  * This file handles user registration
- * TODO: REFACTOR AS STUB
+ * DONE: REFACTOR AS STUB
  */
 
 /*
@@ -46,15 +46,15 @@ $requiredFields = Site::$requiredRegistrationFields;
 if ($user->isLoggedIn())
     throw new RegistrationException("You're already registered");
 
-if (!($site->isAcceptingRegistrations() OR $site->isAcceptingWalkIns()))
+if (!($site->isAcceptingRegistrations() || $site->isAcceptingWalkIns()))
     throw new RegistrationException("Sorry, registrations are currently closed");
 
 //Check captcha
-$response = $_POST['g-recaptcha-response'];
-
-if (!recaptcha_verify($response, RECAPTCHA_SECRET)) {
-    throw new CaptchaException("Captcha failed to verify");
-}
+//$response = $_POST['g-recaptcha-response'];
+//
+//if (!recaptcha_verify($response, RECAPTCHA_SECRET)) {
+//    throw new CaptchaException("Captcha failed to verify");
+//}
 
 //Sanitize all inputs
 sanitize_array($_POST, $acceptableFields);
@@ -80,7 +80,7 @@ unset($_POST['mlh_accept']);
 
 //By now we have all our required fields, now we need to make sure all fields are following length and value checks
 validate_array($_POST, $acceptableFields, $errors);
-json_response($errors);
+json_response($response);
 
 //If the email does not end with one of the whitelisted domains, throw an error
 $found = false;
@@ -94,7 +94,7 @@ if (!$found)
     throw new EmailException("The email address you entered is not in the list of whitelisted domains");
 
 //No need to run a query if it's not an acceptable email
-json_response($errors);
+json_response($response);
 
 //Check if there are any errors so far, and if so, execute a response
 
@@ -161,13 +161,6 @@ if (isset($_FILES['resume'])) {
     $newName = filter_var($newName, FILTER_SANITIZE_URL);
     $newName .= "." . $fileInfo['extension'];
 
-    $success = move_uploaded_file($resume["tmp_name"],
-        //Funnily enough, this location is relative to the calling script, and not the location of this one
-        "../../common/resumes/" . $newName);
-    if (!$success) {
-        throw new Exception("Error saving file to directory");
-    }
-
     $_POST['resume'] = $newName;
 }
 
@@ -200,14 +193,14 @@ $_POST['pass'] = password_hash($_POST['pass'], PASSWORD_DEFAULT);
 
 //DONE: Work on SQL query with all items as placeholders and fill in those that are optional using an array of binds
 
-//First we have to prepare the values
-$preparedPairs = [];
-
 //if we're accepting walkins, we mark the user as a walkin
-if($site->isAcceptingWalkIns()){
+if ($site->isAcceptingWalkIns()) {
     $_POST['is_walk_in'] = true;
     $_POST['can_attend'] = true;
 }
+
+//First we have to prepare the values
+$preparedPairs = [];
 
 foreach ($_POST as $key => $value) {
     $preparedKey = ":$key";
@@ -230,11 +223,23 @@ $newUserSQL = "INSERT INTO hackers $columnNames VALUES $columnValues";
 //DONE: Do what's below with the other query
 $newUserQuery = $db->prepare($newUserSQL);
 if (!$newUserQuery->execute($preparedPairs))
-    throw new Exception($newUserQuery->errorInfo());
+    throw new DatabaseErrorException($newUserQuery->errorInfo());
 
-if(!!$site->isAcceptingWalkIns()) {
+//We don't send emails to walk-ins since the attendance flag is already set
+if (!$site->isAcceptingWalkIns()) {
+
+    //We also don't accept resumes from walk-ins either, so this should only execute otherwise
+    $success = move_uploaded_file($resume["tmp_name"], RESUME_PATH . $newName);
+    if (!$success) {
+        throw new ResumeException("Error saving file to directory");
+    }
+
     $mailer = new Mailer($db);
+    $context["user"]["firstName"] = $_POST['f_name'];
+    $context["key"] = $_POST['email_vid'];
+
     $mailer->queueMail($_POST['email'], "Please verify your email address for ShellHacks",
-        $mailer->generateHTML("email-test.html.twig", ["user" => ["firstName" => $_POST['f_name']], "key" => $_POST['email_vid']]));
+        $mailer->generateHTML("verify.html.twig", $context)
+    );
 }
 http_response_code(201);
