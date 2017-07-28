@@ -10,6 +10,7 @@
  */
 
 $emailVerifier = new EmailVerify($db);
+$mailer = new Mailer($db);
 
 $allowedFields = [
     "action",
@@ -18,6 +19,10 @@ $allowedFields = [
 
 if (!isset($_POST['type'])) {
     throw new MissingFieldException("Action field is missing");
+}
+
+if(!$site->isAcceptingRegistrations()){
+    throw new RegistrationException("Registration is closed");
 }
 
 $type = $_POST['type'];
@@ -61,7 +66,11 @@ switch ($type) {
 
 //        $errors['Success'][] = $newKey;
 
-        //TODO: Email new key
+        //DONE: Email new key
+
+        $mailer->queueMail($user->getEmail(), "Please verify your email address for ShellHacks",
+            $mailer->generateHTML("verify.html.twig", ["key" => $newKey])
+        );
 
         break;
 
