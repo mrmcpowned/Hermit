@@ -84,12 +84,84 @@ class Hacker extends User
         return $this->userInfo['email'];
     }
 
+    public function getAge()
+    {
+        return $this->userInfo['age'];
+    }
+
+    //TODO: Add a getter for the label
+    public function getGender()
+    {
+        return $this->userInfo['gender'];
+    }
+
+    //TODO: Add a getter for the label
+    public function getClassYear()
+    {
+        return $this->userInfo['class_year'];
+    }
+
+    //TODO: Add a getter for the label
+    public function getSchool()
+    {
+        return $this->userInfo['school'];
+    }
+
+    //TODO: Add a getter for the label
+    public function getRace()
+    {
+        return $this->userInfo['race'];
+    }
+
+    //TODO: Add a getter for the label
+    public function getState()
+    {
+        return $this->userInfo['state'];
+    }
+
+    //TODO: Add a getter for the label
+    public function getShirtSize()
+    {
+        return $this->userInfo['shirt_size'];
+    }
+
+    //TODO: Add a getter for the label
+    public function getDietRestriction()
+    {
+        return $this->userInfo['diet_restriction'];
+    }
+
+    public function getDietOther()
+    {
+        return $this->userInfo['diet_other'];
+    }
+
+    public function getGithub()
+    {
+        return $this->userInfo['github'];
+    }
+
+    public function getLinkedin()
+    {
+        return $this->userInfo['linkedin'];
+    }
+
+    public function getCheckInCode()
+    {
+        return $this->userInfo['check_in_code'];
+    }
+
+    public function isFirstHackathon()
+    {
+        return filter_var($this->userInfo['is_first_hackathon'], FILTER_VALIDATE_BOOLEAN);
+    }
+
     public function isVerified(){
         return filter_var($this->userInfo['is_email_confirmed'], FILTER_VALIDATE_BOOLEAN);
     }
 
     public function getTimeVerified(){
-        return filter_var($this->userInfo['email_verify_time']);
+        return filter_var($this->userInfo['email_verify_time'], FILTER_VALIDATE_INT);
     }
 
     public function isEntranceDenied()
@@ -106,7 +178,7 @@ class Hacker extends User
         return filter_var($this->userInfo['can_attend'], FILTER_VALIDATE_BOOLEAN);
     }
 
-    public function getState()
+    public function getRegistrationState()
     {
         //I can cheat like this in PHP and it makes me feel dirty.
         global $site;
@@ -133,7 +205,7 @@ class Hacker extends User
 
     public function isAccepted()
     {
-        switch ($this->getState()){
+        switch ($this->getRegistrationState()){
             case RegistrationState::ACCEPTED:
                 return true;
 
