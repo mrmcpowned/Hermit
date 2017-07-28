@@ -32,9 +32,9 @@ $allowedFields['email'] = Site::$registrationFields['email'];
 $allowedFields['pass'] = Site::$registrationFields['pass'];
 
 //Go through the captcha check
-$response = $_POST['g-recaptcha-response'];
+$captchaResponse = $_POST['g-recaptcha-response'];
 
-if(!recaptcha_verify($response, RECAPTCHA_SECRET)){
+if(!recaptcha_verify($captchaResponse, RECAPTCHA_SECRET)){
     throw new CaptchaException("Captcha failed to verify");
 }
 
@@ -49,7 +49,7 @@ if(!isset($_POST['pass'])){
     throw new MissingFieldException("Password is missing");
 }
 validate_array($_POST, $allowedFields, $errors);
-json_response($errors);
+json_response($response);
 
 //Validate
 
