@@ -19,11 +19,8 @@ foreach ($mailer->getEmails() as $email){
         $mailer->sendMail($email['email'], $email['subject'], $email['message']);
         //Set to SENT
         $mailer->setMessageStatus($email['id'], 3);
-    } catch (MailerException $e){
+    } catch (Exception $e){
         //Set to FAILED
         $mailer->setMessageStatus($email['id'], 4, $e->getMessage());
     }
 }
-
-
-echo "Done at " . time();
