@@ -36,7 +36,7 @@ class Site
         "state",
         "shirt_size",
         "is_first_hackathon",
-        "diet_restrictions",
+        "diet_restriction",
         "mlh_accept"
     ];
 
@@ -152,7 +152,7 @@ class Site
                 "max" => 1
             ]
         ], //Normalize - DONE
-        "diet_restrictions" => [
+        "diet_restriction" => [
             "filter" => [FILTER_SANITIZE_NUMBER_INT],
             "name" => "Dietary Restrictions",
             "length" => [
@@ -213,6 +213,9 @@ class Site
     private $settings;
     private $schools;
     private $validEmails;
+    private $genders;
+    private $states;
+    private $shirtSizes;
 
     /**
      * Site constructor.
@@ -221,27 +224,34 @@ class Site
     public function __construct(PDO $db)
     {
         $this->db = $db;
+        $this->setUp();
     }
 
     private function setUp(){
 
+        $this->settings = [];
+
         $sql = "SELECT * FROM site_settings";
+
+        $query = $this->db->prepare($sql);
+        $query->execute();
+
+        while($row = $query->fetch()){
+            $this->settings[$row['name']] = $row['value'];
+        }
+
+        //Create an array out of the comma separated list and trim the values after
+        $this->validEmails = array_map("trim", explode(',', $this->settings['valid_emails']));
 
     }
 
     public function getValidEmails()
     {
-        if($this->validEmails != null)
-            return $this->validEmails;
-
-        $query = $this->db->prepare();
-
-
-        return ['.edu', 'mymdc.net'];
+        return $this->validEmails;
     }
 
     public function getSchools(){
-        if($this->schools != null)
+        if(!is_null($this->schools))
             return $this->schools;
 
         $sql = "SELECT * FROM schools";
@@ -253,14 +263,78 @@ class Site
         return $this->schools;
     }
 
-    public function isAcceptingRegistrations()
+    public function getGenders()
     {
-        return true;
+        if(!is_null($this->genders))
+            return $this->genders;
+
+        //Note: Could possibly move this action to its own method, but would require accounting for more than just a KV pair
+        $sql = "SELECT * FROM genders";
+        $query = $this->db->query($sql);
+        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+            $this->genders[$row['id']] = $row['name'];
+        }
+        return $this->genders;
+
     }
 
+    public function getStates()
+    {
+        if(!is_null($this->states))
+            return $this->states;
+
+        $sql = "SELECT * FROM states";
+        $query = $this->db->query($sql);
+        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+            $this->states[$row['id']] = [
+                "state" => $row['state'],
+                "name" => $row['name']
+            ];
+        }
+        return $this->states;
+    }
+
+    public function getShirtSizes()
+    {
+        if(!is_null($this->shirtSizes))
+            return $this->shirtSizes;
+
+        $sql = "SELECT * FROM shirt_sizes";
+        $query = $this->db->query($sql);
+        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+            $this->shirtSizes[$row['id']] = $row['shirt_size'];
+        }
+        return $this->shirtSizes;
+    }
+
+
+    //TODO: Get from DB
+    public function getRegistrationOpenTime()
+    {
+        return filter_var($this->settings['reg_open'], FILTER_VALIDATE_INT);
+    }
+
+    //TODO: Get from DB
+    public function getRegistrationCloseTime()
+    {
+        return filter_var($this->settings['reg_close'], FILTER_VALIDATE_INT);
+    }
+
+    public function isAcceptingRegistrations()
+    {
+        $now = time();
+        return ($this->isWithinRegistrationWindow($now));
+    }
+
+    public function isWithinRegistrationWindow($time)
+    {
+        return ($time < $this->getRegistrationCloseTime() && $time > $this->getRegistrationOpenTime());
+    }
+
+    //TODO: Get from DB
     public function isAcceptingWalkIns()
     {
-        return false;
+        return filter_var($this->settings['walk_ins'], FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -268,7 +342,7 @@ class Site
      */
     public function getRequiredRegistrationFields()
     {
-        return Site::$requiredRegistrationFields;
+        return $this::$requiredRegistrationFields;
     }
 
     /**
@@ -276,7 +350,7 @@ class Site
      */
     public function getRegistrationFields()
     {
-        return Site::$registrationFields;
+        return $this::$registrationFields;
     }
 
 
