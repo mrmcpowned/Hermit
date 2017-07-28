@@ -1,4 +1,8 @@
 <?php
+require_once '../../common/config.php';
+
+
+
 /**
  * Created by PhpStorm.
  * User: mrmcp
