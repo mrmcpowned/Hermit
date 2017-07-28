@@ -81,13 +81,13 @@ function codeToMessage($code) {
 
 /**
  * Creates proper JSON response and ends the script
- * @param array $errors
-
+ * @param $response
+ * @param bool $returnOnEmpty
+ * @internal param array $errors
  */
-function json_response($errors = [], $returnOnEmpty = true){
-    $response = [
-        "success" => false,
-        "errors" => $errors
+function json_response($response, $returnOnEmpty = true){
+    $finalResponse = [
+        "success" => false
     ];
 
     /**
@@ -102,14 +102,16 @@ function json_response($errors = [], $returnOnEmpty = true){
         }
     }
 
-    if(!empty($errors)) {
+    if(!empty($response['errors'])) {
+        //The fact that I can easily merge arrays like this is nice.
+        $finalResponse += $response;
         http_response_code(400);
-        echo json_encode($response);
+        echo json_encode($finalResponse);
         die;
     }
 
-    $response['success'] = true;
-    echo json_encode($response);
+    $finalResponse['success'] = true;
+    echo json_encode($finalResponse);
     die;
 }
 

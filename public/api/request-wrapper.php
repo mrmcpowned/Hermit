@@ -17,6 +17,10 @@ if (!isset($_POST))
     die;
 
 $errors = [];
+$response = [
+    "errors" => &$errors,
+    "message" => []
+];
 
 header("Content-Type: application/json");
 
@@ -54,8 +58,10 @@ try {
     $errors['Email Error'][] = $e->getMessage();
 } catch (ResumeException $e) {
     $errors['Resume Error'][] = $e->getMessage();
+} catch (RegistrationException $e){
+    $errors['Registration Error'][] = $e->getMessage();
 } catch (Exception $e){
     $errors['General Error'][] = $e->getMessage();
 }
 
-json_response($errors, false);
+json_response($response, false);
