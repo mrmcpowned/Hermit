@@ -16,40 +16,10 @@
  */
 
 //There's no password changing here because password changing and resetting will be done from the same controller
-/*$acceptableFields = [
-    "shirt_size" => [
-        "filter" => [FILTER_SANITIZE_NUMBER_INT],
-        "name" => "Shirt Size",
-        "length" => [
-            "min" => 1,
-            "max" => 1
-        ]
-    ], //Normalize - DONE
-    "diet_restrictions" => [
-        "filter" => [FILTER_SANITIZE_NUMBER_INT],
-        "name" => "Dietary Restrictions",
-        "length" => [
-            "min" => 1,
-            "max" => 1
-        ]
-    ], //Normalize - IN PROGRESS
-    "diet_other" => [
-        "filter" => [FILTER_CALLBACK],
-        "filterOptions" => [
-            "options" => "strip_tags"
-        ],
-        "name" => "Diet Other",
-        "length" => [
-            "min" => 3,
-            "max" => 500
-        ]
-    ]
-];*/
-
 //Here we build our validation array from fields already defined for the site
 $acceptableFields = [];
 $acceptableFields['shirt_size'] = Site::$registrationFields['shirt_size'];
-$acceptableFields['diet_restrictions'] = Site::$registrationFields['diet_restrictions'];
+$acceptableFields['diet_restriction'] = Site::$registrationFields['diet_restriction'];
 $acceptableFields['diet_other'] = Site::$registrationFields['diet_other'];
 $acceptableFields['pass'] = Site::$registrationFields['pass'];
 
@@ -66,7 +36,7 @@ if (empty($_POST['curr_pass'])) {
 //Go through the cleansing routine
 sanitize_array($_POST, $acceptableFields);
 validate_array($_POST, $acceptableFields, $errors);
-json_response($errors);
+json_response($response);
 
 $currentPass = $_POST['curr_pass'];
 unset($_POST['curr_pass']);
