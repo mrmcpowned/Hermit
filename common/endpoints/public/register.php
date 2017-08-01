@@ -46,7 +46,8 @@ $requiredFields = Site::$requiredRegistrationFields;
 if ($user->isLoggedIn())
     throw new RegistrationException("You're already registered");
 
-if (!($site->isAcceptingRegistrations() || $site->isAcceptingWalkIns()))
+//It might seem odd here, but I want an exclusive or, since we can't accepting both walk-ins and normal registrations
+if (!($site->isAcceptingRegistrations() XOR $site->isAcceptingWalkIns()))
     throw new RegistrationException("Sorry, registrations are currently closed");
 
 //Check captcha
@@ -126,7 +127,7 @@ if ($queryResult > 0)
  * - Required if it's a walk-in
  */
 //We don't require resumes from walk-ins
-if (!isset($_FILES['resume']) AND !$site->isAcceptingWalkIns()) {
+if (!isset($_FILES['resume']) && !$site->isAcceptingWalkIns()) {
     throw new ResumeException("A resume is required");
 }
 

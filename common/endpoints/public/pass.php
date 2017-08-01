@@ -49,7 +49,7 @@ json_response($response);
 //It's time to ... SWITCH! *Nintendo Switch click noise*
 switch ($type) {
 
-    //TODO: [SEMI-DONE] Complete code for a forgotten password reset
+    //DONE: Complete code for a forgotten password reset
     case VerificationType::FORGOT:
         $email = null;
         if ($user->isLoggedIn()) {
@@ -62,9 +62,7 @@ switch ($type) {
             }
         }
         //We now have a email we need to create a key for, but we need to check if we're spamming or not
-
-
-        //TODO: Exception
+        //DONE: Exception
         if (!$passManager->isPastRequestCooldown($email))
             throw new CooldownException("Please wait a while before initiating another reset");
 
@@ -73,7 +71,7 @@ switch ($type) {
         $resetKey = $passManager->setResetKeyByEmail($email);
 
         //Lets assume for now we have a working mailer
-        //TODO: Send to mail queue table
+        //DONE: Send to mail queue table
 
         $mailer->queueMail($email, "Reset Forgotten Password",
             $mailer->generateHTML("forgot.html.twig", ["key" => $resetKey]
