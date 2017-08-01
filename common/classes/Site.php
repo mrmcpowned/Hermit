@@ -308,13 +308,13 @@ class Site
     }
 
 
-    //TODO: Get from DB
+    //DONE: Get from DB
     public function getRegistrationOpenTime()
     {
         return filter_var($this->settings['reg_open'], FILTER_VALIDATE_INT);
     }
 
-    //TODO: Get from DB
+    //DONE: Get from DB
     public function getRegistrationCloseTime()
     {
         return filter_var($this->settings['reg_close'], FILTER_VALIDATE_INT);
@@ -331,7 +331,7 @@ class Site
         return ($time < $this->getRegistrationCloseTime() && $time > $this->getRegistrationOpenTime());
     }
 
-    //TODO: Get from DB
+    //DONE: Get from DB
     public function isAcceptingWalkIns()
     {
         return filter_var($this->settings['walk_ins'], FILTER_VALIDATE_BOOLEAN);
@@ -342,7 +342,7 @@ class Site
      */
     public function getRequiredRegistrationFields()
     {
-        return $this::$requiredRegistrationFields;
+        return self::$requiredRegistrationFields;
     }
 
     /**
@@ -350,7 +350,7 @@ class Site
      */
     public function getRegistrationFields()
     {
-        return $this::$registrationFields;
+        return self::$registrationFields;
     }
 
 

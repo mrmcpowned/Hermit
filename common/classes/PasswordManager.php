@@ -164,7 +164,7 @@ class PasswordManager
     }
 
     /**
-     * Sets a password reset verification ID t
+     * Sets a password reset verification ID
      * @param $email string Email to lookup by
      * @return array|string If no errors arise, the nan array containing the key is returned, else a
      * string with the error

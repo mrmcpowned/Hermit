@@ -48,12 +48,12 @@ class EmailVerify
 
     public function isPastCooldown($verifyTime)
     {
-        return (time() - $verifyTime) >= $this::REQUEST_COOLDOWN;
+        return (time() - $verifyTime) >= self::REQUEST_COOLDOWN;
     }
 
     public function isWithinWindow($verifyTime)
     {
-        return (time() - $verifyTime) <= $this::EXPIRE_TIME;
+        return (time() - $verifyTime) <= self::EXPIRE_TIME;
     }
 
     public function verifyEmail($key)
