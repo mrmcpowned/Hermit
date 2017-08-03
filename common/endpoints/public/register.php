@@ -226,14 +226,14 @@ $newUserQuery = $db->prepare($newUserSQL);
 if (!$newUserQuery->execute($preparedPairs))
     throw new DatabaseErrorException($newUserQuery->errorInfo());
 
+//Now we move the uploaded file to the proper directory
+$success = move_uploaded_file($resume["tmp_name"], RESUME_PATH . $newName);
+if (!$success) {
+    throw new ResumeException("Error saving file to directory");
+}
+
 //We don't send emails to walk-ins since the attendance flag is already set
 if (!$site->isAcceptingWalkIns()) {
-
-    //We also don't accept resumes from walk-ins either, so this should only execute otherwise
-    $success = move_uploaded_file($resume["tmp_name"], RESUME_PATH . $newName);
-    if (!$success) {
-        throw new ResumeException("Error saving file to directory");
-    }
 
     $mailer = new Mailer($db);
     $context["user"]["firstName"] = $_POST['f_name'];
