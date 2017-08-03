@@ -15,7 +15,7 @@ interface RegistrationState
     const REJECTED = 2;
     const ACCEPTED = 3;
 
-    const STATE_NAMES[
+    const STATE_NAMES = [
         self::DENIED => "Denied",
         self::UNVERIFIED => "Unverified",
         self::REGISTERED => "Registered",
