@@ -32,7 +32,6 @@ class Site
         "school",
         "race",
         "is_hispanic",
-        "zip_code",
         "state",
         "shirt_size",
         "is_first_hackathon",
@@ -128,14 +127,6 @@ class Site
             "filter" => [FILTER_VALIDATE_BOOLEAN],
             "name" => "Are you of Hispanic/Latino origins?"
         ], //Boolean is hispanic
-        "zip_code" => [
-            "filter" => [FILTER_SANITIZE_NUMBER_INT],
-            "name" => "City",
-            "length" => [
-                "min" => 5,
-                "max" => 5
-            ]
-        ],
         "state" => [
             "filter" => [FILTER_SANITIZE_NUMBER_INT],
             "name" => "State",
