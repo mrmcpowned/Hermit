@@ -203,6 +203,11 @@ class Hacker extends User
 
     }
 
+    public function getRegistrationStateLabel()
+    {
+        return RegistrationState::STATE_NAMES[$this->getRegistrationState()];
+    }
+
     public function isAccepted()
     {
         switch ($this->getRegistrationState()){
