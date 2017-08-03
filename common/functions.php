@@ -90,6 +90,8 @@ function json_response($response, $returnOnEmpty = true){
         "success" => false
     ];
 
+    $finalResponse += $response;
+
     /**
      * We use this to cut down on our outer logic to check if there's any errors
      * If there happens to be an error the function wont return prematurely and go about it's regular execution
@@ -104,7 +106,6 @@ function json_response($response, $returnOnEmpty = true){
 
     if(!empty($response['errors'])) {
         //The fact that I can easily merge arrays like this is nice.
-        $finalResponse += $response;
         http_response_code(400);
         echo json_encode($finalResponse);
         die;
