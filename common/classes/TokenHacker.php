@@ -8,5 +8,5 @@
  */
 class TokenHacker extends VirtualHacker
 {
-    protected $userSelectSQL = "SELECT * FROM hackers WHERE check_in_code = :id";
+    protected $whereClauseSQL= "WHERE hackers.check_in_code = :id";
 }

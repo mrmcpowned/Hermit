@@ -21,6 +21,11 @@ abstract class User
     protected $userInfo;
 
     /**
+     * @var array Similar to the previous, but stores exclusively the labels to the normalized fields in the userInfo
+     */
+    protected $userInfoLabel;
+
+    /**
      * @var string Hash of the user's password
      */
     protected $passHash;

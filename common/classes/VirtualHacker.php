@@ -8,7 +8,7 @@ class VirtualHacker extends Hacker
 
     private $uniqueID;
 
-    protected $userSelectSQL = "SELECT * FROM hackers WHERE id = :id";
+    protected $whereClauseSQL = "WHERE hackers.id = :id";
 
     public function __construct(PDO $dbPDO, $uniqueID)
     {

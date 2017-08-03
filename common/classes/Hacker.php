@@ -9,7 +9,25 @@
 class Hacker extends User
 {
 
-    protected $userSelectSQL = "SELECT * FROM hackers WHERE sid = :id";
+    protected $whereClauseSQL = "WHERE hackers.sid = :id";
+    protected $userSelectSQL = "SELECT * FROM hackers ";
+    protected $labelSelectSQL = "SELECT genders.name AS gender , diets.name AS diet, class_years.year AS class_year,
+     races.name AS race, shirt_sizes.shirt_size AS shirt_size, schools.name AS school, states.name AS state
+     FROM hackers 
+     INNER JOIN genders
+        ON hackers.gender = genders.id
+     INNER JOIN diets
+        ON hackers.diet_restriction = diets.id
+     INNER JOIN class_years
+        ON hackers.class_year = class_years.id
+     INNER JOIN races
+        ON hackers.race = races.id
+     INNER JOIN shirt_sizes
+        ON hackers.shirt_size = shirt_sizes.id
+     INNER JOIN schools
+        ON hackers.school = schools.id
+     INNER JOIN states
+        ON hackers.state = states.id ";
 
     /**
      * Hacker constructor.
@@ -30,12 +48,18 @@ class Hacker extends User
      */
     protected function userSetup()
     {
-        $query = $this->db->prepare($this->userSelectSQL);
+        $query = $this->db->prepare($this->userSelectSQL . $this->whereClauseSQL);
         $sid = $this->getSID();
         $query->bindParam(":id", $sid);
         $query->execute();
 
         $this->userInfo = $query->fetch(PDO::FETCH_ASSOC);
+
+        $query = $this->db->prepare($this->labelSelectSQL . $this->whereClauseSQL);
+        $query->bindParam(":id", $sid);
+        $query->execute();
+
+        $this->userInfoLabel = $query->fetch(PDO::FETCH_ASSOC);
 
         //If the SID On the server changed, our fetch came up false
         if($this->userInfo === false){
@@ -56,7 +80,6 @@ class Hacker extends User
      * TODO: Possibly add a message parameter so a messaage could be left in the new session explaining what kind of
      * logout occurred.
      *
-     * @return bool
      */
     public function logout()
     {
@@ -89,46 +112,74 @@ class Hacker extends User
         return $this->userInfo['age'];
     }
 
-    //TODO: Add a getter for the label
     public function getGender()
     {
         return $this->userInfo['gender'];
     }
 
-    //TODO: Add a getter for the label
     public function getClassYear()
     {
         return $this->userInfo['class_year'];
     }
 
-    //TODO: Add a getter for the label
     public function getSchool()
     {
         return $this->userInfo['school'];
     }
 
-    //TODO: Add a getter for the label
     public function getRace()
     {
         return $this->userInfo['race'];
     }
 
-    //TODO: Add a getter for the label
     public function getState()
     {
         return $this->userInfo['state'];
     }
 
-    //TODO: Add a getter for the label
     public function getShirtSize()
     {
         return $this->userInfo['shirt_size'];
     }
 
-    //TODO: Add a getter for the label
     public function getDietRestriction()
     {
         return $this->userInfo['diet_restriction'];
+    }
+
+    public function getGenderLabel()
+    {
+        return $this->userInfoLabel['gender'];
+    }
+
+    public function getClassYearLabel()
+    {
+        return $this->userInfoLabel['class_year'];
+    }
+
+    public function getSchoolLabel()
+    {
+        return $this->userInfoLabel['school'];
+    }
+
+    public function getRaceLabel()
+    {
+        return $this->userInfoLabel['race'];
+    }
+
+    public function getStateLabel()
+    {
+        return $this->userInfoLabel['state'];
+    }
+
+    public function getShirtSizeLabel()
+    {
+        return $this->userInfoLabel['shirt_size'];
+    }
+
+    public function getDietRestrictionLabel()
+    {
+        return $this->userInfoLabel['diet_restriction'];
     }
 
     public function getDietOther()

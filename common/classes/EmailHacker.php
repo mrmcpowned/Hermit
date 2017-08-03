@@ -8,5 +8,5 @@
  */
 class EmailHacker extends VirtualHacker
 {
-    protected $userSelectSQL = "SELECT * FROM hackers WHERE email = :id";
+    protected $whereClauseSQL = "WHERE hackers.email = :id";
 }
