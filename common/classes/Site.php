@@ -175,13 +175,12 @@ class Site
         ], //URL Escape and only the username
         "linkedin" => [
             "filter" => [
-                FILTER_SANITIZE_STRING,
                 FILTER_SANITIZE_URL
             ],
             "name" => "LinkedIn Profile",
             "length" => [
                 "min" => 0,
-                "max" => 30
+                "max" => 255
             ]
         ], //Ditto
         "is_first_hackathon" => [
