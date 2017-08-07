@@ -70,12 +70,12 @@ $result = $query->fetch();
 //Result is only false on no match
 if (!$result) {
     //TODO: Log incorrect attempt
-    throw new Exception("Email is incorrect");
+    throw new EmailException("Email is incorrect");
 }
 //Login failed due to incorrect password
 if (!password_verify($pass, $result['pass'])) {
     //TODO: Log incorrect attempt
-    throw new Exception("Password is incorrect");
+    throw new IncorrectPasswordException("Password is incorrect");
 }
 
 $sql = "UPDATE hackers SET sid = :session, current_ip = :current_ip, last_login_time = UNIX_TIMESTAMP() WHERE id=:user";
