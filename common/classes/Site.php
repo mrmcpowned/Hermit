@@ -63,8 +63,11 @@ class Site
             ]
         ],
         "email" => [
-            "filter" => [FILTER_SANITIZE_EMAIL],
+            "filter" => [FILTER_SANITIZE_EMAIL, FILTER_CALLBACK],
             "validate" => FILTER_VALIDATE_EMAIL,
+            "filterOptions" => [
+                "options" => "strtolower"
+            ],
             "name" => "E-Mail",
             "length" => [
                 "min" => 7,
@@ -206,6 +209,7 @@ class Site
     private $genders;
     private $states;
     private $shirtSizes;
+    private $classYears;
 
     /**
      * Site constructor.
@@ -265,6 +269,21 @@ class Site
             $this->genders[$row['id']] = $row['name'];
         }
         return $this->genders;
+
+    }
+
+    public function getClassYears()
+    {
+        if(!is_null($this->classYears))
+            return $this->classYears;
+
+        //Note: Could possibly move this action to its own method, but would require accounting for more than just a KV pair
+        $sql = "SELECT * FROM class_years";
+        $query = $this->db->query($sql);
+        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+            $this->classYears[$row['id']] = $row['year'];
+        }
+        return $this->classYears;
 
     }
 
