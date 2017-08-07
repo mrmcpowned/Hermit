@@ -1,0 +1,9 @@
+<nav class="dash menu">
+    <ul>
+        <li><a href="/dash" class="button">Status</a></li>
+        {% if user.accepted %}
+        <li><a href="/dash/qr" class="button qr-code">QR Code</a></li>
+        {% endif %}
+        <li><a href="/dash/me" class="button">My Info</a></li>
+    </ul>
+</nav>

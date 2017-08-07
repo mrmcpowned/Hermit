@@ -1,0 +1,45 @@
+{% extends "site-base.html.twig" %}
+
+{% block title "QR Code" %}
+
+{% block extra_head %}
+
+    <script src="/assets/js/kjua-0.1.1.min.js"></script>
+
+{% endblock %}
+
+{% block body %}
+    {% embed "html-stubs/page.html.twig" %}
+        {% block pagebody %}
+            {% embed "html-stubs/modal.html.twig" %}
+                {% block modalbody %}
+                    {% include "html-stubs/dash-nav.html.twig" %}
+                    <section class="content">
+                        <h1>{{ block('title', "dash-qr.html.twig") }}</h1>
+                        <p>You can use the QR Code below to quickly check in to ShellHacks.</p>
+                        <p>Alternatively, you can tell staff your check-in code at the booth as well.</p>
+                        <div class="qr-code">
+                            <h2><strong>{{ user.checkInCode }}</strong></h2>
+                            <div class="qr-container">
+                            </div>
+                        </div>
+                    </section>
+                {% endblock %}
+            {% endembed %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block javascript %}
+
+    let el = kjua({
+        text: "{{ user.checkInCode }}",
+        rounded: 100,
+        ecLevel: 'H',
+        size: 400,
+        quiet: 1
+    });
+
+    $('.qr-container').html(el);
+
+{% endblock %}

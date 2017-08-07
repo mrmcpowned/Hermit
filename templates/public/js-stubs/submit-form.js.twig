@@ -1,0 +1,45 @@
+$('select').select2();
+let formIsSubmitting = false;
+$("form").on("submit", function (event) {
+    event.preventDefault();
+    if(formIsSubmitting)
+        return;
+
+    let formData = new FormData(this);
+
+    let address = this.action;
+    $.ajax({
+        method: "POST",
+        url: address,
+        data: formData,
+        contentType: false,
+        processData: false,
+        dataType: "json",
+        beforeSend: function () {
+            formIsSubmitting = true;
+            $("#messages").empty();
+        }
+    }).fail(function (jqXHR, textStatus) {
+        let response = jqXHR.responseJSON;
+        if(textStatus === "parsererror" || !response) {
+            console.log("Error parsing request: ", jqXHR.responseText);
+        } else {
+            $("#messages").append("<section class='content'></section>");
+            for(let entry in response.errors){
+                if(!response.errors.hasOwnProperty(entry))
+                    continue;
+
+                let newHtml = $("#messages .content").append(`<div class="message"><h4>${entry}</h4><ul></ul></div>`);
+                for(let i = 0; i < response.errors[entry].length; i++){
+                    newHtml.find("ul").append(`<li>${response.errors[entry][i]}</li>`)
+                }
+            }
+        }
+    }).done(function (data) {
+        window.location.reload(true);
+    }).always(function (data) {
+        if(typeof grecaptcha !== "undefined")
+            grecaptcha.reset();
+        formIsSubmitting = false;
+    })
+})

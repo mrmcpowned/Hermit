@@ -1,0 +1,521 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:400,500');
+
+:root {
+    font-size: calc(1.1875rem + ((1vw - 4.8px) * 0.6944));
+    /* Where: * 0.6944 = 100 * font_Size_Difference / viewport_Width_Difference */
+    font-family: 'Raleway';
+}
+/* Prevent font scaling beyond this breakpoint */
+@media (min-width: 1200px) {
+  :root {
+    font-size: 24px;
+  }
+}
+
+@keyframes glow {
+    0% {
+        filter: drop-shadow(0 0 .5em hotpink);
+    }
+    30% {
+        filter: drop-shadow(0 0 .5em hotpink);
+    }
+    60% {
+        filter: drop-shadow(0 0 .5em hotpink);
+    }
+    65% {
+        filter: drop-shadow(0 0 .5em hotpink);
+    }
+    78% {
+        filter: drop-shadow(0 0 .5em hotpink);
+    }
+    79% {
+        filter: drop-shadow(0 0 0px hotpink);
+    }
+    84% {
+        filter: drop-shadow(0 0 .5em hotpink);
+    }
+    85% {
+        filter: drop-shadow(0 0 0px hotpink);
+    }
+    86% {
+        filter: drop-shadow(0 0 .5em hotpink);
+    }
+    96% {
+        filter: drop-shadow(0 0 .5em hotpink);
+    }
+    100% {
+        filter: drop-shadow(0 0 .5em hotpink);
+    }
+}
+
+
+h1{
+    font-size: 200%
+}
+
+h2{
+    font-size: 175%
+}
+
+h3{
+    font-size: 150%;
+}
+
+h4{
+    font-size: 130%;
+}
+
+h5{
+    font-size: 115%;
+}
+
+h1,h2,h3,h4,h5{
+    line-height: 1.15em;
+    margin-bottom: .4em;
+}
+
+p{
+    margin-bottom: .75em;
+    line-height: 1.2em;
+}
+
+strong{
+    font-weight: bold
+}
+
+em{
+    font-style: italic;
+}
+
+.button{
+    text-decoration: none;
+    color: inherit;
+}
+
+.menu.button{
+    display: inline-block;
+    font-size: 250%;
+    color: darkred;
+    padding: .1em .25em;
+}
+
+.menu.button *{
+    display: inline-block;
+    vertical-align: middle;
+    font-size: inherit;
+}
+
+.menu.button .title{
+    font-size: 75%;
+    text-transform: uppercase;
+}
+
+.menu li{
+/*    display: inline-block;*/
+}
+
+.site.header{
+    position: fixed;
+/*    top: 0;*/
+    z-index: 11000;
+    user-select: none
+}
+
+.main.menu{
+    position: fixed;
+    height: 100%;
+    top: 0;
+    font-size: 150%;
+    background: white;
+    transform: translateX(calc(-100% - 10px));
+    z-index: 1;
+    transition: .25s cubic-bezier(.45, .87, 0, 1.01);
+}
+
+.main.menu a{
+    display: block;
+    padding: .5em 1em;
+    transition: .3s ease-out
+}
+
+.main.menu a:hover{
+    background: rgba(0,0,0,0.15);
+    color: darkred;
+}
+
+.main.menu:target{
+    transform: none;
+}
+
+.main.menu + .shade{
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    background: rgba(0,0,0,0.65);
+    pointer-events: none;
+    opacity: 0;
+    transition: .2s ease-out
+}
+
+.main.menu:target + .shade{
+    pointer-events: all;
+    opacity: 1;
+}
+
+/*HOME PAGE*/
+.hero{
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.3) 100%),
+        url(../imgs/bg/miami-bg.png) fixed;
+    background-size: auto, cover;
+}
+
+.hero > div{
+    display: flex;
+    flex-basis: 50%;
+    flex-direction: column;
+    flex-grow: 1
+}
+
+.hero .right{
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center
+}
+
+.hero .logo{
+    max-width: calc(100% - 150px);
+    max-height: calc(100% - 150px);
+    filter: drop-shadow(rgba(0,0,0,.2) 0px 0px 5px);
+    animation: glow 3s infinite linear;
+}
+
+.hero .left{
+    justify-content: flex-end;
+    align-items: center
+}
+
+.hero .links{
+    width: 55%;
+    margin-bottom: 10%;
+    box-sizing: border-box;
+}
+
+.hero .links .button{
+    font-size: 175%;
+    display: block;
+    text-align: center;
+    margin-bottom: 5%;
+    padding: .3em;
+    background: turquoise;
+}
+
+.content{
+    margin: 50px 0;
+    padding: 0 30px;
+}
+
+.clamped{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.clamped .content{
+    width: calc(100vw - 40px);
+    max-width: 1000px;
+    min-height: 300px;
+    box-sizing: border-box;
+}
+
+.beach h2{
+    font-weight: bold
+}
+
+.beach{
+    background: cornflowerblue;
+    color: mintcream;
+}
+
+.beach .content{
+    margin: 100px 0;
+}
+
+.sponsors {
+    background: black;
+    color: whitesmoke;
+}
+
+.sponsor-us{
+    margin-bottom: 1em;
+}
+
+.sponsor-us .button{
+    border: .125em solid whitesmoke;
+    padding: .25em;
+    display: block;
+    text-align: center;
+    border-radius: .5em;
+}
+
+.sponsor-group{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 1.5em
+}
+
+.sponsor-group h2, .sponsor-group h3{
+    flex-basis: 100%;
+}
+
+.sponsor-group a{
+    margin: 15px;
+    transition: .3s ease-out;
+    opacity: .65;
+}
+
+.sponsor-group a:hover{
+    opacity: 1;
+}
+
+.sponsor-group img{
+    max-width: 150px;
+    max-height: 150px
+}
+
+.sponsor-group.sand-dollar img{
+    max-width: 175px;
+    max-height: 175px;
+}
+
+.sponsor-group.scallop  img{
+    max-width: 225px;
+    max-height: 225px;
+}
+
+.sponsor-group.cone  img{
+    max-width: 250px;
+    max-height: 250px;
+}
+
+.sponsor-group.conch  img{
+    max-width: 300px;
+    max-height: 300px;
+}
+
+
+
+
+
+
+.page{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: skyblue;
+}
+
+.modal{
+    overflow: hidden;
+    background: white;
+    border-radius: 3px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.25);
+    box-sizing: border-box;
+    margin: .5em 10px
+}
+
+.modal:first-of-type{
+    margin-top: 3.5em
+}
+
+.modal:last-of-type{
+    margin-bottom: 3.5em
+}
+
+.modal .content{
+    padding: 1em;
+    margin: auto;
+    min-height: 0;
+}
+
+.modal.small.clamped .content{
+    max-width: 500px;
+}
+
+
+
+
+
+.form fieldset:not(:last-child), 
+.form input:not(:last-child), 
+.form select:not(:last-child),
+.form textarea{
+    margin-bottom: .5em;
+    font-family: inherit
+}
+
+.form fieldset legend{
+    font-weight: bold;
+}
+
+.form input:not([type=radio]),
+.form textarea, .form select{
+    font-size: inherit;
+    width: 100%;
+    resize: vertical
+}
+
+.form input[type=checkbox]{
+    width: auto;
+}
+
+.form input:not([type=file]){
+    border: none;
+    border-bottom: .1em solid rgba(0,0,0,.75);
+}
+
+.form input.button{
+    padding: .5em;
+    border: .1em solid rgba(0,0,0,.75);
+}
+
+
+
+
+.messages.error{
+/*    margin-bottom: auto;*/
+    background-color: indianred;
+    color: white
+}
+
+#messages:empty{
+    display: none;
+}
+
+.messages li{
+    line-height: 1.20em
+}
+
+.messages ul li:before{
+    content: '- '
+}
+
+.messages .message:not(:last-of-type){
+    margin-bottom: .5em
+}
+
+
+
+
+.status .state{
+    text-align: center;
+    padding: .6em;
+    background: purple;
+    font-weight: bold;
+    color: white
+}
+
+.status .state.registered{
+    background: navy
+}
+
+.status .state.accepted{
+    background: green
+}
+
+.status .state.rejected{
+    background-color: darkred
+}
+
+.status .state.denied{
+    background: red
+}
+
+
+.list{
+    list-style: disc inside;
+    line-height: 1.2em;
+}
+
+
+.dash.menu{
+    width: 100%;
+    text-align: center;
+/*    padding-bottom: .3em;*/
+/*    border-bottom: .1em solid rgba(0,0,0,.65)*/
+}
+
+.dash.menu ul{
+    display: flex;
+    justify-content: space-around;
+}
+
+.dash.menu li{
+    flex-grow: 1;
+}
+
+.dash.menu .button{
+    display: block;
+    padding: .3em;
+    background: hotpink;
+    color: white;
+    transition: .2s ease-out;
+}
+
+.dash.menu li:nth-of-type(even) .button{
+    background: #ff44a1;
+}
+
+.dash.menu .button:hover{
+    filter:brightness(1.1);
+    color: black
+}
+
+.qr-code{
+    text-align: center;
+    align-self: center
+}
+
+.qr-code img{
+    width: 100% !important;
+    height: auto !important;
+    max-width: 400px;
+}
+
+
+@media (max-width: 1100px) {
+    .hero {
+        flex-direction: column-reverse;
+    }
+
+    .hero .left {
+        flex-basis: auto;
+    }
+
+    .hero .logo {
+        max-width: calc(100% - 50px);
+        max-height: calc(100% - 150px);
+    }
+
+    .sponsor-group.conch img {
+        max-width: 80vw;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .menu.button .title{
+        display: none;
+    }
+
+}

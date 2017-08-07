@@ -1,0 +1,22 @@
+{% extends "site-base.html.twig" %}
+
+{% block title "Dashboard" %}
+
+{% block body %}
+<section class="page">
+    <!--       <section class="clamped modal error messages" id="messages"></section>-->
+    <section class="clamped modal">
+        {% include "html-stubs/dash-nav.html.twig" %}
+        <section class="content">
+            <h1>Hi {{user.firstName}}!</h1>
+            <section class="status">
+                <h3>Your application is currently...</h3>
+                <h3 class="state {{user.registrationStateLabel | lower}}">{{user.registrationStateLabel | upper}}</h3>
+            </section>
+            <section class="registration-message">
+                {% include  "html-stubs/registration-messages/" ~ user.registrationStateLabel | lower ~ ".html.twig"%}
+            </section>
+        </section>
+    </section>
+</section>
+{% endblock %}

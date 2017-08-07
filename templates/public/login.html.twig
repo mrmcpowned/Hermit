@@ -1,0 +1,29 @@
+{% extends "site-base.html.twig" %}
+
+{% block extra_head %}
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}
+
+{% block body %}
+    <section class="page login">
+        {% include "html-stubs/error-messages.html.twig" %}
+        <section class="clamped modal small">
+        <section class="content">
+            <h1>Login</h1>
+            <form class="form" action="/api/request-wrapper.php?type=auth" method="post">
+
+                <input type="email" placeholder="Email" name="email" required>
+                <input type="password" placeholder="Password" name="pass" required>
+                <div class="g-recaptcha" data-sitekey="6LevRykUAAAAAHrEG5L_UTm7iqDQIDr7BEx_IuXb"></div>
+                <input type="submit" class="button">
+
+            </form>
+        </section>
+    </section>
+</section>
+
+{% endblock %}
+
+{% block javascript %}
+    {% include "js-stubs/submit-form.js.twig" %}
+{% endblock %}
