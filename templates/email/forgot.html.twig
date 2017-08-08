@@ -1,5 +1,7 @@
 {% extends "email-base.html.twig" %}
 
+{% block hero_image "http://i.imgur.com/lAnKbBB.gif" %}
+
 {% block emailbody %}
     {% embed "blocks/title-with-message.html.twig" %}
 
@@ -8,7 +10,7 @@
         button below and you'll be able to make a new one!" %}
         {% block button %}
             {% embed "blocks/button.html.twig" %}
-                {% block url "https://shellhacks.net/pass/verify?key=#{key}" %}
+                {% block url "https://shellhacks.net/verify/pass?key=#{key}" %}
                 {% block text "Reset Password" %}
             {% endembed %}
         {% endblock %}
