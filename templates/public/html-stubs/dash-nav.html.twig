@@ -1,9 +1,11 @@
 <nav class="dash menu">
     <ul>
+        {% block buttons %}
         <li><a href="/dash" class="button">Status</a></li>
         {% if user.accepted %}
-        <li><a href="/dash/qr" class="button qr-code">QR Code</a></li>
+        <li><a href="/dash/qr" class="button">QR Code</a></li>
         {% endif %}
-        <li><a href="/dash/me" class="button">My Info</a></li>
+        <li><a href="/dash/me" class="button">My Profile</a></li>
+        {% endblock %}
     </ul>
 </nav>
