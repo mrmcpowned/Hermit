@@ -204,6 +204,8 @@ em{
     width: 55%;
     margin-bottom: 10%;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
 .hero .links .button{
@@ -213,6 +215,15 @@ em{
     margin-bottom: 5%;
     padding: .3em;
     background: turquoise;
+}
+
+.hero .dates{
+    text-align: center;
+    color: white;
+    background: #ff0080;
+    align-self: center;
+    border-radius: 1em;
+    padding: .2em .5em
 }
 
 .content{
@@ -355,13 +366,15 @@ em{
 
 
 
+.form:not(:last-of-type){
+    margin-bottom: 1em;
+}
 
 .form fieldset:not(:last-child), 
 .form input:not(:last-child), 
 .form select:not(:last-child),
 .form textarea{
     margin-bottom: .5em;
-    font-family: inherit
 }
 
 .form fieldset legend{
@@ -371,8 +384,14 @@ em{
 .form input:not([type=radio]),
 .form textarea, .form select{
     font-size: inherit;
+    font-family: inherit;
     width: 100%;
     resize: vertical
+}
+
+.form label{
+    margin-bottom: .2em;
+    line-height: 1.2em;
 }
 
 .form input[type=checkbox]{
@@ -389,8 +408,22 @@ em{
     border: .1em solid rgba(0,0,0,.75);
 }
 
+/*Select2 Fixes*/
+.select2-container--default .select2-selection {
+    padding: .2em;
+    margin: .3em 0;
+}
+
+.select2-container .select2-selection--single{
+    height: auto !important;
+}
 
 
+
+
+#messages{
+    cursor: pointer;
+}
 
 .messages.error{
 /*    margin-bottom: auto;*/
@@ -398,8 +431,10 @@ em{
     color: white
 }
 
-#messages:empty{
-    display: none;
+.messages.success{
+/*    margin-bottom: auto;*/
+    background-color: darkgreen;
+    color: white
 }
 
 .messages li{
@@ -493,7 +528,7 @@ em{
 }
 
 
-@media (max-width: 1100px) {
+@media (max-width: 1270px) {
     .hero {
         flex-direction: column-reverse;
     }
