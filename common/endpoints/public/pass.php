@@ -77,6 +77,8 @@ switch ($type) {
             $mailer->generateHTML("forgot.html.twig", ["key" => $resetKey]
         ));
 
+        $response['message']['Fear not, the cavalry has arrived!'] = "We've sent you an email to help you get back on track with your hacking.";
+
         break;
     //DONE: Complete code for changing password with current password
     case VerificationType::CHANGE:
@@ -102,6 +104,8 @@ switch ($type) {
         //By here we should have a correct password and be authenticated
         $passManager->updatePassword($user->getEmail(), $newPassword);
 
+        $response['message']['Password Changed'] = "Password successfully changed";
+
         break;
     //DONE: Complete code for initiating a reset after user has submitted a valid key
     case VerificationType::RESET:
@@ -124,6 +128,8 @@ switch ($type) {
 
         //Finally, change the password
         $passManager->changePasswordByKey($resetKey, $newPassword);
+
+        $response['message']['Password Reset'] = "Password successfully reset";
 
         break;
 
