@@ -207,6 +207,11 @@ class Hacker extends User
         return filter_var($this->userInfo['is_first_hackathon'], FILTER_VALIDATE_BOOLEAN);
     }
 
+    public function isHispanic()
+    {
+        return filter_var($this->userInfo['is_hispanic'], FILTER_VALIDATE_BOOLEAN);
+    }
+
     public function isVerified(){
         return filter_var($this->userInfo['is_email_confirmed'], FILTER_VALIDATE_BOOLEAN);
     }
