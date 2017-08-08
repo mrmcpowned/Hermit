@@ -210,6 +210,8 @@ class Site
     private $states;
     private $shirtSizes;
     private $classYears;
+    private $dietRestrictions;
+    private $races;
 
     /**
      * Site constructor.
@@ -284,6 +286,36 @@ class Site
             $this->classYears[$row['id']] = $row['year'];
         }
         return $this->classYears;
+
+    }
+
+    public function getDietRestrictions()
+    {
+        if(!is_null($this->dietRestrictions))
+            return $this->dietRestrictions;
+
+        //Note: Could possibly move this action to its own method, but would require accounting for more than just a KV pair
+        $sql = "SELECT * FROM diets";
+        $query = $this->db->query($sql);
+        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+            $this->dietRestrictions[$row['id']] = $row['name'];
+        }
+        return $this->dietRestrictions;
+
+    }
+    
+    public function getRaces()
+    {
+        if(!is_null($this->races))
+            return $this->races;
+
+        //Note: Could possibly move this action to its own method, but would require accounting for more than just a KV pair
+        $sql = "SELECT * FROM races";
+        $query = $this->db->query($sql);
+        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+            $this->races[$row['id']] = $row['name'];
+        }
+        return $this->races;
 
     }
 
