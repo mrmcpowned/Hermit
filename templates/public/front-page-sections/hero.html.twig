@@ -1,13 +1,15 @@
 <section class="hero">
-    {% if not user.loggedIn %}
         <div class="left">
-        <section class="links">
+
+            <section class="links">
+                <h2 class="dates">Sept 29 &mdash; Oct 1</h2>
+                {% if not user.loggedIn %}
                 <a class="button" href="register">Register</a>
-                <a class="button" href="dash">Login</a>
-            <a class="button" href="/resources/Sponsorship_Packet.pdf">Sponsor</a>
-        </section>
-    </div>
-    {% endif %}
+                {% endif %}
+                <a class="button" href="/resources/Sponsorship_Packet.pdf">Sponsor</a>
+            </section>
+
+        </div>
     <div class="right">
         <img class="logo" src="assets/imgs/logo-final.svg" alt="ShellHacks Logo">
         <h2><strong><em>Learn. Create. Share.</em></strong></h2>
