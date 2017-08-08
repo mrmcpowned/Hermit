@@ -1,0 +1,25 @@
+{% extends "site-base.html.twig" %}
+
+{% block title "Logged Out" %}
+
+{% block body %}
+    {% embed "html-stubs/page.html.twig" %}
+        {% block pagebody %}
+            {% embed "html-stubs/modal.html.twig" %}
+                {% block modalbody %}
+                    <section class="content">
+                        <h1>{{ block('title', _self) }}</h1>
+                        <p>You have been successfully logged out and will be redirected to the homepage shortly.</p>
+                    </section>
+                {% endblock %}
+            {% endembed %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block javascript %}
+    setTimeout(() => {
+        window.location.replace('/');
+    }, 5000);
+
+{% endblock %}
