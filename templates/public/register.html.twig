@@ -2,3 +2,153 @@
 
 {% block title "Register" %}
 
+{% block extra_head %}
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}
+
+{% block body %}
+    {% embed "html-stubs/page.html.twig" %}
+        {% block pagebody %}
+            {% embed "html-stubs/modal.html.twig" %}
+                {% block modalbody %}
+                    <section class="content">
+                        <h1>{{ block('title', _self) }}</h1>
+                        <p>If you have any questions, feel free to email <a href="mailto:questions@shellhacks.net">questions@shellhacks.net</a>!</p>
+                        <form class="form" action="/api/request-wrapper?type=register" method="post">
+                            <fieldset>
+                                <legend>Email</legend>
+                                <input placeholder="Account Email" type="email" data-validation-group="email_check" name="email" required>
+                                <input placeholder="Confirm Email" type="email" data-validation-group="email_check" name="email_check" required>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>Password</legend>
+                                <input placeholder="Account Password" data-validation-group="pass_check" name="pass" type="password" required>
+                                <input placeholder="Confirm Password" data-validation-group="pass_check" name="pass_check" type="password" required>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>Personal Info</legend>
+                                <input placeholder="First Name" name="f_name" type="text" required>
+                                <input placeholder="Last Name" name="l_name" type="text" required>
+                                <label for="resume">Resume (2MB Max)</label>
+                                {#<input type="hidden" name="MAX_FILE_SIZE" value="2000000"/>#}
+                                <input id="resume" name="resume" type="file" accept="application/msword,
+                                    application/pdf,
+                                    application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                                <input placeholder="LinkedIn Profile URL (Optional)" type="text">
+                                <input placeholder="GitHub Username (Optional)" type="text">
+                                <label for="age">Age</label>
+                                <select name="age" id="age" required>
+                                    {% for key, value in site.registrationFields.age.value.min .. site.registrationFields.age.value.max %}
+                                        {% set age = loop.index0 + site.registrationFields.age.value.min %}
+                                        <option value="{{ age }}">{{ age }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="school">School</label>
+                                <select name="school" id="school" required>
+                                    {% for id, school in site.schools %}
+                                        <option value="{{ id }}">{{ school }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="class_year">Class Year</label>
+                                <select name="class_year" id="class_year" required>
+                                    {% for id, year in site.classYears %}
+                                        <option value="{{ id }}">{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="state">State</label>
+                                <select name="state" id="state" required>
+                                    {% for id, state in site.states %}
+                                        <option value="{{ id }}">{{ state.state }} - {{ state.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="shirt_size">Shirt Size</label>
+                                <select name="shirt_size" id="shirt_size" required>
+                                    {% for id, size in site.shirtSizes %}
+                                        <option value="{{ id }}">{{ size }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="diet_restriction">Diet Restrictions</label>
+                                <select name="diet_restriction" id="diet_restriction" required>
+                                    {% for id, restriction in site.dietRestrictions %}
+                                        <option value="{{ id }}">{{ restriction }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="">Additional diet information</label>
+                                <textarea name="diet_other" id="" cols="30" rows="4"></textarea>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>Demographic Information</legend>
+                                <label for="gender">Gender</label>
+                                <select name="gender" id="gender" required>
+                                    {% for id, gender in site.genders %}
+                                        <option value="{{ id }}">{{ gender }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="race">Race</label>
+                                <select name="race" id="race" required>
+                                    {% for id, race in site.races %}
+                                        <option value="{{ id }}">{{ race }}</option>
+                                    {% endfor %}
+                                </select>
+
+                                <label>Are you hispanic?</label>
+                                <fieldset>
+                                    <input type="radio" value="1" name="is_hispanic" id="is_hispanic_yes"
+                                           required><label for="is_hispanic_yes">Yes</label>
+                                    <input type="radio" value="0" name="is_hispanic" id="is_hispanic_no" required><label
+                                            for="is_hispanic_no">No</label>
+                                </fieldset>
+
+                                <label for="">Is this your first hackathon?</label>
+                                <fieldset>
+                                    <input type="radio" value="1" name="is_first_hackathon" id="is_first_hackathon_yes"
+                                           required><label for="is_first_hackathon_yes">Yes</label>
+                                    <input type="radio" value="0" name="is_first_hackathon" id="is_first_hackathon_no"
+                                           required><label for="is_first_hackathon_no">No</label>
+                                </fieldset>
+
+                                <fieldset>
+                                    <input type="checkbox" name="mlh_accept" id="mlh_accept" required><label
+                                            for="mlh_accept">I agree to the terms of the <a
+                                                href="https://github.com/MLH/mlh-policies/tree/master/prize-terms-and-conditions">MLH
+                                            Contest Terms and Conditions</a>, the <a href="https://mlh.io/privacy">MLH
+                                            Privacy Policy</a> and the <a
+                                                href="static.mlh.io/docs/mlh-code-of-conduct.pdf">MLH Code of
+                                            Conduct</a>. Please note that you may receive pre and post-event
+                                        informational e-mails and occasional messages about hackathons from MLH as per
+                                        the MLH Privacy Policy.</label>
+                                </fieldset>
+
+                                {% include "html-stubs/recaptcha.html.twig" %}
+
+                                <input class="button" type="submit" value="Submit">
+
+                            </fieldset>
+                        </form>
+                    </section>
+                {% endblock %}
+            {% endembed %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block javascript %}
+    {#<script>#}
+
+        $('input[type=file]').on('change', function () {
+           if ($(this)[0].files[0].size > 2000000){
+               $(this)[0].setCustomValidity("Woah, that file is toooo big!");
+           } else {
+               $(this)[0].setCustomValidity("");
+           }
+        });
+
+    {% embed "js-stubs/submit-form.js.twig" %}
+        {% block done %}
+            window.location.assign("?success");
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
