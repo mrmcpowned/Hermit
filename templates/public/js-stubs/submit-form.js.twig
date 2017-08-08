@@ -1,4 +1,46 @@
 $('select').select2();
+
+$('[data-validation-group]').on('change', validateCheck);
+
+function validateCheck() {
+    let checkedVal = $(this).val();
+    let validationGroup = $(this).attr("data-validation-group");
+    $(`[data-validation-group=${validationGroup}]`).each(function(){
+        $(this)[0].setCustomValidity("Entries do not match");
+    });
+    $(`[data-validation-group=${validationGroup}]`).each(function(){
+        let valueToCheck = $(this).val();
+        if(checkedVal === valueToCheck){
+            $(this)[0].setCustomValidity("");
+        }
+    });
+}
+
+// language=ECMAScript 6
+function createMessage(response, type = 'error') {
+    let msgs = $(`{% include 'html-stubs/error-messages.html.twig' %}`);
+    msgs.addClass(type);
+    $(".page").prepend(msgs);
+    for(let entry in response){
+        if(!response.hasOwnProperty(entry))
+            continue;
+
+        let newHtml = $("#messages .content").append(`<div class="message"><h4>${entry}</h4><ul></ul></div>`);
+        if(response.length > 1) {
+            for (let i = 0; i < response[entry].length; i++) {
+                newHtml.find("ul").append(`<li>${response[entry][i]}</li>`)
+            }
+        } else {
+            newHtml.find("ul").remove();
+            newHtml.append(`<p>${response[entry]}</p>`);
+        }
+    }
+}
+
+$('.page').on('click touch', '#messages', function () {
+    $(this).remove();
+})
+
 let formIsSubmitting = false;
 $("form").on("submit", function (event) {
     event.preventDefault();
@@ -17,29 +59,27 @@ $("form").on("submit", function (event) {
         dataType: "json",
         beforeSend: function () {
             formIsSubmitting = true;
-            $("#messages").empty();
+            $("#messages").remove();
         }
     }).fail(function (jqXHR, textStatus) {
+        {% block fail %}
         let response = jqXHR.responseJSON;
         if(textStatus === "parsererror" || !response) {
             console.log("Error parsing request: ", jqXHR.responseText);
         } else {
-            $("#messages").append("<section class='content'></section>");
-            for(let entry in response.errors){
-                if(!response.errors.hasOwnProperty(entry))
-                    continue;
-
-                let newHtml = $("#messages .content").append(`<div class="message"><h4>${entry}</h4><ul></ul></div>`);
-                for(let i = 0; i < response.errors[entry].length; i++){
-                    newHtml.find("ul").append(`<li>${response.errors[entry][i]}</li>`)
-                }
-            }
+            createMessage(response.errors);
         }
+        window.scrollTo(0,0);
+        {% endblock %}
     }).done(function (data) {
+        {% block done %}
         window.location.reload(true);
+        {% endblock %}
     }).always(function (data) {
+        {% block always %}
         if(typeof grecaptcha !== "undefined")
             grecaptcha.reset();
         formIsSubmitting = false;
+        {% endblock %}
     })
 })
