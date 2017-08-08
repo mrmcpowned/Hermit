@@ -1,0 +1,37 @@
+{% extends "site-base.html.twig" %}
+
+{% block title "Forgot Password" %}
+
+{% block body %}
+    <section class="page login">
+        <section class="clamped modal small">
+            <section class="content">
+                <h1>{{ block('title', _self) }}</h1>
+                <form class="form" action="/api/request-wrapper.php?type=pass" method="post">
+                    <input type="hidden" name="change_type" value="{{ constant('VerificationType::FORGOT') }}">
+                    {% if not user.loggedIn %}
+                    <input type="email" placeholder="Email" name="email" required>
+                    {% endif %}
+                    <input type="submit" class="button" value="Reset Password">
+                </form>
+            </section>
+
+            {% if not user.loggedIn %}
+                {% embed "html-stubs/dash-nav.html.twig" %}
+                    {% block buttons %}
+                        <li><a href="/dash" class="button">Login</a></li>
+                    {% endblock %}
+                {% endembed %}
+            {% endif %}
+        </section>
+    </section>
+
+{% endblock %}
+
+{% block javascript %}
+    {% embed "js-stubs/submit-form.js.twig" %}
+        {% block done %}
+            createMessage(data.message, "success");
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
