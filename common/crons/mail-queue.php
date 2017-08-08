@@ -2,6 +2,13 @@
 
 require_once "../config.php";
 
+interface EmailState{
+    const QUEUED = 1;
+    const SENDING = 2;
+    const SENT = 3;
+    const ERROR = 4;
+}
+
 /**
  * Created by PhpStorm.
  * User: mrmcp
@@ -11,16 +18,31 @@ require_once "../config.php";
 
 $mailer = new Mailer($db);
 
-foreach ($mailer->getEmails() as $email){
+$emails = $mailer->getEmails();
+
+//No need to continue if there's no emails queued
+if(empty($emails))
+    die;
+
+foreach ($emails as $email){
     try{
         //Set to SENDING
-        $mailer->setMessageStatus($email['id'], 2);
+        $mailer->setMessageStatus($email['id'], EmailState::SENDING);
+    } catch (Exception $e){
+        //Set to FAILED
+        $mailer->setMessageStatus($email['id'], EmailState::ERROR, $e->getMessage());
+    }
+}
+//We have to split the assignment of state from the mail sending, else it'll be possible to send dupe emails in
+// the event a cron reruns the script while a previous instance is still executing.
+foreach ($emails as $email){
+    try{
         //Send
         $mailer->sendMail($email['email'], $email['subject'], $email['message']);
         //Set to SENT
-        $mailer->setMessageStatus($email['id'], 3);
+        $mailer->setMessageStatus($email['id'], EmailState::SENT);
     } catch (Exception $e){
         //Set to FAILED
-        $mailer->setMessageStatus($email['id'], 4, $e->getMessage());
+        $mailer->setMessageStatus($email['id'], EmailState::ERROR, $e->getMessage());
     }
 }
