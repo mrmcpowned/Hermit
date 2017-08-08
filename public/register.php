@@ -17,4 +17,7 @@ $context = [
 
 $template = "register.html.twig";
 
+if(isset($_GET['success']))
+    $template = "register-success.html.twig";
+
 echo $twig->render($template, $context);
