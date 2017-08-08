@@ -98,4 +98,13 @@ class Mailer
         return $twig->render($template, $context);
     }
 
+    public function cleanQueue(){
+        $sql = "DELETE FROM mail_queue WHERE sending_status = 3";
+        $query = $this->db->prepare($sql);
+
+        if(!$query->execute()){
+            throw new DatabaseErrorException($query->errorInfo());
+        }
+    }
+
 }
