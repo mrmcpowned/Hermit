@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file handles user registration
  * DONE: REFACTOR AS STUB
@@ -44,24 +43,25 @@ $requiredFields = Site::$requiredRegistrationFields;
 
 //Check if we're NOT accepting registrations OR walk-ins
 if ($user->isLoggedIn())
-    throw new RegistrationException("You're already registered");
+    throw new RegistrationException("You're already registered and logged in");
 
-//It might seem odd here, but I want an exclusive or, since we can't accepting both walk-ins and normal registrations
+//It might seem odd here, but I want an exclusive or, since we can't be accepting both walk-ins and normal registrations
 if (!($site->isAcceptingRegistrations() XOR $site->isAcceptingWalkIns()))
     throw new RegistrationException("Sorry, registrations are currently closed");
 
-//Check captcha
-//$response = $_POST['g-recaptcha-response'];
-//
-//if (!recaptcha_verify($response, RECAPTCHA_SECRET)) {
-//    throw new CaptchaException("Captcha failed to verify");
-//}
+////Check captcha
+$captchaResponse = $_POST['g-recaptcha-response'];
+
+if (!recaptcha_verify($captchaResponse, RECAPTCHA_SECRET)) {
+    throw new CaptchaException("Captcha failed to verify");
+}
 
 //Sanitize all inputs
 sanitize_array($_POST, $acceptableFields);
 
 //Perform specific checks
 $missing = missing_fields($requiredFields, $_POST, $acceptableFields);
+
 
 //If our set of missing fields is greater than zero, then we're missing fields...
 if (count($missing) > 0) {
@@ -78,6 +78,10 @@ if (!$_POST['mlh_accept'])
 
 //We only check if the user has accepted, saving this response is of no real value
 unset($_POST['mlh_accept']);
+
+//If our diet other is empty, we unset it
+if(empty($_POST['diet_other']))
+    unset($_POST['diet_other']);
 
 //By now we have all our required fields, now we need to make sure all fields are following length and value checks
 validate_array($_POST, $acceptableFields, $errors);
