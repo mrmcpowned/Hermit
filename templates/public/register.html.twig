@@ -15,7 +15,7 @@
                         <h1>{{ block('title', _self) }}</h1>
                         {% if user.loggedIn  %}
                         <p>Hey, you're logged in already!</p>
-                        {% if site.acceptingRegistrations != site.acceptingWalkIns %}
+                        {% elseif site.acceptingRegistrations != site.acceptingWalkIns %}
                         <p>If you have any questions, feel free to email <a href="mailto:questions@shellhacks.net">questions@shellhacks.net</a>!</p>
                         <form class="form" action="/api/request-wrapper?type=register" method="post">
                             <fieldset>
