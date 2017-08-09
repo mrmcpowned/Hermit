@@ -13,6 +13,9 @@
                 {% block modalbody %}
                     <section class="content">
                         <h1>{{ block('title', _self) }}</h1>
+                        {% if user.loggedIn  %}
+                        <p>Hey, you're logged in already!</p>
+                        {% if site.acceptingRegistrations != site.acceptingWalkIns %}
                         <p>If you have any questions, feel free to email <a href="mailto:questions@shellhacks.net">questions@shellhacks.net</a>!</p>
                         <form class="form" action="/api/request-wrapper?type=register" method="post">
                             <fieldset>
@@ -135,6 +138,9 @@
 
                             </fieldset>
                         </form>
+                        {% else %}
+                            <p>Sorry, but registrations are currently closed</p>
+                        {% endif %}
                     </section>
                 {% endblock %}
             {% endembed %}
