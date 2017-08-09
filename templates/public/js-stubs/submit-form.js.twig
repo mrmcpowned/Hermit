@@ -41,12 +41,16 @@ $('.page').on('click touch', '#messages', function () {
     $(this).remove();
 })
 
-let formIsSubmitting = false;
+{#let formIsSubmitting = false;#}
 $("form").on("submit", function (event) {
     event.preventDefault();
+    let currentForm = $(this);
+    let formIsSubmitting = (currentForm.attr("data-sending") == 'true');
+
     if(formIsSubmitting)
         return;
 
+    console.log("Starting to send");
     let formData = new FormData(this);
 
     let address = this.action;
@@ -58,7 +62,7 @@ $("form").on("submit", function (event) {
         processData: false,
         dataType: "json",
         beforeSend: function () {
-            formIsSubmitting = true;
+            currentForm.attr("data-sending", true);
             $("#messages").remove();
         }
     }).fail(function (jqXHR, textStatus) {
@@ -76,10 +80,11 @@ $("form").on("submit", function (event) {
         window.location.reload(true);
         {% endblock %}
     }).always(function (data) {
+        currentForm.attr("data-sending", false);
         {% block always %}
         if(typeof grecaptcha !== "undefined")
             grecaptcha.reset();
-        formIsSubmitting = false;
+
         {% endblock %}
     })
 })
