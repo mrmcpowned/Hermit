@@ -31,6 +31,7 @@ class Site
         "class_year",
         "school",
         "race",
+        "major",
         "is_hispanic",
         "state",
         "shirt_size",
@@ -125,6 +126,14 @@ class Site
                 "min" => 1,
                 "max" => 1
             ]
+        ],
+        "major" => [
+            "filter" => [FILTER_SANITIZE_NUMBER_INT],
+            "name" => "Race",
+            "length" => [
+                "min" => 1,
+                "max" => 3
+            ]
         ], //normalize - DONE
         "is_hispanic" => [
             "filter" => [FILTER_VALIDATE_BOOLEAN],
@@ -212,6 +221,7 @@ class Site
     private $classYears;
     private $dietRestrictions;
     private $races;
+    private $majors;
 
     /**
      * Site constructor.
@@ -316,6 +326,21 @@ class Site
             $this->races[$row['id']] = $row['name'];
         }
         return $this->races;
+
+    }
+
+    public function getMajors()
+    {
+        if(!is_null($this->majors))
+            return $this->majors;
+
+        //Note: Could possibly move this action to its own method, but would require accounting for more than just a KV pair
+        $sql = "SELECT * FROM majors";
+        $query = $this->db->query($sql);
+        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+            $this->majors[$row['id']] = $row['major'];
+        }
+        return $this->majors;
 
     }
 

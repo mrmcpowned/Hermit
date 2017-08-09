@@ -12,7 +12,8 @@ class Hacker extends User
     protected $whereClauseSQL = "WHERE hackers.sid = :id";
     protected $userSelectSQL = "SELECT * FROM hackers ";
     protected $labelSelectSQL = "SELECT genders.name AS gender , diets.name AS diet, class_years.year AS class_year,
-     races.name AS race, shirt_sizes.shirt_size AS shirt_size, schools.name AS school, states.name AS state
+     races.name AS race, shirt_sizes.shirt_size AS shirt_size, schools.name AS school, states.name AS state,
+     majors.major AS major
      FROM hackers 
      INNER JOIN genders
         ON hackers.gender = genders.id
@@ -27,7 +28,9 @@ class Hacker extends User
      INNER JOIN schools
         ON hackers.school = schools.id
      INNER JOIN states
-        ON hackers.state = states.id ";
+        ON hackers.state = states.id 
+    INNER JOIN majors
+        ON hackers.major = majors.id";
 
     /**
      * Hacker constructor.
@@ -132,6 +135,11 @@ class Hacker extends User
         return $this->userInfo['race'];
     }
 
+    public function getMajor()
+    {
+        return $this->userInfo['major'];
+    }
+
     public function getState()
     {
         return $this->userInfo['state'];
@@ -165,6 +173,11 @@ class Hacker extends User
     public function getRaceLabel()
     {
         return $this->userInfoLabel['race'];
+    }
+
+    public function getMajorLabel()
+    {
+        return $this->userInfoLabel['major'];
     }
 
     public function getStateLabel()
