@@ -4,3 +4,4 @@ common/resumes/*
 vendor/
 
 !/common/config.php
+!/common/resumes/README.md
