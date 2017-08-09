@@ -35,7 +35,8 @@
                                 {#<input type="hidden" name="MAX_FILE_SIZE" value="2000000"/>#}
                                 <input id="resume" name="resume" type="file" accept="application/msword,
                                     application/pdf,
-                                    application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                                    application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                {% if not site.acceptingWalkIns %}required{% endif %}>
                                 <input placeholder="LinkedIn Profile URL (Optional)" type="text">
                                 <input placeholder="GitHub Username (Optional)" type="text">
                                 <label for="age">Age</label>
@@ -57,6 +58,12 @@
                                         <option value="{{ id }}">{{ year }}</option>
                                     {% endfor %}
                                 </select>
+                                <label for="major">Major</label>
+                                <select name="major" id="major" required>
+                                    {% for id, major in site.majors %}
+                                        <option value="{{ id }}">{{ major }}</option>
+                                    {% endfor %}
+                                </select>
                                 <label for="state">State</label>
                                 <select name="state" id="state" required>
                                     {% for id, state in site.states %}
@@ -75,8 +82,8 @@
                                         <option value="{{ id }}">{{ restriction }}</option>
                                     {% endfor %}
                                 </select>
-                                <label for="">Additional diet information</label>
-                                <textarea name="diet_other" id="" cols="30" rows="4"></textarea>
+                                <textarea name="diet_other" id="" cols="30" rows="4"
+                                          placeholder="Additional Diet Information (Optional)"></textarea>
                             </fieldset>
 
                             <fieldset>

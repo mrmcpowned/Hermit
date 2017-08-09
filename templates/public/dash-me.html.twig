@@ -54,6 +54,13 @@
                                                 {% if user.classYear == id %}selected{% endif %}>{{ year }}</option>
                                     {% endfor %}
                                 </select>
+                                <label for="major">Major</label>
+                                <select name="major" id="major" required disabled>
+                                    {% for id, major in site.majors %}
+                                        <option value="{{ id }}"
+                                                {% if user.major == id %}selected{% endif %}>{{ major }}</option>
+                                    {% endfor %}
+                                </select>
                                 <label for="state">State</label>
                                 <select name="state" id="state" required disabled>
                                     {% for id, state in site.states %}
