@@ -389,6 +389,11 @@ em{
     resize: vertical
 }
 
+.form textarea{
+    padding: .5em;
+    box-sizing: border-box;
+}
+
 .form label{
     margin-bottom: .2em;
     line-height: 1.2em;
