@@ -13,13 +13,15 @@ $twig = new Twig_Environment($loader);
 
 $context = [
     "site" => $site,
-    "user" => $user,
-    "key" => $_POST['key']
+    "user" => $user
 ];
 
-$template = "verfy-email.html.twig";
+if(isset($_GET['key']))
+    $context['key'] = $_GET['key'];
 
-if(($_GET['type'] == "pass"))
+$template = "verify-email.html.twig";
+
+if(isset($_GET['type']) && $_GET['type'] == "pass")
     $template = "verify-password.html.twig";
 
 echo $twig->render($template, $context);
