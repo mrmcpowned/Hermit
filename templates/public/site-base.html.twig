@@ -112,7 +112,7 @@ From Miami, with <3
     <nav class="main menu" id="menu">
         <ul>
             <li><a class="button" href="/">Home</a></li>
-            {% if not user.loggedIn %}
+            {% if not user.loggedIn and site.acceptingRegistrations %}
             <li><a class="button" href="/register">Register</a></li>
             <li><a class="button" href="/dash">Login</a></li>
             {% else %}
