@@ -225,15 +225,17 @@ $columnValues = "($columnValues, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), UNIX_TIMEST
 
 $newUserSQL = "INSERT INTO hackers $columnNames VALUES $columnValues";
 
-//DONE: Do what's below with the other query
-$newUserQuery = $db->prepare($newUserSQL);
-if (!$newUserQuery->execute($preparedPairs))
-    throw new DatabaseErrorException($newUserQuery->errorInfo());
-
 //Now we move the uploaded file to the proper directory
 $success = move_uploaded_file($resume["tmp_name"], RESUME_PATH . $newName);
 if (!$success) {
     throw new ResumeException("Error saving file to directory");
+}
+
+//DONE: Do what's below with the other query
+$newUserQuery = $db->prepare($newUserSQL);
+if (!$newUserQuery->execute($preparedPairs)) {
+    unlink(RESUME_PATH . $newName);
+    throw new DatabaseErrorException($newUserQuery->errorInfo());
 }
 
 //We don't send emails to walk-ins since the attendance flag is already set
