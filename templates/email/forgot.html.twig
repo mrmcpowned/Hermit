@@ -10,7 +10,7 @@
         button below and you'll be able to make a new one!" %}
         {% block button %}
             {% embed "blocks/button.html.twig" %}
-                {% block url "https://shellhacks.net/verify/pass?key=#{key}" %}
+                {% block url constant("SITE_ADDRESS") ~ "/verify/pass?key=#{key}" %}
                 {% block text "Reset Password" %}
             {% endembed %}
         {% endblock %}

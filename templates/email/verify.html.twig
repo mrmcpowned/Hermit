@@ -7,7 +7,7 @@
         {% block message "Hiya #{user.firstName}, thanks for signing up for ShellHacks! To complete your registration, make sure you click the button below to verify your email." %}
         {% block button %}
             {% embed "blocks/button.html.twig" %}
-                {% block url "https://shellhacks.net/verify?key=#{key}" %}
+                {% block url constant("SITE_ADDRESS") ~ "/verify?key=#{key}" %}
                 {% block text "Verify Email" %}
             {% endembed %}
         {% endblock %}

@@ -7,11 +7,12 @@
         <section class="clamped modal small">
             <section class="content">
                 <h1>{{ block('title', _self) }}</h1>
-                <form class="form" action="/api/request-wrapper.php?type=verify" method="post">
+                <form class="form" id="verify" action="/api/request-wrapper.php?type=verify" method="post">
 
                     <input type="hidden" name="type" value="{{ constant('VerificationType::VERIFY') }}">
                     <input type="hidden" name="key" value="{{ key }}">
-                    <input type="submit" class="button" value="Verify Email">
+                    {#<input type="submit" class="button" value="Verify Email">#}
+                    <p>You will be redirected to the dashboard on successful verification.</p>
                 </form>
             </section>
             {% embed "html-stubs/dash-nav.html.twig" %}
@@ -25,5 +26,14 @@
 {% endblock %}
 
 {% block javascript %}
-    {% include "js-stubs/submit-form.js.twig" %}
+    $(document).ready(function(){
+
+        $("#verify").submit();
+
+    });
+    {% embed "js-stubs/submit-form.js.twig" %}
+        {% block done %}
+            window.location.assign("/dash");
+        {% endblock %}
+    {% endembed %}
 {% endblock %}

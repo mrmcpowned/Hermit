@@ -419,6 +419,11 @@ class Site
         return self::$registrationFields;
     }
 
+    public function getAddress()
+    {
+        return SITE_ADDRESS;
+    }
+
 
 
 }
