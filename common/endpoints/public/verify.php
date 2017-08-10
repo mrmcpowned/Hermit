@@ -43,6 +43,8 @@ switch ($type) {
 
         $emailVerifier->verifyEmail($key);
 
+        $response['message']['Email Verified'] = "Your email has been successfully verified";
+
         break;
 
     case VerificationType::RESET:
@@ -69,7 +71,7 @@ switch ($type) {
         //DONE: Email new key
 
         $mailer->queueMail($user->getEmail(), "Please verify your email address for ShellHacks",
-            $mailer->generateHTML("verify.html.twig", ["key" => $newKey])
+            $mailer->generateHTML("verify.html.twig", ["user" => $user, "key" => $newKey])
         );
 
         break;
