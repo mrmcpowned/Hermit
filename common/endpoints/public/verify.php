@@ -74,6 +74,8 @@ switch ($type) {
             $mailer->generateHTML("verify.html.twig", ["user" => $user, "key" => $newKey])
         );
 
+        $response['message']['Verification Email'] = "A new verification email has been sent";
+
         break;
 
     default:

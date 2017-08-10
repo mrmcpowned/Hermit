@@ -10,6 +10,13 @@
                     {% include "html-stubs/dash-nav.html.twig" %}
                     <section class="content">
                         <h1>{{ block('title', _self) }}</h1>
+                        {% if not user.verified %}
+                        <form action="/api/request-wrapper.php?type=pass" class="form">
+                            <input type="hidden" name="type" value="{{ constant('VerificationType::RESET') }}">
+                            <input class="button" type="submit" value="Resend Verification Email">
+                        </form>
+                        {% endif %}
+
                         <h3>Reset Password</h3>
                         <form action="/api/request-wrapper.php?type=pass" class="form">
                             <input type="hidden" name="change_type" value="{{ constant('VerificationType::CHANGE') }}">
@@ -18,7 +25,7 @@
                             <input type="password" placeholder="Confirm New Password" name="new_pass_check" data-validation-group="new_pass_check" minlength="8">
                             <input class="button" type="submit" value="Update Password">
                         </form>
-                        
+
                         <form class="form" action="" method="post">
                             <p>If you need to change anything below, email us at <a href="mailto:questions@shellhacks.net">questions@shellhacks.net</a></p>
                             <fieldset>
