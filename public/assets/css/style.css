@@ -76,7 +76,7 @@ h1,h2,h3,h4,h5{
 
 p{
     margin-bottom: .75em;
-    line-height: 1.2em;
+    line-height: 1.35em;
 }
 
 strong{
@@ -397,7 +397,7 @@ em{
 
 .form label{
     margin-bottom: .2em;
-    line-height: 1.2em;
+    line-height: 1.35em;
 }
 
 .form input[type=checkbox]{
@@ -485,7 +485,7 @@ em{
 
 .list{
     list-style: disc inside;
-    line-height: 1.2em;
+    line-height: 1.35em;
 }
 
 
