@@ -30,7 +30,7 @@ class Mailer
      * Gets an array of emails to be processed
      */
     public function getEmails(){
-        $sql = "SELECT * FROM mail_queue WHERE sending_status = 1 LIMIT 5";
+        $sql = "SELECT * FROM mail_queue WHERE sending_status = 1 LIMIT 10";
         $query = $this->db->prepare($sql);
 
         if(!$query->execute()){
