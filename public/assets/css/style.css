@@ -130,6 +130,7 @@ em{
     transform: translateX(calc(-100% - 10px));
     z-index: 1;
     transition: .25s cubic-bezier(.45, .87, 0, 1.01);
+    overflow: auto;
 }
 
 .main.menu a{
@@ -533,7 +534,7 @@ em{
 }
 
 
-@media (max-width: 1270px) {
+@media (max-width: 1270px) and (orientation: portrait) {
     .hero {
         flex-direction: column-reverse;
     }
@@ -549,6 +550,16 @@ em{
 
     .sponsor-group.conch img {
         max-width: 80vw;
+    }
+}
+
+@media (max-width: 1270px) and (orientation: landscape){
+    .hero .logo{
+        max-width: calc(100% - 50px);
+        max-height: calc(100% - 150px);
+    }
+    .hero .right h2{
+        display: none;
     }
 }
 
