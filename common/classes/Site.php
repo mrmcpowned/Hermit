@@ -36,6 +36,7 @@ class Site
         "state",
         "shirt_size",
         "is_first_hackathon",
+        "activity_info",
         "diet_restriction",
         "mlh_accept"
     ];
@@ -176,13 +177,12 @@ class Site
         ],
         "github" => [
             "filter" => [
-                FILTER_SANITIZE_STRING,
                 FILTER_SANITIZE_URL
             ],
             "name" => "GitHub Profile",
             "length" => [
                 "min" => 0,
-                "max" => 20
+                "max" => 255
             ]
         ], //URL Escape and only the username
         "linkedin" => [
@@ -205,6 +205,17 @@ class Site
         ],
         "resume" => [
             "name" => "Resume",
+        ],
+        "activity_info" => [
+            "filter" => [FILTER_CALLBACK],
+            "filterOptions" => [
+                "options" => "strip_tags"
+            ],
+            "name" => "Activity Info",
+            "length" => [
+                "min" => 7,
+                "max" => 500
+            ]
         ]
     ];
 
