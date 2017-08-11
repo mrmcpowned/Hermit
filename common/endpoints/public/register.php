@@ -96,7 +96,7 @@ foreach ($site->getValidEmails() as $address) {
     }
 }
 if (!$found)
-    throw new EmailException("The email address you entered is not in the list of whitelisted domains");
+    throw new EmailException("The email address you entered is not in the list of whitelisted domains. If your email is actually a school address, send a message to questions@shellhacks.net to request your school's address be added to the whitelist.");
 
 //No need to run a query if it's not an acceptable email
 json_response($response);
