@@ -196,6 +196,10 @@ $_POST['email_vid'] = generateSID();
 //Can't forget to hash the password. Last thing we need is to be storing this in plaintext
 $_POST['pass'] = password_hash($_POST['pass'], PASSWORD_DEFAULT);
 
+//Also make sure names are in title case for clean showing
+$_POST['f_name'] = ucwords($_POST['f_name']);
+$_POST['l_name'] = ucwords($_POST['l_name']);
+
 //DONE: Work on SQL query with all items as placeholders and fill in those that are optional using an array of binds
 
 //if we're accepting walkins, we mark the user as a walkin
