@@ -76,6 +76,7 @@ $("form").on("submit", function (event) {
         window.scrollTo(0,0);
         {% endblock %}
     }).done(function (data) {
+        currentForm[0].reset();
         {% block done %}
         window.location.reload(true);
         {% endblock %}
