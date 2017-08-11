@@ -253,8 +253,7 @@ em{
 }
 
 .beach{
-    background: cornflowerblue;
-    color: mintcream;
+    background: url('/assets/imgs/bg/lifeguard-bg.png') no-repeat center/cover;
 }
 
 .beach .content{
@@ -332,6 +331,14 @@ em{
 }
 
 
+
+.footer.site {
+    display: flex;
+    justify-content: space-between;
+    padding: 1em;
+    font-size: 80%;
+    background: #fc5bb4;
+}
 
 
 
@@ -585,8 +592,13 @@ em{
 
 }
 
-@media (max-width: 500px){
+@media (max-width: 500px) {
     .sponsor-group.conch img {
         max-width: 80vw;
+    }
+
+    .footer.site {
+        flex-direction: column;
+        align-items: center;
     }
 }
