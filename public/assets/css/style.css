@@ -95,8 +95,9 @@ em{
 .menu.button{
     display: inline-block;
     font-size: 250%;
-    color: darkred;
     padding: .1em .25em;
+    color: #fc5bb4;
+    text-shadow: 0px 0px 0px rgba(0,0,0,.5), 1px 1px 0px rgba(0,0,0,.5), -1px -1px 0px rgba(0,0,0,.5), 1px -1px 0px rgba(0,0,0,.5), -1px 1px 0px rgba(0,0,0,.5);
 }
 
 .menu.button *{
