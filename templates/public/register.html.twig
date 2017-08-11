@@ -45,8 +45,8 @@
                                     application/pdf,
                                     application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                            {% if not site.acceptingWalkIns %}required{% endif %}>
-                                    <input placeholder="LinkedIn Profile URL (Optional)" type="url">
-                                    <input placeholder="GitHub Profile URL (Optional)" type="url">
+                                    <input placeholder="LinkedIn Profile URL (Recommended)" type="url">
+                                    <input placeholder="GitHub Profile URL (Recommended)" type="url">
                                     <label for="age">Age</label>
                                     <select name="age" id="age" required>
                                         {% for key, value in site.registrationFields.age.value.min .. site.registrationFields.age.value.max %}
