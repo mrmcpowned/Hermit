@@ -186,12 +186,12 @@ em{
     justify-content: center;
     align-items: center;
     color: white;
-    text-align: center
+    text-align: center;
+    order: -1;
+    padding: 1.5em;
 }
 
 .hero .logo{
-    max-width: calc(100% - 150px);
-    max-height: calc(100% - 150px);
     filter: drop-shadow(rgba(0,0,0,.2) 0px 0px 5px);
     animation: glow 3s infinite linear;
 }
@@ -224,7 +224,9 @@ em{
     background: #ff0080;
     align-self: center;
     border-radius: 1em;
-    padding: .2em .5em
+    padding: .2em .5em;
+    margin-top: .5em;
+
 }
 
 .content{
@@ -375,11 +377,12 @@ em{
 .form input:not(:last-child), 
 .form select:not(:last-child),
 .form textarea{
-    margin-bottom: .5em;
+    margin-bottom: .7em;
 }
 
 .form fieldset legend{
     font-weight: bold;
+    margin-bottom: .7em;
 }
 
 .form input:not([type=radio]),
@@ -415,6 +418,10 @@ em{
 }
 
 /*Select2 Fixes*/
+.select2-container{
+    width: 100% !important;
+}
+
 .select2-container--default .select2-selection {
     padding: .2em;
     margin: .3em 0;
@@ -534,18 +541,27 @@ em{
 }
 
 
-@media (max-width: 1270px) and (orientation: portrait) {
+@media (max-width: 1400px) {
+
+    .menu.button .title{
+        display: none;
+    }
+
+}
+
+@media (max-width: 1270px) {
     .hero {
-        flex-direction: column-reverse;
+        flex-direction: column;
     }
 
     .hero .left {
         flex-basis: auto;
     }
 
-    .hero .logo {
-        max-width: calc(100% - 50px);
-        max-height: calc(100% - 150px);
+
+    .hero .right{
+        flex-basis: auto;
+        flex-grow: 0;
     }
 
     .sponsor-group.conch img {
@@ -554,19 +570,35 @@ em{
 }
 
 @media (max-width: 1270px) and (orientation: landscape){
-    .hero .logo{
-        max-width: calc(100% - 50px);
-        max-height: calc(100% - 150px);
-    }
-    .hero .right h2{
+    .hero .right h2:not(.dates){
         display: none;
     }
+
+    .hero{
+        flex-direction: row;
+    }
+
+    .hero .right{
+        flex-grow: 1;
+    }
+
 }
 
-@media (max-width: 768px) {
-
-    .menu.button .title{
-        display: none;
+@media (max-width: 1270px) and (orientation: portrait) {
+    .hero {
+        flex-direction: column;
     }
 
+    .hero .left {
+        flex-basis: auto;
+    }
+
+    .hero .right{
+        flex-basis: auto;
+        flex-grow: 10;
+    }
+
+    .sponsor-group.conch img {
+        max-width: 80vw;
+    }
 }
