@@ -422,10 +422,6 @@ em{
 }
 
 /*Select2 Fixes*/
-.select2-container{
-    width: 100% !important;
-}
-
 .select2-container--default .select2-selection {
     padding: .2em;
     margin: .3em 0;
@@ -433,6 +429,7 @@ em{
 
 .select2-container .select2-selection--single{
     height: auto !important;
+    width: 100% !important;
 }
 
 
