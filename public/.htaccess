@@ -31,6 +31,3 @@ RewriteRule ^verify/(.*)?$ /verify.php?type=$1 [QSA]
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ $1.php
-
-php_flag display_startup_errors off
-
