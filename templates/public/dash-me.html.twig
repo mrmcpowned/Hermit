@@ -11,7 +11,7 @@
                     <section class="content">
                         <h1>{{ block('title', _self) }}</h1>
                         {% if not user.verified %}
-                        <form action="/api/request-wrapper.php?type=pass" class="form">
+                        <form action="/api/request-wrapper.php?type=verify" class="form">
                             <input type="hidden" name="type" value="{{ constant('VerificationType::RESET') }}">
                             <input class="button" type="submit" value="Resend Verification Email">
                         </form>
