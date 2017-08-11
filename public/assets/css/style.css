@@ -167,7 +167,7 @@ em{
 
 /*HOME PAGE*/
 .hero{
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: row;
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.3) 100%),
@@ -325,6 +325,10 @@ em{
     max-height: 300px;
 }
 
+.sponsor-group.conch a:first-of-type{
+    margin-left: 100%;
+    margin-right: 100%;
+}
 
 
 
@@ -549,42 +553,7 @@ em{
 
 }
 
-@media (max-width: 1270px) {
-    .hero {
-        flex-direction: column;
-    }
-
-    .hero .left {
-        flex-basis: auto;
-    }
-
-
-    .hero .right{
-        flex-basis: auto;
-        flex-grow: 0;
-    }
-
-    .sponsor-group.conch img {
-        max-width: 80vw;
-    }
-}
-
-@media (max-width: 1270px) and (orientation: landscape){
-    .hero .right h2:not(.dates){
-        display: none;
-    }
-
-    .hero{
-        flex-direction: row;
-    }
-
-    .hero .right{
-        flex-grow: 1;
-    }
-
-}
-
-@media (max-width: 1270px) and (orientation: portrait) {
+@media (max-width: 1270px){
     .hero {
         flex-direction: column;
     }
@@ -597,7 +566,28 @@ em{
         flex-basis: auto;
         flex-grow: 10;
     }
+}
 
+@media (max-width: 1270px) and (min-height: 400px) and (orientation: landscape){
+    .hero .right h2:not(.dates){
+        display: none;
+    }
+
+    .hero{
+        flex-direction: row;
+    }
+
+    .hero .right{
+        flex-grow: 1;
+    }
+
+    .hero .links{
+        width: auto;
+    }
+
+}
+
+@media (max-width: 500px){
     .sponsor-group.conch img {
         max-width: 80vw;
     }
