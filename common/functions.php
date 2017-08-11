@@ -99,7 +99,7 @@ function json_response($response, $returnOnEmpty = true){
      * signifies a successful response.
      */
     if($returnOnEmpty){
-        if(empty($errors)){
+        if(empty($response['errors'])){
             return;
         }
     }
