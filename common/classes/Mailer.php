@@ -80,6 +80,7 @@ class Mailer
 
     public function sendMail($address, $subject, $message){
 
+        $this->mail->ClearAddresses();
         $this->mail->addAddress($address);
         $this->mail->Subject = $subject;
         $this->mail->msgHTML($message);
