@@ -260,7 +260,7 @@ class Hacker extends User
         if($this->isWalkIn() || $this->canAttend())
             return RegistrationState::ACCEPTED;
 
-        //If we are verified and verified within the registration window (or a walk-in), then we're registered
+        //If we are verified and verified within the registration window, then we're registered
         if(($this->isVerified() && ($site->isWithinRegistrationWindow($this->getTimeVerified()))))
             return RegistrationState::REGISTERED;
 

@@ -10,6 +10,7 @@
 
 {% block body %}
     {% embed "html-stubs/page.html.twig" %}
+        {% if user.accepted %}
         {% block pagebody %}
             {% embed "html-stubs/modal.html.twig" %}
                 {% block modalbody %}
@@ -27,6 +28,7 @@
                 {% endblock %}
             {% endembed %}
         {% endblock %}
+        {% endif %}
     {% endembed %}
 {% endblock %}
 
