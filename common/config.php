@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 require_once __DIR__ . "/constants.php";
 
@@ -7,8 +8,6 @@ try {
 } catch (PDOException $e) {
     die("Error connecting to database: " . $e->getMessage());
 }
-
-session_start();
 
 require_once __DIR__ . "/functions.php";
 require_once __DIR__ . "/classes/Autoloader.php";
