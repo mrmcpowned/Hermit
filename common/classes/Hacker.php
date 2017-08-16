@@ -215,6 +215,11 @@ class Hacker extends User
         return $this->userInfo['check_in_code'];
     }
 
+    public function getDenialReason()
+    {
+        return $this->userInfo['denial_reason'];
+    }
+
     public function isFirstHackathon()
     {
         return filter_var($this->userInfo['is_first_hackathon'], FILTER_VALIDATE_BOOLEAN);
