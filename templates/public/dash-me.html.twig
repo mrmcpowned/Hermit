@@ -18,6 +18,7 @@
                         {% endif %}
 
                         <h3>Reset Password</h3>
+                        <p><a href="/forgot">Forgot your password?</a></p>
                         <form action="/api/request-wrapper.php?type=pass" class="form">
                             <input type="hidden" name="change_type" value="{{ constant('VerificationType::CHANGE') }}">
                             <input type="password" placeholder="Current Password" name="curr_pass" minlength="8">
