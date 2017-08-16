@@ -127,11 +127,12 @@ em{
     height: 100%;
     top: 0;
     font-size: 150%;
-    background: white;
+    background: hsla(60, 3%, 2%, 1);
     transform: translateX(calc(-100% - 10px));
     z-index: 1;
     transition: .25s cubic-bezier(.45, .87, 0, 1.01);
     overflow: auto;
+    color: white
 }
 
 .main.menu a{
@@ -141,8 +142,7 @@ em{
 }
 
 .main.menu a:hover{
-    background: rgba(0,0,0,0.15);
-    color: darkred;
+    background: #fc5bb4;
 }
 
 .main.menu:target{
@@ -170,7 +170,7 @@ em{
 .hero{
     min-height: 100vh;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.3) 100%),
         url(../imgs/bg/miami-bg.png) fixed;
     background-size: auto, cover;
@@ -190,21 +190,24 @@ em{
     text-align: center;
     order: -1;
     padding: 1.5em;
+    flex-basis: 100%;
+    padding-top: 3.5em;
 }
 
 .hero .logo{
     filter: drop-shadow(rgba(0,0,0,.2) 0px 0px 5px);
     animation: glow 3s infinite linear;
+    max-width: 26em;
 }
 
 .hero .left{
-    justify-content: flex-end;
-    align-items: center
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 1;
 }
 
 .hero .links{
-    width: 55%;
-    margin-bottom: 10%;
+    width: 35%;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -219,15 +222,14 @@ em{
     background: turquoise;
 }
 
-.hero .dates{
+.hero .dates {
     text-align: center;
     color: white;
     background: #fc5bb4;
     align-self: center;
     border-radius: 1em;
-    padding: .2em .5em;
+    padding: .4em 1em;
     margin-top: .5em;
-
 }
 
 .content{
@@ -253,6 +255,7 @@ em{
 
 .beach{
     background: url('/assets/imgs/bg/lifeguard-bg.png') no-repeat center/cover;
+    background: #fc5bb4;
 }
 
 .beach .content{
@@ -329,11 +332,16 @@ em{
     margin-right: 100%;
 }
 
+.sponsor-group.conch a:first-of-type img{
+    max-width: 450px;
+    max-height: 450px;
+}
+
 
 
 
 .faq{
-    background: #fc5bb4;
+    background: darkturquoise;
 }
 
 
@@ -343,7 +351,8 @@ em{
     justify-content: space-between;
     padding: 1em;
     font-size: 80%;
-    background: #fc5bb4;
+    background: black;
+    color: #fc5bb4;
 }
 
 
@@ -565,18 +574,15 @@ em{
 }
 
 @media (max-width: 1270px){
+
     .hero {
         flex-direction: column;
     }
 
-    .hero .left {
-        flex-basis: auto;
+    .hero .links{
+        width: 55%;
     }
 
-    .hero .right{
-        flex-basis: auto;
-        flex-grow: 10;
-    }
 }
 
 @media (max-width: 1270px) and (min-height: 400px) and (orientation: landscape){
@@ -584,27 +590,27 @@ em{
         display: none;
     }
 
-    .hero{
-        flex-direction: row;
-    }
-
-    .hero .right{
+    .hero .right {
         flex-grow: 1;
-    }
-
-    .hero .links{
-        width: auto;
     }
 
 }
 
 @media (max-width: 500px) {
     .sponsor-group.conch img {
-        max-width: 80vw;
+        max-width: 80vw !important;
     }
 
     .footer.site {
         flex-direction: column;
         align-items: center;
     }
+
+}
+
+@media (max-width: 300px) {
+    .sponsor-group img {
+        max-width: 80vw !important;
+    }
+
 }
