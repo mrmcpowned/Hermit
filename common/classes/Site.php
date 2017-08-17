@@ -346,7 +346,7 @@ class Site
             return $this->majors;
 
         //Note: Could possibly move this action to its own method, but would require accounting for more than just a KV pair
-        $sql = "SELECT * FROM majors";
+        $sql = "SELECT * FROM majors ORDER BY major";
         $query = $this->db->query($sql);
         while($row = $query->fetch(PDO::FETCH_ASSOC)){
             $this->majors[$row['id']] = $row['major'];
