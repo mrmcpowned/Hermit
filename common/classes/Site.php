@@ -275,7 +275,9 @@ class Site
         $query = $this->db->query($sql);
         //We do this to create an array whose indices are the IDs of the schools
         while($row = $query->fetch(PDO::FETCH_ASSOC)){
-            $this->schools[$row['id']] = $row['name'];
+            $this->schools[$row['id']]['name'] = $row['name'];
+            $this->schools[$row['id']]['hasBus'] = $row['has_bus'];
+            $this->schools[$row['id']]['busCaptain'] = $row['bus_captain'];
         }
         return $this->schools;
     }

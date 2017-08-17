@@ -11,14 +11,14 @@ interface RegistrationState
 {
     const DENIED = -1;
     const UNVERIFIED = 0;
-    const REGISTERED = 1;
+    const PENDING = 1;
     const REJECTED = 2;
     const ACCEPTED = 3;
 
     const STATE_NAMES = [
         self::DENIED => "Denied",
         self::UNVERIFIED => "Unverified",
-        self::REGISTERED => "Registered",
+        self::PENDING => "Pending",
         self::REJECTED => "Rejected",
         self::ACCEPTED => "Accepted"
     ];

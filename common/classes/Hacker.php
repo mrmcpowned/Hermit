@@ -267,7 +267,7 @@ class Hacker extends User
 
         //If we are verified and verified within the registration window, then we're registered
         if(($this->isVerified() && ($site->isWithinRegistrationWindow($this->getTimeVerified()))))
-            return RegistrationState::REGISTERED;
+            return RegistrationState::PENDING;
 
         //EMail not verified and site isn't accepting registrations means you've been rejected (for tardiness)
         if(!$this->isVerified() && !$site->isAcceptingRegistrations())
