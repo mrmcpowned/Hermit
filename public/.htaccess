@@ -8,6 +8,13 @@
 Options -MultiViews -Indexes
 RewriteEngine On
 
+#RewriteCond %{QUERY_STRING} ^type=(.*)$
+RewriteRule ^verify/(.*)?$ /verify.php?type=$1 [QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ $1.php [QSA,L]
+
 # Remove the www
 RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
 RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
@@ -23,11 +30,3 @@ RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/.+$
 RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
 RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-
-#RewriteCond %{QUERY_STRING} ^type=(.*)$
-RewriteRule ^verify/(.*)?$ /verify.php?type=$1 [QSA]
-
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ $1.php
