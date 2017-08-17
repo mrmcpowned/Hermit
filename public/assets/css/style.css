@@ -255,7 +255,7 @@ em{
 
 .beach{
     background: url('/assets/imgs/bg/lifeguard-bg.png') no-repeat center/cover;
-    background: #fc5bb4;
+    background: #fc5bb4 url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat center center/75% fixed;
 }
 
 .beach .content{
@@ -341,7 +341,23 @@ em{
 
 
 .faq{
-    background: darkturquoise;
+    background: darkturquoise url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat -50% center/60% fixed;
+}
+
+.faq a {
+    color: white;
+}
+
+.faq a:visited{
+    color: gray;
+}
+
+.faq a:hover{
+    color: hsla(0, 0%, 92%, 1);
+}
+
+.faq a:active{
+    color: lightgray
 }
 
 
@@ -363,7 +379,7 @@ em{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: darkturquoise;
+    background: darkturquoise url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat 120% center/50% fixed;
 }
 
 .modal{
@@ -400,8 +416,8 @@ em{
     margin-bottom: 1em;
 }
 
-.form fieldset:not(:last-child), 
-.form input:not(:last-child), 
+.form fieldset:not(:last-child),
+.form input:not(:last-child),
 .form select:not(:last-child),
 .form textarea{
     margin-bottom: .7em;
@@ -497,7 +513,7 @@ em{
     color: white
 }
 
-.status .state.registered{
+.status .state.pending{
     background: navy
 }
 
@@ -604,6 +620,10 @@ em{
     .footer.site {
         flex-direction: column;
         align-items: center;
+    }
+
+    .page{
+        background: darkturquoise url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat center center/160% fixed;
     }
 
 }
