@@ -5,6 +5,7 @@ define("DB_PASS", "");
 define("DB_NAME", "");
 
 define("RECAPTCHA_SECRET", "");
+define("RECAPTCHA_PUBLIC", "");
 
 define('SESSION_EXPIRATION_SECONDS', 3600); //1 Hour Expiration
 define('RESUME_PATH', __DIR__ . "/resumes/"); //Relative to the constant file, but absolute when used
