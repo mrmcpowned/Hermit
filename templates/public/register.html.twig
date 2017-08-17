@@ -39,8 +39,8 @@
                                     <legend>Personal Info</legend>
                                     <input placeholder="First Name" name="f_name" type="text" required>
                                     <input placeholder="Last Name" name="l_name" type="text" required>
-                                    <label for="resume">Resume (2MB Max)</label>
-                                    {#<input type="hidden" name="MAX_FILE_SIZE" value="2000000"/>#}
+                                    <label for="resume">Resume (2MB Max{% if not site.acceptingWalkIns %}, Required{% endif %})</label>
+                                    <input type="hidden" name="MAX_FILE_SIZE" value="2000000"/>
                                     <input id="resume" name="resume" type="file" accept="application/msword,
                                     application/pdf,
                                     application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -57,7 +57,7 @@
                                     <label for="school">School</label>
                                     <select name="school" id="school" required>
                                         {% for id, school in site.schools %}
-                                            <option value="{{ id }}">{{ school }}</option>
+                                            <option value="{{ id }}">{{ school.name }}</option>
                                         {% endfor %}
                                     </select>
                                     <label for="class_year">Class Year</label>

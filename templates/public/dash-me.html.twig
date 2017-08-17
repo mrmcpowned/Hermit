@@ -52,7 +52,7 @@
                                 <select name="school" id="school" required disabled>
                                     {% for id, school in site.schools %}
                                         <option value="{{ id }}"
-                                                {% if user.school == id %}selected{% endif %}>{{ school }}</option>
+                                                {% if user.school == id %}selected{% endif %}>{{ school.name }}</option>
                                     {% endfor %}
                                 </select>
                                 <label for="class_year">Class Year</label>
