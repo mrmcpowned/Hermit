@@ -5,11 +5,12 @@
     /* Where: * 0.6944 = 100 * font_Size_Difference / viewport_Width_Difference */
     font-family: 'Raleway';
 }
+
 /* Prevent font scaling beyond this breakpoint */
 @media (min-width: 1200px) {
-  :root {
-    font-size: 24px;
-  }
+    :root {
+        font-size: 24px;
+    }
 }
 
 @keyframes glow {
@@ -48,81 +49,80 @@
     }
 }
 
-
-h1{
+h1 {
     font-size: 200%
 }
 
-h2{
+h2 {
     font-size: 175%
 }
 
-h3{
+h3 {
     font-size: 150%;
 }
 
-h4{
+h4 {
     font-size: 130%;
 }
 
-h5{
+h5 {
     font-size: 115%;
 }
 
-h1,h2,h3,h4,h5{
+h1, h2, h3, h4, h5 {
     line-height: 1.15em;
     margin-bottom: .4em;
 }
 
-p{
+p {
     margin-bottom: .75em;
     line-height: 1.35em;
 }
 
-strong{
+strong {
     font-weight: bold
 }
 
-em{
+em {
     font-style: italic;
 }
 
-.button{
+.button {
     text-decoration: none;
     color: inherit;
 }
 
-.menu.button{
+.menu.button {
     display: inline-block;
     font-size: 250%;
     padding: .1em .25em;
     color: #fc5bb4;
-    text-shadow: 0px 0px 0px rgba(0,0,0,.5), 1px 1px 0px rgba(0,0,0,.5), -1px -1px 0px rgba(0,0,0,.5), 1px -1px 0px rgba(0,0,0,.5), -1px 1px 0px rgba(0,0,0,.5);
+    text-shadow: 0px 0px 0px rgba(0, 0, 0, .5), 1px 1px 0px rgba(0, 0, 0, .5), -1px -1px 0px rgba(0, 0, 0, .5), 1px -1px 0px rgba(0, 0, 0, .5), -1px 1px 0px rgba(0, 0, 0, .5);
 }
 
-.menu.button *{
+.menu.button * {
     display: inline-block;
     vertical-align: middle;
     font-size: inherit;
 }
 
-.menu.button .title{
+.menu.button .title {
     font-size: 75%;
     text-transform: uppercase;
 }
 
-.menu li{
-/*    display: inline-block;*/
+.menu li {
+    /*    display: inline-block;*/
 }
 
-.site.header{
+.site.header {
     position: fixed;
-/*    top: 0;*/
+    /*    top: 0;*/
     z-index: 11000;
     user-select: none
 }
 
-.main.menu{
+.main.menu {
     position: fixed;
     height: 100%;
     top: 0;
@@ -135,55 +135,55 @@ em{
     color: white
 }
 
-.main.menu a{
+.main.menu a {
     display: block;
     padding: .5em 1em;
     transition: .3s ease-out
 }
 
-.main.menu a:hover{
+.main.menu a:hover {
     background: #fc5bb4;
 }
 
-.main.menu:target{
+.main.menu:target {
     transform: none;
 }
 
-.main.menu + .shade{
+.main.menu + .shade {
     display: block;
     width: 100%;
     height: 100%;
     position: fixed;
     top: 0;
-    background: rgba(0,0,0,0.65);
+    background: rgba(0, 0, 0, 0.65);
     pointer-events: none;
     opacity: 0;
     transition: .2s ease-out
 }
 
-.main.menu:target + .shade{
+.main.menu:target + .shade {
     pointer-events: all;
     opacity: 1;
 }
 
 /*HOME PAGE*/
-.hero{
+.hero {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.3) 100%),
-        url(../imgs/bg/miami-bg.png) fixed;
+    url(../imgs/bg/miami-bg.png) fixed;
     background-size: auto, cover;
 }
 
-.hero > div{
+.hero > div {
     display: flex;
     flex-basis: 50%;
     flex-direction: column;
     flex-grow: 1
 }
 
-.hero .right{
+.hero .right {
     justify-content: center;
     align-items: center;
     color: white;
@@ -194,26 +194,24 @@ em{
     padding-top: 3.5em;
 }
 
-.hero .logo{
-    filter: drop-shadow(rgba(0,0,0,.2) 0px 0px 5px);
+.hero .logo {
+    filter: drop-shadow(rgba(0, 0, 0, .2) 0px 0px 5px);
     animation: glow 3s infinite linear;
     max-width: 26em;
 }
 
-.hero .left{
+.hero .left {
     justify-content: center;
     align-items: center;
     flex-shrink: 1;
 }
 
-.hero .links{
+.hero .links {
     width: 35%;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
 }
 
-.hero .links .button{
+.hero .links .button {
     font-size: 175%;
     display: block;
     text-align: center;
@@ -232,33 +230,33 @@ em{
     margin-top: .5em;
 }
 
-.content{
+.content {
     margin: 50px 0;
     padding: 0 30px;
 }
 
-.clamped{
+.clamped {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.clamped .content{
+.clamped .content {
     width: calc(100vw - 40px);
     max-width: 1000px;
     box-sizing: border-box;
 }
 
-.beach h2{
+.beach h2 {
     font-weight: bold
 }
 
-.beach{
+.beach {
     background: url('/assets/imgs/bg/lifeguard-bg.png') no-repeat center/cover;
     background: #fc5bb4 url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat center/cover fixed;
 }
 
-.beach .content{
+.beach .content {
     margin: 100px 0;
 }
 
@@ -267,11 +265,11 @@ em{
     color: whitesmoke;
 }
 
-.sponsor-us{
+.sponsor-us {
     margin-bottom: 1em;
 }
 
-.sponsor-us .button{
+.sponsor-us .button {
     border: .125em solid whitesmoke;
     padding: .25em;
     display: block;
@@ -279,7 +277,7 @@ em{
     border-radius: .5em;
 }
 
-.sponsor-group{
+.sponsor-group {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -288,59 +286,57 @@ em{
     margin-bottom: 1.5em
 }
 
-.sponsor-group h2, .sponsor-group h3{
+.sponsor-group h2, .sponsor-group h3 {
     flex-basis: 100%;
 }
 
-.sponsor-group a{
+.sponsor-group a {
     margin: 15px;
     transition: .3s ease-out;
     opacity: .65;
 }
 
-.sponsor-group a:hover{
+.sponsor-group a:hover {
     opacity: 1;
 }
 
-.sponsor-group img{
+.sponsor-group img {
     max-width: 150px;
     max-height: 150px
 }
 
-.sponsor-group.sand-dollar img{
+.sponsor-group.sand-dollar img {
     max-width: 175px;
     max-height: 175px;
 }
 
-.sponsor-group.scallop  img{
+.sponsor-group.scallop img {
     max-width: 225px;
     max-height: 225px;
 }
 
-.sponsor-group.cone  img{
+.sponsor-group.cone img {
     max-width: 250px;
     max-height: 250px;
 }
 
-.sponsor-group.conch  img{
+.sponsor-group.conch img {
     max-width: 300px;
     max-height: 300px;
 }
 
-.sponsor-group.conch a:first-of-type{
-    margin-left: 100%;
-    margin-right: 100%;
+.sponsor-group.conch a:first-of-type {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
-.sponsor-group.conch a:first-of-type img{
+.sponsor-group.conch a:first-of-type img {
     max-width: 450px;
     max-height: 450px;
 }
 
-
-
-
-.faq{
+.faq {
     background: darkturquoise url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat fixed;
     background-size: cover;
     background-position: -30vw 50%;
@@ -350,19 +346,17 @@ em{
     color: white;
 }
 
-.faq a:visited{
+.faq a:visited {
     color: gray;
 }
 
-.faq a:hover{
+.faq a:hover {
     color: hsla(0, 0%, 92%, 1);
 }
 
-.faq a:active{
+.faq a:active {
     color: lightgray
 }
-
-
 
 .footer.site {
     display: flex;
@@ -373,9 +367,7 @@ em{
     color: #fc5bb4;
 }
 
-
-
-.page{
+.page {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -384,82 +376,79 @@ em{
     background: darkturquoise url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat 120% center/50% fixed;
 }
 
-.modal{
+.modal {
     overflow: hidden;
     background: white;
     border-radius: 3px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.25);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
     box-sizing: border-box;
     margin: .5em 10px
 }
 
-.modal:first-of-type{
+.modal:first-of-type {
     margin-top: 3.5em
 }
 
-.modal:last-of-type{
+.modal:last-of-type {
     margin-bottom: 3.5em
 }
 
-.modal .content{
+.modal .content {
     padding: 1em;
     margin: auto;
     min-height: 0;
 }
 
-.modal.small.clamped .content{
+.modal.small.clamped .content {
     max-width: 500px;
 }
 
-
-
-
-.form:not(:last-of-type){
+.form:not(:last-of-type) {
     margin-bottom: 1em;
 }
 
 .form fieldset:not(:last-child),
 .form input:not(:last-child),
 .form select:not(:last-child),
-.form textarea{
+.form textarea {
     margin-bottom: .7em;
 }
 
-.form fieldset legend{
+.form fieldset legend {
     font-weight: bold;
     margin-bottom: .7em;
 }
 
 .form input:not([type=radio]),
-.form textarea, .form select{
+.form textarea, .form select {
     font-size: inherit;
     font-family: inherit;
     width: 100%;
     resize: vertical
 }
 
-.form textarea{
+.form textarea {
     padding: .5em;
     box-sizing: border-box;
 }
 
-.form label{
+.form label {
     margin-bottom: .2em;
     line-height: 1.35em;
 }
 
-.form input[type=checkbox]{
+.form input[type=checkbox] {
     width: auto;
 }
 
-.form input:not([type=file]){
+.form input:not([type=file]) {
     border: none;
-    border-bottom: .1em solid rgba(0,0,0,.75);
+    border-bottom: .1em solid rgba(0, 0, 0, .75);
 }
 
-.form input.button{
+.form input.button {
     padding: .5em;
-    border: .1em solid rgba(0,0,0,.75);
+    border: .1em solid rgba(0, 0, 0, .75);
 }
 
 /*Select2 Fixes*/
@@ -468,46 +457,40 @@ em{
     margin: .3em 0;
 }
 
-.select2-container .select2-selection--single{
+.select2-container .select2-selection--single {
     height: auto !important;
     width: 100% !important;
 }
 
-
-
-
-#messages{
+#messages {
     cursor: pointer;
 }
 
-.messages.error{
-/*    margin-bottom: auto;*/
+.messages.error {
+    /*    margin-bottom: auto;*/
     background-color: indianred;
     color: white
 }
 
-.messages.success{
-/*    margin-bottom: auto;*/
+.messages.success {
+    /*    margin-bottom: auto;*/
     background-color: darkgreen;
     color: white
 }
 
-.messages li{
+.messages li {
     line-height: 1.20em
 }
 
-.messages ul li:before{
+.messages ul li:before {
     content: '- '
 }
 
-.messages .message:not(:last-of-type){
+.messages .message:not(:last-of-type) {
     margin-bottom: .5em
 }
 
-
-
-
-.status .state{
+.status .state {
     text-align: center;
     padding: .6em;
     background: purple;
@@ -515,46 +498,44 @@ em{
     color: white
 }
 
-.status .state.pending{
+.status .state.pending {
     background: navy
 }
 
-.status .state.accepted{
+.status .state.accepted {
     background: green
 }
 
-.status .state.rejected{
+.status .state.rejected {
     background-color: darkred
 }
 
-.status .state.denied{
+.status .state.denied {
     background: red
 }
 
-
-.list{
+.list {
     list-style: disc inside;
     line-height: 1.35em;
 }
 
-
-.dash.menu{
+.dash.menu {
     width: 100%;
     text-align: center;
-/*    padding-bottom: .3em;*/
-/*    border-bottom: .1em solid rgba(0,0,0,.65)*/
+    /*    padding-bottom: .3em;*/
+    /*    border-bottom: .1em solid rgba(0,0,0,.65)*/
 }
 
-.dash.menu ul{
+.dash.menu ul {
     display: flex;
     justify-content: space-around;
 }
 
-.dash.menu li{
+.dash.menu li {
     flex-grow: 1;
 }
 
-.dash.menu .button{
+.dash.menu .button {
     display: block;
     padding: .3em;
     background: hotpink;
@@ -562,49 +543,48 @@ em{
     transition: .2s ease-out;
 }
 
-.dash.menu li:nth-of-type(even) .button{
+.dash.menu li:nth-of-type(even) .button {
     background: #ff44a1;
 }
 
-.dash.menu .button:hover{
-    filter:brightness(1.1);
+.dash.menu .button:hover {
+    filter: brightness(1.1);
     color: black
 }
 
-.qr-code{
+.qr-code {
     text-align: center;
     align-self: center
 }
 
-.qr-code img{
+.qr-code img {
     width: 100% !important;
     height: auto !important;
     max-width: 400px;
 }
 
-
 @media (max-width: 1400px) {
 
-    .menu.button .title{
+    .menu.button .title {
         display: none;
     }
 
 }
 
-@media (max-width: 1270px){
+@media (max-width: 1270px) {
 
     .hero {
         flex-direction: column;
     }
 
-    .hero .links{
+    .hero .links {
         width: 55%;
     }
 
 }
 
-@media (max-width: 1270px) and (min-height: 400px) and (orientation: landscape){
-    .hero .right h2:not(.dates){
+@media (max-width: 1270px) and (min-height: 400px) and (orientation: landscape) {
+    .hero .right h2:not(.dates) {
         display: none;
     }
 
@@ -624,7 +604,7 @@ em{
         align-items: center;
     }
 
-    .page{
+    .page {
         background: darkturquoise url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat center center/160% fixed;
     }
 
