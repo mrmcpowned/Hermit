@@ -255,7 +255,7 @@ em{
 
 .beach{
     background: url('/assets/imgs/bg/lifeguard-bg.png') no-repeat center/cover;
-    background: #fc5bb4 url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat center center/75% fixed;
+    background: #fc5bb4 url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat center/cover fixed;
 }
 
 .beach .content{
@@ -341,7 +341,9 @@ em{
 
 
 .faq{
-    background: darkturquoise url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat -50% center/60% fixed;
+    background: darkturquoise url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat fixed;
+    background-size: cover;
+    background-position: -30vw 50%;
 }
 
 .faq a {
