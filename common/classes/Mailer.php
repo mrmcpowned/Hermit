@@ -23,6 +23,16 @@ class Mailer
         $this->mail = new PHPMailer();
         $this->mail->setFrom("no-reply@shellhacks.net", "ShellHacks");
 
+        $this->mail->IsSMTP();                                      // Set mailer to use SMTP
+        $this->mail->Host = 'smtp.mandrillapp.com';                 // Specify main and backup server
+        $this->mail->Port = 587;                                    // Set the SMTP port
+        $this->mail->SMTPAuth = true;                               // Enable SMTP authentication
+        $this->mail->Username = MANDRILL_USERNAME;                  // SMTP username
+        $this->mail->Password = MANDRILL_APIKEY;                    // SMTP password
+        $this->mail->SMTPSecure = 'tls';                            // Enable encryption, 'ssl' also accepted
+
+        $this->mail->IsHTML(true);                                  // Set email format to HTML
+
     }
 
 
