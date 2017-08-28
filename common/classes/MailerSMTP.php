@@ -6,12 +6,11 @@
  * Date: 7/23/2017
  * Time: 8:51 PM
  */
-class Mailer
+class MailerSMTP
 {
 
     private $db;
     private $mail;
-    private $messageData;
 
     /**
      * Mailer constructor.
@@ -21,18 +20,29 @@ class Mailer
     {
         $this->db = $db;
 
-        $this->messageData = [
-            'from_email' => 'no-reply@shellhacks.net',
-            'from_name' => 'ShellHacks',
-            'to' => [
+        $this->mail = new PHPMailer();
+        $this->mail->setFrom("no-reply@shellhacks.net", "ShellHacks");
 
-            ],
-            'headers' => [
-                'Reply-To' => 'questions@shellhacks.net'
-            ]
-        ];
+        $this->mail->isSMTP();                                      // Set mailer to use SMTP
+        $this->mail->SMTPAuth = true;                               // Enable SMTP authentication
+        $this->mail->SMTPSecure = 'tls';                            // Enable encryption, 'ssl' also accepted
+        $this->mail->Host = 'smtp.mandrillapp.com';                 // Specify main and backup server
+        $this->mail->Port = 587;                                    // Set the SMTP port
+        $this->mail->Username = MANDRILL_USERNAME;                  // SMTP username
+        $this->mail->Password = MANDRILL_APIKEY;                    // SMTP password
+        $this->mail->SMTPDebug = 2;
+        $this->mail->Debugoutput = 'error_log';
 
-        $this->mail = new Mandrill(MANDRILL_APIKEY);
+        $this->mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+
+
+        $this->mail->isHTML(true);                                  // Set email format to HTML
 
     }
 
@@ -91,13 +101,14 @@ class Mailer
 
     public function sendMail($address, $subject, $message){
 
-        $mailPrefs = $this->messageData;
+        $this->mail->ClearAddresses();
+        $this->mail->addAddress($address);
+        $this->mail->Subject = $subject;
+        $this->mail->msgHTML($message);
 
-        $mailPrefs['subject'] = $subject;
-        $mailPrefs['html'] = $message;
-        $mailPrefs['to'][] = ['email' => $address];
-
-        $this->mail->messages->send($mailPrefs);
+        if (!$this->mail->send()) {
+            throw new MailerException($this->mail->ErrorInfo);
+        }
     }
 
     
