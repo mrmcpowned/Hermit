@@ -30,6 +30,17 @@ class Mailer
         $this->mail->Port = 587;                                    // Set the SMTP port
         $this->mail->Username = MANDRILL_USERNAME;                  // SMTP username
         $this->mail->Password = MANDRILL_APIKEY;                    // SMTP password
+        $this->mail->SMTPDebug = 2;
+        $this->mail->Debugoutput = 'error_log';
+
+        $this->mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+
 
         $this->mail->isHTML(true);                                  // Set email format to HTML
 
