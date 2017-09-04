@@ -233,6 +233,7 @@ class Site
     private $dietRestrictions;
     private $races;
     private $majors;
+    private $events;
 
     /**
      * Site constructor.
@@ -244,7 +245,8 @@ class Site
         $this->setUp();
     }
 
-    private function setUp(){
+    private function setUp()
+    {
 
         $this->settings = [];
 
@@ -253,7 +255,7 @@ class Site
         $query = $this->db->prepare($sql);
         $query->execute();
 
-        while($row = $query->fetch()){
+        while ($row = $query->fetch()) {
             $this->settings[$row['name']] = $row['value'];
         }
 
@@ -267,14 +269,15 @@ class Site
         return $this->validEmails;
     }
 
-    public function getSchools(){
-        if(!is_null($this->schools))
+    public function getSchools()
+    {
+        if (!is_null($this->schools))
             return $this->schools;
 
         $sql = "SELECT * FROM schools";
         $query = $this->db->query($sql);
         //We do this to create an array whose indices are the IDs of the schools
-        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $this->schools[$row['id']]['name'] = $row['name'];
             $this->schools[$row['id']]['hasBus'] = $row['has_bus'];
             $this->schools[$row['id']]['busCaptain'] = $row['bus_captain'];
@@ -284,13 +287,13 @@ class Site
 
     public function getGenders()
     {
-        if(!is_null($this->genders))
+        if (!is_null($this->genders))
             return $this->genders;
 
         //Note: Could possibly move this action to its own method, but would require accounting for more than just a KV pair
         $sql = "SELECT * FROM genders";
         $query = $this->db->query($sql);
-        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $this->genders[$row['id']] = $row['name'];
         }
         return $this->genders;
@@ -299,13 +302,13 @@ class Site
 
     public function getClassYears()
     {
-        if(!is_null($this->classYears))
+        if (!is_null($this->classYears))
             return $this->classYears;
 
         //Note: Could possibly move this action to its own method, but would require accounting for more than just a KV pair
         $sql = "SELECT * FROM class_years";
         $query = $this->db->query($sql);
-        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $this->classYears[$row['id']] = $row['year'];
         }
         return $this->classYears;
@@ -314,28 +317,28 @@ class Site
 
     public function getDietRestrictions()
     {
-        if(!is_null($this->dietRestrictions))
+        if (!is_null($this->dietRestrictions))
             return $this->dietRestrictions;
 
         //Note: Could possibly move this action to its own method, but would require accounting for more than just a KV pair
         $sql = "SELECT * FROM diets";
         $query = $this->db->query($sql);
-        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $this->dietRestrictions[$row['id']] = $row['name'];
         }
         return $this->dietRestrictions;
 
     }
-    
+
     public function getRaces()
     {
-        if(!is_null($this->races))
+        if (!is_null($this->races))
             return $this->races;
 
         //Note: Could possibly move this action to its own method, but would require accounting for more than just a KV pair
         $sql = "SELECT * FROM races";
         $query = $this->db->query($sql);
-        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $this->races[$row['id']] = $row['name'];
         }
         return $this->races;
@@ -344,13 +347,13 @@ class Site
 
     public function getMajors()
     {
-        if(!is_null($this->majors))
+        if (!is_null($this->majors))
             return $this->majors;
 
         //Note: Could possibly move this action to its own method, but would require accounting for more than just a KV pair
         $sql = "SELECT * FROM majors ORDER BY major";
         $query = $this->db->query($sql);
-        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $this->majors[$row['id']] = $row['major'];
         }
         return $this->majors;
@@ -359,12 +362,12 @@ class Site
 
     public function getStates()
     {
-        if(!is_null($this->states))
+        if (!is_null($this->states))
             return $this->states;
 
         $sql = "SELECT * FROM states";
         $query = $this->db->query($sql);
-        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $this->states[$row['id']] = [
                 "state" => $row['state'],
                 "name" => $row['name']
@@ -375,15 +378,33 @@ class Site
 
     public function getShirtSizes()
     {
-        if(!is_null($this->shirtSizes))
+        if (!is_null($this->shirtSizes))
             return $this->shirtSizes;
 
         $sql = "SELECT * FROM shirt_sizes";
         $query = $this->db->query($sql);
-        while($row = $query->fetch(PDO::FETCH_ASSOC)){
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $this->shirtSizes[$row['id']] = $row['shirt_size'];
         }
         return $this->shirtSizes;
+    }
+
+    public function getEvents()
+    {
+        if (!is_null($this->events))
+            return $this->events;
+
+        $sql = "SELECT events_schedule.id, events_schedule.start, events_schedule.end, events_schedule.title, 
+                  events_schedule.description, event_locations.room 
+                FROM events_schedule 
+                JOIN event_locations 
+                  ON event_locations.id = events_schedule.location 
+                ORDER BY start ASC ";
+        $query = $this->db->query($sql);
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+            $this->events[] = $row;
+        }
+        return $this->events;
     }
 
 
@@ -436,7 +457,6 @@ class Site
     {
         return SITE_ADDRESS;
     }
-
 
 
 }
