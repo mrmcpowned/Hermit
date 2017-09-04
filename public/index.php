@@ -3,6 +3,7 @@ require_once '../common/config.php';
 $user = new Hacker($db);
 $loader = new Twig_Loader_Filesystem(PUBLIC_TEMPLATES_PATH);
 $twig = new Twig_Environment($loader);
+$twig->getExtension('Twig_Extension_Core')->setTimezone("America/New_York");
 
 /**
  *

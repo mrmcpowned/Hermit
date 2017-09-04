@@ -1,0 +1,60 @@
+<section class="clamped events" id="events">
+    <div class="content">
+        <h1>Schedule</h1>
+        {{ site.time }} <br>
+        {{ site.time| date('l F jS, Y g:ia') }}
+        <section class="day">
+        {% set currDay = null %}
+        {% set eventDay = null %}
+        {% for event in site.events %}
+            {% set eventDay = event.start|date("m/d/Y") %}
+            {% if currDay != eventDay %}
+                <h3>{{ event.start | date('l F jS, Y') }}</h3>
+            {% endif %}
+
+            <a href="#event-{{ event.id }}" class="event modal" id="event-{{ event.id }}">
+                <article>
+                    <header>
+                        <div class="location">
+                            <div class="times">
+                                <time class="start">{{ event.start | date("g:ia") }}</time>
+                                —
+                                <time class="end">2pm</time>
+                            </div>
+                            <span class="room">Ft Lauderdate (SIPA 125)</span>
+                        </div>
+                        <h4 class="title">Hacker Registration</h4>
+                    </header>
+                    <p class="description">This is an optional event description</p>
+                </article>
+            </a>
+
+            {% if currDay != eventDay %}
+            </section>
+            <section class="day">
+                {% set currDay = eventDay %}
+            {% endif %}
+
+            {% endfor %}
+
+        {#<section class="day">#}
+            {#<h3>Friday, September 29</h3>#}
+            {#<a href="#this_link2" class="event modal" id="this_link2">#}
+                {#<article>#}
+                    {#<header>#}
+                        {#<div class="location">#}
+                            {#<div class="times">#}
+                                {#<time class="start">1pm</time>#}
+                                {#—#}
+                                {#<time class="end">2pm</time>#}
+                            {#</div>#}
+                            {#<span class="room">Ft Lauderdate (SIPA 125)</span>#}
+                        {#</div>#}
+                        {#<h4 class="title">Hacker Registration</h4>#}
+
+                    {#</header>#}
+                    {#<p class="description">This is an optional event description</p></article>#}
+            {#</a>#}
+        </section>
+    </div>
+</section>
