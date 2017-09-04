@@ -234,6 +234,7 @@ class Site
     private $races;
     private $majors;
     private $events;
+    private $time;
 
     /**
      * Site constructor.
@@ -261,6 +262,8 @@ class Site
 
         //Create an array out of the comma separated list and trim the values after
         $this->validEmails = array_map("trim", explode(',', $this->settings['valid_emails']));
+
+        $this->time = time();
 
     }
 
@@ -405,6 +408,14 @@ class Site
             $this->events[] = $row;
         }
         return $this->events;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTime()
+    {
+        return $this->time;
     }
 
 
