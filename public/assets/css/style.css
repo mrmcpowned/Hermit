@@ -313,7 +313,8 @@ em {
 
 .events .event .location{
     display: flex;
-    justify-content: space-between
+    justify-content: space-between;
+    line-height: 1.2em;
 }
 
 .events .event .title{
@@ -661,6 +662,10 @@ em {
 
     .page {
         background: darkturquoise url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat center center/160% fixed;
+    }
+
+    .events .event .location{
+        flex-direction: column;
     }
 
 }
