@@ -307,8 +307,14 @@ em {
     margin-bottom: 1em;
 }
 
-.events .event:not(:target) .description{
+/*.events .event:not(:target) .description{*/
+.events .event:not(.selected) .description{
     display: none;
+}
+
+.events .event.selected{
+    background: black;
+    color: white;
 }
 
 .events .event .location{
