@@ -1,41 +1,42 @@
 <section class="clamped events" id="events">
     <div class="content">
         <h1>Schedule</h1>
-        {{ site.time }} <br>
-        {{ site.time| date('l F jS, Y g:ia') }}
-        <section class="day">
         {% set currDay = null %}
-        {% set eventDay = null %}
         {% for event in site.events %}
             {% set eventDay = event.start|date("m/d/Y") %}
             {% if currDay != eventDay %}
-                <h3>{{ event.start | date('l F jS, Y') }}</h3>
+                {% if not loop.first %}
+                </section>
+                {% endif %}
+            <section class="day">
+            <h3>{{ event.start | date('l F jS, Y') }}</h3>
             {% endif %}
 
-            <a href="#event-{{ event.id }}" class="event modal" id="event-{{ event.id }}">
+            <a href="#event-{{ event.id }}" class="event modal {{ (site.time >= event.start and site.time <= event.end ) ? "ongoing" : "" }}" id="event-{{ event.id }}">
                 <article>
                     <header>
                         <div class="location">
                             <div class="times">
                                 <time class="start">{{ event.start | date("g:ia") }}</time>
                                 —
-                                <time class="end">2pm</time>
+                                <time class="end">{{  (event.start|date("m/d/Y") == (event.end|date("m/d/Y"))) ? event.end|date("g:ia") : event.end|date("g:ia D") }}</time>
                             </div>
-                            <span class="room">Ft Lauderdate (SIPA 125)</span>
+                            <span class="room">{{ event.room }}</span>
                         </div>
-                        <h4 class="title">Hacker Registration</h4>
+                        <h4 class="title">{{ event.title }}</h4>
                     </header>
+                    {% if event.description %}
                     <p class="description">This is an optional event description</p>
+                    {% endif %}
                 </article>
             </a>
 
-            {% if currDay != eventDay %}
-            </section>
-            <section class="day">
-                {% set currDay = eventDay %}
-            {% endif %}
+            {% set currDay = eventDay %}
 
-            {% endfor %}
+            {% if loop.last %}
+            </section>
+            {% endif %}
+        {% endfor %}
 
         {#<section class="day">#}
             {#<h3>Friday, September 29</h3>#}
@@ -55,6 +56,6 @@
                     {#</header>#}
                     {#<p class="description">This is an optional event description</p></article>#}
             {#</a>#}
-        </section>
+
     </div>
 </section>

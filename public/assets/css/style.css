@@ -166,6 +166,35 @@ em {
     opacity: 1;
 }
 
+/*MODAL CSS*/
+.modal {
+    overflow: hidden;
+    background: white;
+    border-radius: 3px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+    margin: .5em 10px
+}
+
+.modal:first-of-type {
+    margin-top: 3.5em
+}
+
+.modal:last-of-type {
+    margin-bottom: 3.5em
+}
+
+.modal .content {
+    padding: 1em;
+    margin: auto;
+    min-height: 0;
+}
+
+.modal.small.clamped .content {
+    max-width: 500px;
+}
+
+
 /*HOME PAGE*/
 .hero {
     min-height: 100vh;
@@ -258,6 +287,59 @@ em {
 
 .beach .content {
     margin: 100px 0;
+}
+
+.events{
+    background: darkturquoise;
+}
+
+.events .event{
+    display: block;
+    padding: .5em;
+    margin-top: auto;
+    margin-left: auto;
+    margin-right: auto;
+    color: inherit;
+    text-decoration: inherit;
+}
+
+.events .event:last-of-type{
+    margin-bottom: 1em;
+}
+
+.events .event:not(:target) .description{
+    display: none;
+}
+
+.events .event .location{
+    display: flex;
+    justify-content: space-between
+}
+
+.events .event .title{
+    margin: 0;
+}
+
+.events .event .description{
+    margin: auto;
+}
+
+.events .event.ongoing{
+    background: #fc5bb4;
+    color: white;
+}
+
+.events .event.ongoing .end:after{
+    display: inline-block;
+    content: "NOW";
+    color: #fc5bb4;
+    background: white;
+    padding: 0em .25em;
+    margin-left: .5em;
+    border-radius: .4em;
+    font-size: .8em;
+    line-height: 1.2em;
+    pointer-events: none;
 }
 
 .sponsors {
@@ -374,33 +456,6 @@ em {
     justify-content: center;
     align-items: center;
     background: darkturquoise url(/assets/imgs/bg/shell-icon-bg.svg) no-repeat 120% center/50% fixed;
-}
-
-.modal {
-    overflow: hidden;
-    background: white;
-    border-radius: 3px;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
-    box-sizing: border-box;
-    margin: .5em 10px
-}
-
-.modal:first-of-type {
-    margin-top: 3.5em
-}
-
-.modal:last-of-type {
-    margin-bottom: 3.5em
-}
-
-.modal .content {
-    padding: 1em;
-    margin: auto;
-    min-height: 0;
-}
-
-.modal.small.clamped .content {
-    max-width: 500px;
 }
 
 .form:not(:last-of-type) {
