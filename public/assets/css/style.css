@@ -308,8 +308,15 @@ em {
 }
 
 /*.events .event:not(:target) .description{*/
-.events .event:not(.selected) .description{
-    display: none;
+.events .event .description{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.events .event.selected .description, .events .event.ongoing .description{
+    overflow: visible;
+    white-space: inherit;
 }
 
 .events .event.selected{
@@ -334,6 +341,10 @@ em {
 .events .event.ongoing{
     background: #fc5bb4;
     color: white;
+}
+
+.events .event.selected .expand, .events .event.ongoing .expand{
+    display: none;
 }
 
 .events .event.ongoing .end:after{

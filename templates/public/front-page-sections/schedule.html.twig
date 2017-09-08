@@ -26,7 +26,7 @@
                         <h4 class="title">{{ event.title }}</h4>
                     </header>
                     {% if event.description %}
-                    <p class="description">This is an optional event description</p>
+                    <p class="description">{{ event.description }}</p>
                     {% endif %}
                 </article>
             </a>
@@ -37,25 +37,6 @@
             </section>
             {% endif %}
         {% endfor %}
-
-        {#<section class="day">#}
-            {#<h3>Friday, September 29</h3>#}
-            {#<a href="#this_link2" class="event modal" id="this_link2">#}
-                {#<article>#}
-                    {#<header>#}
-                        {#<div class="location">#}
-                            {#<div class="times">#}
-                                {#<time class="start">1pm</time>#}
-                                {#—#}
-                                {#<time class="end">2pm</time>#}
-                            {#</div>#}
-                            {#<span class="room">Ft Lauderdate (SIPA 125)</span>#}
-                        {#</div>#}
-                        {#<h4 class="title">Hacker Registration</h4>#}
-
-                    {#</header>#}
-                    {#<p class="description">This is an optional event description</p></article>#}
-            {#</a>#}
 
     </div>
 </section>
