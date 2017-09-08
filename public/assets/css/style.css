@@ -340,7 +340,7 @@ em {
 
 .events .event.ongoing{
     background: #fc5bb4;
-    color: white;
+    color: inherit;
 }
 
 .events .event.selected .expand, .events .event.ongoing .expand{
