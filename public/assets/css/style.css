@@ -293,6 +293,10 @@ em {
     background: darkturquoise;
 }
 
+.events .content{
+    width: 100%;
+}
+
 .events .event{
     display: block;
     padding: .5em;
