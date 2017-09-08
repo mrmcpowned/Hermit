@@ -235,6 +235,7 @@ class Site
     private $majors;
     private $events;
     private $time;
+    private $commitID;
 
     /**
      * Site constructor.
@@ -244,6 +245,9 @@ class Site
     {
         $this->db = $db;
         $this->setUp();
+
+        $this->commitID = trim(exec('git log --pretty="%h" -n1 HEAD'));
+
     }
 
     private function setUp()
@@ -469,5 +473,13 @@ class Site
         return SITE_ADDRESS;
     }
 
+    /**
+     * Returns the current git commit ID for the site
+     * @return string
+     */
+    public function getCommitID(): string
+    {
+        return $this->commitID;
+    }
 
 }
