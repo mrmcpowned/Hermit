@@ -245,9 +245,6 @@ class Site
     {
         $this->db = $db;
         $this->setUp();
-
-        $this->commitID = trim(exec('git log --pretty="%h" -n1 HEAD'));
-
     }
 
     private function setUp()
@@ -268,6 +265,8 @@ class Site
         $this->validEmails = array_map("trim", explode(',', $this->settings['valid_emails']));
 
         $this->time = time();
+
+        $this->commitID = trim(exec('git log --pretty="%h" -n1 HEAD'));
 
     }
 
@@ -415,6 +414,7 @@ class Site
     }
 
     /**
+     * Method to return current time
      * @return mixed
      */
     public function getTime()
@@ -435,10 +435,19 @@ class Site
         return filter_var($this->settings['reg_close'], FILTER_VALIDATE_INT);
     }
 
+    public function getWaitlistCloseTime()
+    {
+        return filter_var($this->settings['wait_close'], FILTER_VALIDATE_INT);
+    }
+
     public function isAcceptingRegistrations()
     {
-        $now = time();
-        return ($this->isWithinRegistrationWindow($now));
+        return ($this->isWithinRegistrationWindow(time()));
+    }
+
+    public function isWaitilistActive()
+    {
+        return (time() >= $this->getRegistrationCloseTime() && time() <= $this->getWaitlistCloseTime());
     }
 
     public function isWithinRegistrationWindow($time)
@@ -477,7 +486,7 @@ class Site
      * Returns the current git commit ID for the site
      * @return string
      */
-    public function getCommitID(): string
+    public function getCommitID()
     {
         return $this->commitID;
     }

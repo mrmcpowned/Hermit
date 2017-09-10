@@ -47,7 +47,7 @@ class PasswordManager
     /**
      * @return array
      */
-    public function getRequiredManagementFields(): array
+    public function getRequiredManagementFields()
     {
         return $this->requiredManagementFields;
     }
@@ -55,7 +55,7 @@ class PasswordManager
     /**
      * @return array
      */
-    public function getManagementFields(): array
+    public function getManagementFields()
     {
         return $this->managementFields;
     }
