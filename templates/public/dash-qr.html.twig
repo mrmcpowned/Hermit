@@ -11,7 +11,7 @@
 {% block body %}
     {% embed "html-stubs/page.html.twig" %}
         {% block pagebody %}
-            {% if not user.accepted %}
+            {% if user.accepted %}
                 {% embed "html-stubs/modal.html.twig" %}
                 {% block modalbody %}
                     {% include "html-stubs/dash-nav.html.twig" %}
