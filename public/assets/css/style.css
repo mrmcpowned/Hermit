@@ -340,11 +340,16 @@ em {
 
 .events .event .description{
     margin: auto;
+    font-size: 95%;
 }
 
 .events .event.ongoing{
     background: #fc5bb4;
     color: inherit;
+}
+
+.events .event.selected:not(.ongoing) .description{
+    color: darkturquoise;
 }
 
 .events .event.selected .expand, .events .event.ongoing .expand{
@@ -581,6 +586,10 @@ em {
 
 .status .state.accepted {
     background: green
+}
+
+.status .state.waitlisted {
+    background: cornflowerblue;
 }
 
 .status .state.rejected {
