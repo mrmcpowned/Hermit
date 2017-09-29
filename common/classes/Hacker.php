@@ -252,26 +252,43 @@ class Hacker extends User
         return filter_var($this->userInfo['can_attend'], FILTER_VALIDATE_BOOLEAN);
     }
 
+    private function isForfeiting()
+    {
+        return filter_var($this->userInfo['is_forfeiting'], FILTER_VALIDATE_BOOLEAN);
+    }
+
+
     public function getRegistrationState()
     {
         //I can cheat like this in PHP and it makes me feel dirty.
         global $site;
 
+        //EMail not verified and site isn't accepting registrations means you've been rejected (for tardiness)
+        if((!$this->isVerified() && !$site->isAcceptingRegistrations()) || $this->isEntranceDenied())
+            return RegistrationState::REJECTED;
+
+        /*
         //This only happens if the flag has been set on the admin backend
         if($this->isEntranceDenied())
             return RegistrationState::DENIED;
+        */
+
+        //If you're unable to attend and have been accepted you can forfeit your spot
+        if($this->isForfeiting())
+            return RegistrationState::FORFEITED;
 
         //canAttend is a boolean we can flip on the backend
         if($this->isWalkIn() || $this->canAttend())
             return RegistrationState::ACCEPTED;
 
-        //If we are verified and verified within the registration window, then we're registered
-        if(($this->isVerified() && ($site->isWithinRegistrationWindow($this->getTimeVerified()))))
-            return RegistrationState::PENDING;
+        //Waitlisted is active if you've registered, verified, and we are not accepted by now (needs to use waitlisting time later)
+        if($this->isVerified() &&  !$this->canAttend())
+            return RegistrationState::WAITLISTED;
 
-        //EMail not verified and site isn't accepting registrations means you've been rejected (for tardiness)
-        if(!$this->isVerified() && !$site->isAcceptingRegistrations())
-            return RegistrationState::REJECTED;
+
+        //If we are verified and verified within the registration window, then we're registered
+        if($this->isVerified())
+            return RegistrationState::PENDING;
 
         return RegistrationState::UNVERIFIED;
 
@@ -292,5 +309,4 @@ class Hacker extends User
                 return false;
         }
     }
-
 }

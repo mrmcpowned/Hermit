@@ -1,0 +1,21 @@
+{% extends "email-base.html.twig" %}
+
+{% block hero_image "https://i.imgur.com/Y2A3tKK.gif" %}
+
+{% block emailbody %}
+    {% embed "blocks/title-with-message.html.twig" %}
+
+        {% block title "You've been accepted to ShellHacks!" %}
+        {% block message "Congrats #{user.firstname}, you've been accepted to this year's ShellHacks at FIU! When you
+        log in to the user dashboard now, you'll be greeted with a message highlighting some suggested and required
+        items for your to bring to the event. There's also a check-in/QR Code we'll be using during check-in time to
+        speed up the process, so make sure to keep a copy or screenshot of it if you'd like!" %}
+        {% block button %}
+            {% embed "blocks/button.html.twig" %}
+                {% block url constant("SITE_ADDRESS") ~ "/dash" %}
+                {% block text "Go to User Dashboard" %}
+            {% endembed %}
+        {% endblock %}
+
+    {% endembed %}
+{% endblock %}
