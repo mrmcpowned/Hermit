@@ -131,9 +131,9 @@ if ($queryResult > 0)
  * - Required if it's a walk-in
  */
 //We don't require resumes from walk-ins
-if (!isset($_FILES['resume']) && !$site->isAcceptingWalkIns()) {
-    throw new ResumeException("A resume is required");
-}
+//if (!isset($_FILES['resume']) && !$site->isAcceptingWalkIns()) {
+//    throw new ResumeException("A resume is required");
+//}
 
 if (isset($_FILES['resume'])) {
 
