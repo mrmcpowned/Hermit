@@ -41,11 +41,11 @@
                                     <input placeholder="Last Name" name="l_name" type="text" required>
                                     <label for="resume">Resume (2MB Max{% if not site.acceptingWalkIns %}, Required{% endif %})</label>
                                     <input type="hidden" name="MAX_FILE_SIZE" value="2000000"/>
-                                    <input id="resume" name="resume" type="file" accept="application/msword,
-                                    application/pdf,
-                                    application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                    {#<input id="resume" name="resume" type="file" accept="application/msword,#}
+                                    {#application/pdf,#}
+                                    {#application/vnd.openxmlformats-officedocument.wordprocessingml.document"#}
                                            {#{% if not site.acceptingWalkIns %}required{% endif %}#}
-                                    >
+                                    {#>#}
                                     <input placeholder="LinkedIn Profile URL (Recommended)" type="url" name="linkedin">
                                     <input placeholder="GitHub Profile URL (Recommended)" type="url" name="github">
                                     <label for="age">Age</label>

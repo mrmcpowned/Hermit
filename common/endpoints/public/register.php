@@ -135,7 +135,7 @@ if ($queryResult > 0)
 //    throw new ResumeException("A resume is required");
 //}
 
-if (isset($_FILES['resume'])) {
+/*if (isset($_FILES['resume'])) {
 
     $resume = $_FILES['resume'];
 
@@ -167,7 +167,7 @@ if (isset($_FILES['resume'])) {
     $newName .= "." . $fileInfo['extension'];
 
     $_POST['resume'] = $newName;
-}
+}*/
 
 //DONE: Generate Check-in code (at size 4) and check for collision. If collision, generate at size 5
 $checkInCode = generateAlphaCode(4);
@@ -230,10 +230,10 @@ $columnValues = "($columnValues, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), UNIX_TIMEST
 $newUserSQL = "INSERT INTO hackers $columnNames VALUES $columnValues";
 
 //Now we move the uploaded file to the proper directory
-$success = move_uploaded_file($resume["tmp_name"], RESUME_PATH . $newName);
-if (!$success) {
-    throw new ResumeException("Error saving file to directory");
-}
+//$success = move_uploaded_file($resume["tmp_name"], RESUME_PATH . $newName);
+//if (!$success) {
+//    throw new ResumeException("Error saving file to directory");
+//}
 
 //DONE: Do what's below with the other query
 $newUserQuery = $db->prepare($newUserSQL);
