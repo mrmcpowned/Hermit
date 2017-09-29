@@ -145,7 +145,7 @@ if (isset($_FILES['resume'])) {
     }
 
     //If PHP has an upload error, respect it
-    if ($resume['error'] !== UPLOAD_ERR_OK) {
+    if (($resume['error'] !== UPLOAD_ERR_OK) || ($resume['error'] !== UPLOAD_ERR_NO_FILE) ) {
         throw new ResumeException(codeToMessage($resume['error']));
     }
 
