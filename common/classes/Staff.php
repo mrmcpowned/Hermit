@@ -33,5 +33,50 @@
  */
 class Staff extends User
 {
+    protected $whereClauseSQL = "WHERE hackers.sid = :id";
+    protected $userSelectSQL = "SELECT * FROM staff ";
+
+    public function __construct($dbPDO)
+    {
+        $this->db = $dbPDO;
+        $this->sidType = "staff-sid";
+        if ($this->isLoggedIn())
+            $this->userSetup();
+        $this->sessionCheck();
+        $this->extendSession();
+    }
+
+    protected function userSetup()
+    {
+        $query = $this->db->prepare($this->userSelectSQL . $this->whereClauseSQL);
+        $sid = $this->getSID();
+        $query->bindParam(":id", $sid);
+        $query->execute();
+
+        $this->userInfo = $query->fetch(PDO::FETCH_ASSOC);
+
+        //If the SID On the server changed, our fetch came up false
+        if($this->userInfo === false){
+            $this->logout();
+            return;
+        }
+
+        $this->passHash = $this->userInfo['pass'];
+        //We have to do some cleanup here so we don't accidentally expose any unwanted columns
+        unset($this->userInfo['pass']);
+        unset($this->userInfo['sid']);
+
+    }
+
+    public function logout()
+    {
+        $sid = $this->getSID();
+        $sql = "UPDATE staff SET sid = NULL, current_ip = NULL WHERE sid=:usersid";
+        $query = $this->db->prepare($sql);
+        $query->bindParam(":usersid", $sid);
+        $query->execute();
+        $this->destroySession();
+        session_start();
+    }
 
 }
